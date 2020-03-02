@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "core-js": "^3.6.4",
-    "vue": "^2.6.11"
+    "socket.io-client": "^2.3.0",
+    "vue": "^2.6.11",
+    "vue-toast-notification": "0.0.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.2.0",
