@@ -1,17 +1,16 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <IdleScreen/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import IdleScreen from "@/components/IdleScreen";
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    IdleScreen
   }
 }
 </script>
