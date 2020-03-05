@@ -8,6 +8,28 @@ let logger = log4js.getLogger();
 let debugEnabled = process.env.DEBUG === '1';
 logger.level = debugEnabled ? 'debug' : 'info';
 
+function checkEnvironment() {
+    let missingEnvs = [];
+
+    for (let env of []) {
+        if (!process.env.hasOwnProperty(env)) {
+            missingEnvs.push(env);
+        }
+    }
+
+    if (missingEnvs.length > 0) {
+        throw new Error(`The following mandatory environment variables have not been set: ${missingEnvs.join(', ')}`);
+    }
+}
+
+// Catches any exception that has not been caught yet
+process.setUncaughtExceptionCaptureCallback(err => {
+    logger.fatal('Uncaught Exception:', err);
+    process.exit(1);
+});
+
+checkEnvironment();
+
 let port = process.env.PORT || 3000;
 
 app.get('/', function(req, res){
@@ -22,6 +44,11 @@ io.on('connection', function(socket){
     });
 });
 
-http.listen(port, function() {
-    logger.info(`listening on *:${port}`);
+http.on('error', (err => {
+    logger.error('Server error:', err);
+}));
+http.on('listening', () => {
+    let address = http.address();
+    logger.info(`Server listens on port ${address.port}`);
 });
+http.listen(port);
