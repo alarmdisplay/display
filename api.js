@@ -72,13 +72,8 @@ module.exports = class APIv1 {
      * @param {e.NextFunction} next
      */
     getDisplay = async (req, res, next) => {
-        let identifier = req.params.id;
-        if (!identifier) {
-            return res.status(400).json({});
-        }
-
         try {
-            let display = await this.controller.findDisplay(identifier);
+            let display = await this.controller.findDisplay(req.params.id);
             if (!display) {
                 return res.sendStatus(404);
             }
