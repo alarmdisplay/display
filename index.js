@@ -44,6 +44,9 @@ controller.start(process.env.MONGODB_URI)
             res.send('Hello World!');
         });
 
+        const APIv1 = require('./api');
+        app.use('/api/v1', new APIv1(controller).router);
+
         io.on('connection', function(socket){
             logger.info('a user connected');
             socket.emit('test message', {key: 'value'});
