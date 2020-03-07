@@ -58,7 +58,9 @@ module.exports = class APIv1 {
     postDisplays = async (req, res, next) => {
         try {
             let display = await this.controller.createDisplay(req.body.identifier, req.body.active, req.body.description, req.body.location);
-            res.json(display);
+            let baseUrl = req.originalUrl.replace(/\/$/, '');
+            let newLocation = `${baseUrl}/${display.id}`;
+            res.set('Location', newLocation).status(201).json(display);
         } catch (e) {
             return next(e);
         }
