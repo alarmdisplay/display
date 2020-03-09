@@ -10,21 +10,44 @@ Vue.config.productionTip = false;
 
 let socket;
 
-new Vue({
-  render: h => h(App),
+let vm = new Vue({
+  render: function(h) {
+    return h(App, {
+      props: {
+        displayId: this.displayId,
+        showSetupInstructions: this.showSetupInstructions
+      }
+    });
+  },
   data: {
-    displayId: null
+    displayId: null,
+    showSetupInstructions: false
   },
   created: function () {
     this.displayId = getIdentifier();
   },
   mounted: function () {
-    setupSocket();
+    setupSocket(this.displayId);
   }
 }).$mount('#app');
 
-function setupSocket() {
-  socket = io();
+function setupSocket(displayId) {
+  socket = io({
+    query: {
+      displayId: displayId
+    },
+    timeout: 6000
+  });
+
+  socket.on('error', function(err) {
+    console.error(err);
+
+    if (err.type && err.type === 'UnknownDisplay') {
+      vm.showSetupInstructions = true;
+    } else {
+      Vue.$toast.error('An error occurred, please check the logs');
+    }
+  });
 
   socket.on('connect_error', function() {
     Vue.$toast.error('Could not connect to the server');

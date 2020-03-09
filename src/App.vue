@@ -1,16 +1,23 @@
 <template>
   <div id="app">
-    <IdleScreen/>
+    <DisplaySetup v-if="showSetupInstructions" v-bind:display-identifier="displayId"/>
+    <IdleScreen v-else/>
   </div>
 </template>
 
 <script>
+import DisplaySetup from "@/components/DisplaySetup";
 import IdleScreen from "@/components/IdleScreen";
 
 export default {
   name: 'App',
   components: {
+    DisplaySetup,
     IdleScreen
+  },
+  props: {
+    displayId: String,
+    showSetupInstructions: Boolean
   }
 }
 </script>
