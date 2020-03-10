@@ -1,9 +1,14 @@
 import Vue from 'vue'
 import App from './App.vue'
+import moment from 'moment'
 import io from 'socket.io-client'
+import VueMoment from 'vue-moment';
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/index.css';
 
+require('moment/locale/de');
+
+Vue.use(VueMoment, { moment });
 Vue.use(VueToast);
 
 Vue.config.productionTip = false;
@@ -27,6 +32,7 @@ let vm = new Vue({
   },
   created: function () {
     this.displayId = getIdentifier();
+    this.$moment.locale('de');
   },
   mounted: function () {
     setupSocket(this.displayId);

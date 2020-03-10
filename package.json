@@ -11,7 +11,9 @@
     "core-js": "^3.6.4",
     "socket.io-client": "^2.3.0",
     "vue": "^2.6.11",
-    "vue-toast-notification": "0.0.3"
+    "vue-moment": "^4.1.0",
+    "vue-toast-notification": "0.0.3",
+    "moment": "^2.24.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.2.0",

@@ -1,10 +1,16 @@
 <template>
-    <div>IdleScreen</div>
+    <div>
+        <Clock/>
+    </div>
 </template>
 
 <script>
+    import Clock from "@/components/Clock";
     export default {
-        name: "IdleScreen"
+        name: "IdleScreen",
+        components: {
+            Clock
+        }
     }
 </script>
 
