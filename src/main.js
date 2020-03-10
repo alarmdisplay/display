@@ -39,6 +39,25 @@ function setupSocket(displayId) {
     timeout: 6000
   });
 
+  socket.on('connect', function() {
+    console.log('Connected to the server');
+  });
+
+  socket.on('connect_error', function(error) {
+    console.error(error);
+    Vue.$toast.error('Could not connect to the server');
+  });
+
+  socket.on('connect_timeout', function(timeout) {
+    console.error(timeout);
+    Vue.$toast.warning('Timeout');
+  });
+
+  socket.on('disconnect', function(reason) {
+    console.error(reason);
+    Vue.$toast.warning('Disconnected');
+  });
+
   socket.on('error', function(err) {
     console.error(err);
 
@@ -49,16 +68,27 @@ function setupSocket(displayId) {
     }
   });
 
-  socket.on('connect_error', function() {
-    Vue.$toast.error('Could not connect to the server');
+  socket.on('reconnect', function(attemptNumber) {
+    console.log(`Successfully reconnected after ${attemptNumber} attempt(s)`);
+    Vue.$toast.success('Connection reestablished');
   });
 
-  socket.on('reconnect_error', function() {
+  socket.on('reconnect_attempt', function(attemptNumber) {
+    console.log('Reconnection attempt', attemptNumber);
+  });
+
+  socket.on('reconnecting', function(attemptNumber) {
+    console.log('Reconnecting', attemptNumber);
+  });
+
+  socket.on('reconnect_error', function(error) {
+    console.error('Reconnect Error', error);
     Vue.$toast.error('Could not reconnect to the server');
   });
 
-  socket.on('reconnecting', function() {
-    Vue.$toast.success('Reconnected to server');
+  socket.on('reconnect_failed', function() {
+    console.error('Reconnect Failed');
+    Vue.$toast.error('Reconnect failed');
   });
 
   socket.on('test message', function(data) {
