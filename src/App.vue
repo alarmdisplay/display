@@ -1,23 +1,27 @@
 <template>
   <div id="app">
-    <DisplaySetup v-if="showSetupInstructions" v-bind:display-identifier="displayId"/>
-    <IdleScreen v-else/>
+    <SplashScreen v-if="showSplashScreen === true"/>
+    <IdleScreen v-else-if="authenticated === true"/>
+    <DisplaySetup v-else v-bind:display-identifier="displayId"/>
   </div>
 </template>
 
 <script>
 import DisplaySetup from "@/components/DisplaySetup";
 import IdleScreen from "@/components/IdleScreen";
+import SplashScreen from "@/components/SplashScreen";
 
 export default {
   name: 'App',
   components: {
     DisplaySetup,
-    IdleScreen
+    IdleScreen,
+    SplashScreen
   },
   props: {
+    authenticated: Boolean,
     displayId: String,
-    showSetupInstructions: Boolean
+    showSplashScreen: Boolean
   }
 }
 </script>

@@ -14,20 +14,31 @@ let vm = new Vue({
   render: function(h) {
     return h(App, {
       props: {
+        authenticated: this.authenticated,
         displayId: this.displayId,
-        showSetupInstructions: this.showSetupInstructions
+        showSplashScreen: this.showSplashScreen
       }
     });
   },
   data: {
+    authenticated: false,
     displayId: null,
-    showSetupInstructions: false
+    showSplashScreen: true
   },
   created: function () {
     this.displayId = getIdentifier();
   },
   mounted: function () {
     setupSocket(this.displayId);
+    setTimeout(this.hideSplashScreen, 3000);
+  },
+  methods: {
+    setAuthentication: function (state) {
+      this.authenticated = state;
+    },
+    hideSplashScreen: function () {
+      this.showSplashScreen = false;
+    }
   }
 }).$mount('#app');
 
@@ -60,12 +71,7 @@ function setupSocket(displayId) {
 
   socket.on('error', function(err) {
     console.error(err);
-
-    if (err.type && err.type === 'UnknownDisplay') {
-      vm.showSetupInstructions = true;
-    } else {
-      Vue.$toast.error('An error occurred, please check the logs');
-    }
+    Vue.$toast.error('An error occurred, please check the logs');
   });
 
   socket.on('reconnect', function(attemptNumber) {
@@ -93,6 +99,16 @@ function setupSocket(displayId) {
 
   socket.on('test message', function(data) {
     console.log('Received data', data);
+  });
+
+  socket.on('auth_error', function (error) {
+    console.error('Auth error', error);
+    vm.setAuthentication(false);
+  });
+
+  socket.on('auth_success', function (data) {
+    console.log('Auth success', data);
+    vm.setAuthentication(true);
   });
 }
 
