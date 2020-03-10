@@ -1,21 +1,21 @@
 <template>
   <div id="app">
     <SplashScreen v-if="showSplashScreen === true"/>
-    <IdleScreen v-else-if="authenticated === true"/>
+    <DisplayApp v-else-if="authenticated === true"/>
     <DisplaySetup v-else v-bind:display-identifier="displayId"/>
   </div>
 </template>
 
 <script>
+import DisplayApp from "@/components/DisplayApp";
 import DisplaySetup from "@/components/DisplaySetup";
-import IdleScreen from "@/components/IdleScreen";
 import SplashScreen from "@/components/SplashScreen";
 
 export default {
   name: 'App',
   components: {
+    DisplayApp,
     DisplaySetup,
-    IdleScreen,
     SplashScreen
   },
   props: {
