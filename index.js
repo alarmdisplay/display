@@ -9,6 +9,7 @@ let debugEnabled = process.env.DEBUG === '1';
 logger.level = debugEnabled ? 'debug' : 'info';
 
 const Controller = require('./controller');
+const SocketController = require('./socket-controller');
 
 /**
  * Make sure that all required environment variables are set.
@@ -27,32 +28,6 @@ function checkEnvironment() {
     }
 }
 
-/**
- * socket.io middleware to verify if a new socket connection should be allowed
- *
- * @param socket
- * @param next
- * @return {Promise<*>}
- */
-async function verifyNewSocket(socket, next) {
-    let displayId = socket.handshake.query.displayId;
-    logger.debug(`Authenticating display with id ${displayId}`);
-
-    let display = await controller.findDisplay(displayId);
-
-    if (display === null || !display.active) {
-        logger.warn(`Could not find a display with id ${displayId}`);
-        return next({
-            data: {
-                type: 'UnknownDisplay'
-            }
-        });
-    }
-
-    logger.info('All good');
-    return next();
-}
-
 // Catches any exception that has not been caught yet
 process.setUncaughtExceptionCaptureCallback(err => {
     logger.fatal('Uncaught Exception:', err);
@@ -62,6 +37,7 @@ process.setUncaughtExceptionCaptureCallback(err => {
 checkEnvironment();
 
 let controller = new Controller();
+let socketController;
 controller.start(process.env.MONGODB_URI)
     .then(() => {
         let port = process.env.PORT || 3000;
@@ -73,16 +49,7 @@ controller.start(process.env.MONGODB_URI)
         const APIv1 = require('./api');
         app.use('/api/v1', new APIv1(controller).router);
 
-        io.use(verifyNewSocket);
-
-        io.on('connection', function(socket) {
-            logger.info('a user connected');
-
-            socket.emit('test message', {key: 'value'});
-            socket.on('disconnect', function(){
-                logger.info('user disconnected');
-            });
-        });
+        socketController = new SocketController(io, controller);
 
         http.on('error', (err => {
             logger.error('Server error:', err);
