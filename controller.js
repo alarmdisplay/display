@@ -1,24 +1,8 @@
 const log4js = require('log4js');
 const mongoose = require('mongoose');
 
-const Schema = mongoose.Schema;
-let displaySchema = new Schema({
-    _id: { type: String },
-    active: { type: Boolean, default: false },
-    description: { type: String, default: "" },
-    location: { type: String, default: "" },
-    lastSeen: { type: Date, default: null },
-    groups: [{ type: Schema.Types.ObjectId, ref: 'DisplayGroup' }]
-}, {timestamps: true});
-
-let displayGroupSchema = new Schema({
-    name: String,
-    description: String,
-    displays: [{ type: Schema.Types.ObjectId, ref: 'Display' }]
-}, {timestamps: true});
-
-let Display = mongoose.model('Display', displaySchema);
-let DisplayGroup = mongoose.model('DisplayGroup', displayGroupSchema);
+const Display = require('./models/display');
+const DisplayGroup = require('./models/display-group');
 
 module.exports = class Controller {
     constructor() {
