@@ -1,8 +1,10 @@
 require('dotenv').config();
 const app = require('express')();
+const cors = require('cors');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const log4js = require('log4js');
+const swaggerJSDoc = require('swagger-jsdoc');
 
 let logger = log4js.getLogger();
 let debugEnabled = process.env.DEBUG === '1';
@@ -47,7 +49,21 @@ controller.start(process.env.MONGODB_URI)
         });
 
         const APIv1 = require('./api');
-        app.use('/api/v1', new APIv1(controller).router);
+        app.use('/api/v1', cors(), new APIv1(controller).router);
+
+        // Collect the Swagger spec from the routes files and serve the JSON
+        const swaggerSpec = swaggerJSDoc({
+            definition: {
+                info: {
+                    title: 'display-backend',
+                    version: '1.0.0',
+                },
+            },
+            apis: ['./routes/*.js'],
+        });
+        app.get('/api-docs.json', cors(), (req, res) => {
+            res.json(swaggerSpec);
+        });
 
         socketController = new SocketController(io, controller);
 
