@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Display = require('../../models/display');
+const Display = require('../../src/models/display');
 
 describe('Display model', () => {
     let connection;
