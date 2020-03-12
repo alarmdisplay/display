@@ -13,20 +13,9 @@ module.exports = class APIv1 {
         this.router.use('/displays', displayRoutes);
 
         // Add our own error handler to override the built-in one
-        this.router.use(this.errorHandler);
+        this.router.use((err, req, res, next) => {
+            this.logger.error(err);
+            res.status(500).json({error: {message: err.message}});
+        });
     }
-
-    /**
-     * Error Handler, logs the error and sends the error as HTTP response.
-     *
-     * @param {Error} err
-     * @param {e.Request} req
-     * @param {e.Response} res
-     * @param {e.NextFunction} next
-     */
-    errorHandler = (err, req, res, next) => {
-        this.logger.error(err);
-        res.status(500).json({error: {message: err.message}});
-    };
-
 };
