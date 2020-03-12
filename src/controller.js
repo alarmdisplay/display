@@ -22,6 +22,11 @@ module.exports = class Controller {
         });
     }
 
+    shutDown() {
+        this.logger.info('Shutting down...');
+        return mongoose.disconnect();
+    }
+
     createDisplay(identifier, active, description, location) {
         let display = new Display({
             _id: identifier,
