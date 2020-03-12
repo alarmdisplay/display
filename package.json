@@ -4,7 +4,7 @@
   "description": "Data source and configuration store for displays",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
+    "dev": "nodemon src/index.js",
     "test": "jest"
   },
   "keywords": [],
