@@ -33,17 +33,20 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin: 0;
+  padding: 0;
   height: 100%;
   overflow: hidden;
 }
 
 body {
   height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 html {
-  height: 100%;
+  height: 100vh;
   background-color: #777777;
 }
 </style>
