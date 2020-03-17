@@ -133,11 +133,22 @@ module.exports = function (controller) {
    *     responses:
    *       200:
    *         description: Successfully updated
+   *       201:
+   *         description: Display did not exist before and got created
    */
   router.put('/:id', async (req, res, next) => {
     try {
-      const display = await controller.updateDisplay(req.params.id, req.body)
-      res.json(display)
+      const display = await controller.findDisplay(req.params.id)
+      if (!display) {
+        const newDisplay = await controller.createDisplay(req.params.id, req.body.active, req.body.description, req.body.location)
+        const baseUrl = req.originalUrl.replace(/\/$/, '')
+        const newLocation = `${baseUrl}/${newDisplay.id}`
+        res.set('Content-Location', newLocation).status(201).json(newDisplay)
+        return
+      }
+
+      const updatedDisplay = await controller.updateDisplay(req.params.id, req.body)
+      res.json(updatedDisplay)
     } catch (e) {
       return next(e)
     }
