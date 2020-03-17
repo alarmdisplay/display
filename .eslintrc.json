@@ -14,6 +14,7 @@
     "parserOptions": {
         "ecmaVersion": 2018
     },
+    "root": true,
     "rules": {
     }
 }
