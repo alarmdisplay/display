@@ -1,5 +1,5 @@
 <template>
-    <IdleScreen/>
+    <IdleScreen v-bind:number-of-columns="3" v-bind:number-of-rows="2"/>
 </template>
 
 <script>
