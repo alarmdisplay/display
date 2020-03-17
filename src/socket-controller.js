@@ -1,16 +1,19 @@
+const socketIo = require('socket.io')
 const log4js = require('log4js')
 
 module.exports = class SocketController {
-  constructor (io, controller) {
+  constructor (server, controller) {
     this.logger = log4js.getLogger('SocketController')
-    this.io = io
+    this.io = socketIo(server)
     this.controller = controller
-
-    this.io.use((socket, next) => this.verifyNewSocket(socket, next))
-    this.io.on('connection', socket => this.onConnected(socket))
 
     this.sockets = new Map()
     this.pendingDisplayIds = new Set()
+  }
+
+  openSockets () {
+    this.io.use((socket, next) => this.verifyNewSocket(socket, next))
+    this.io.on('connection', socket => this.onConnected(socket))
   }
 
   async onConnected (socket) {
@@ -58,7 +61,7 @@ module.exports = class SocketController {
    * @param next
    */
   verifyNewSocket (socket, next) {
-    if (!socket.handshake.query.hasOwnProperty('displayId')) {
+    if (!Object.prototype.hasOwnProperty.call(socket.handshake.query, 'displayId')) {
       return next(new Error('Parameter displayId is missing'))
     }
 

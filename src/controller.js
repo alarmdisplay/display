@@ -2,7 +2,6 @@ const log4js = require('log4js')
 const mongoose = require('mongoose')
 
 const Display = require('./models/display')
-const DisplayGroup = require('./models/display-group')
 
 module.exports = class Controller {
   constructor () {

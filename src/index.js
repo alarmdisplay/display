@@ -1,8 +1,7 @@
 require('dotenv').config()
 const app = require('express')()
 const cors = require('cors')
-const http = require('http').createServer(app)
-const io = require('socket.io')(http)
+const server = require('http').createServer(app)
 const log4js = require('log4js')
 const swaggerJSDoc = require('swagger-jsdoc')
 
@@ -20,7 +19,7 @@ function checkEnvironment () {
   const missingEnvs = []
 
   for (const env of ['MONGODB_URI']) {
-    if (!process.env.hasOwnProperty(env)) {
+    if (!Object.prototype.hasOwnProperty.call(process.env, env)) {
       missingEnvs.push(env)
     }
   }
@@ -65,16 +64,17 @@ controller.start(process.env.MONGODB_URI)
       res.json(swaggerSpec)
     })
 
-    socketController = new SocketController(io, controller)
+    socketController = new SocketController(server, controller)
+    socketController.openSockets()
 
-    http.on('error', err => {
+    server.on('error', err => {
       logger.error('Server error:', err)
     })
-    http.on('listening', () => {
-      const address = http.address()
+    server.on('listening', () => {
+      const address = server.address()
       logger.info(`Server listens on port ${address.port}`)
     })
-    http.listen(port)
+    server.listen(port)
   })
   .catch(reason => {
     logger.fatal('Could not start the server', reason)
