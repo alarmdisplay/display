@@ -4,7 +4,7 @@
   "description": "Data source and configuration store for displays",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.js --exec 'npm run lint && node'",
+    "dev": "nodemon src/index.js --exec 'npm run lint --silent && node'",
     "lint": "eslint src/",
     "test": "jest"
   },
