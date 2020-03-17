@@ -7,3 +7,5 @@ exclude_patterns:
   - ".idea/"
   - "node_modules/"
   - "__tests__/"
+  - "jest-mongodb-config.js"
+  - "jest.config.js"
