@@ -1,12 +1,19 @@
 language: node_js
 node_js:
-  - 10
-  - 12
   - 13
+  - 12
+  - 10
 
 env:
   global:
     - CC_TEST_REPORTER_ID=c1c885065adfd5bb4901e0bb11111b73d3b71833597bc1759741e02f89b1be7b
+
+jobs:
+  include:
+    - name: "ESLint"
+      before_script: skip
+      script: npm run lint
+      after_script: skip
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
