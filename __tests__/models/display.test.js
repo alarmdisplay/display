@@ -37,8 +37,6 @@ describe('Display model', () => {
     expect(savedDisplay._id).toBe('ABC')
     expect(savedDisplay.active).toBeFalsy()
     expect(savedDisplay.description).toBe('')
-    expect(savedDisplay.groups).toBeInstanceOf(Array)
-    expect(savedDisplay.groups.length).toBe(0)
     expect(savedDisplay.lastSeen).toBeNull()
     expect(savedDisplay.location).toBe('')
   })

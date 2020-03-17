@@ -6,8 +6,7 @@ const displaySchema = new Schema({
   active: { type: Boolean, default: false },
   description: { type: String, default: '' },
   location: { type: String, default: '' },
-  lastSeen: { type: Date, default: null },
-  groups: [{ type: Schema.Types.ObjectId, ref: 'DisplayGroup' }]
+  lastSeen: { type: Date, default: null }
 }, { timestamps: true })
 
 module.exports = mongoose.model('Display', displaySchema)
