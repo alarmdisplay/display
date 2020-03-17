@@ -5,6 +5,10 @@ plugins:
     channel: "eslint-6"
 exclude_patterns:
   - ".idea/"
+  - ".*.json"
+  - ".*.yml"
+  - ".*ignore"
   - "node_modules/"
-  - "jest-mongodb-config.js"
-  - "jest.config.js"
+  - "__tests__/"
+  - "*.js"
+  - "*.json"
