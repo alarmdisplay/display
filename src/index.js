@@ -58,7 +58,7 @@ controller.start(process.env.MONGODB_URI)
           version: '1.0.0'
         }
       },
-      apis: ['./routes/*.js']
+      apis: ['./src/routes/*.js']
     })
     app.get('/api-docs.json', cors(), (req, res) => {
       res.json(swaggerSpec)
