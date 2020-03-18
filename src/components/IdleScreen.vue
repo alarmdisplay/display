@@ -42,13 +42,23 @@
                 return 'grid-template-columns: ' + templateColumns + '; grid-template-rows: ' + templateRows + ';';
             },
             getChildComponents: function () {
-                return [
-                    {name: 'Clock', style: 'grid-column-start: 1; grid-column-end: 2; grid-row-start: 1; grid-row-end: 2; background-color: yellow'},
-                    {name: 'Clock', style: 'grid-column-start: 2; grid-column-end: 3; grid-row-start: 2; grid-row-end: 3; background-color: yellow'}
-                ];
+                let components = [];
+                for (let config of this.componentConfigs) {
+                    if (!config.name || !config.coords || config.coords.length < 4) {
+                        continue;
+                    }
+
+                    components.push({
+                        name: config.name,
+                        style: `grid-column-start: ${config.coords[0]}; grid-row-start: ${config.coords[1]}; grid-column-end: ${config.coords[2]}; grid-row-end: ${config.coords[3]}`
+                    });
+                }
+
+                return components;
             }
         },
         props: {
+            componentConfigs: Array,
             numberOfColumns: Number,
             numberOfRows: Number
         }
@@ -58,7 +68,6 @@
 <style scoped>
     .idle-screen {
         display: grid;
-        background-color: green;
         height: 100%;
     }
 </style>

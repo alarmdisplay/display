@@ -21,6 +21,7 @@ let vm = new Vue({
       props: {
         authenticated: this.authenticated,
         displayId: this.displayId,
+        screenConfigs: this.screenConfigs,
         showSplashScreen: this.showSplashScreen
       }
     });
@@ -28,7 +29,17 @@ let vm = new Vue({
   data: {
     authenticated: false,
     displayId: null,
-    showSplashScreen: true
+    showSplashScreen: true,
+    screenConfigs: {
+      'IdleScreen': {
+        columns: 3,
+        rows: 3,
+        components: [
+          {name: 'Clock', coords: [1,2,2,3]},
+          {name: 'Clock', coords: [2,3,3,4]}
+        ]
+      }
+    }
   },
   created: function () {
     this.displayId = getIdentifier();
