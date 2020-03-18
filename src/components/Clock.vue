@@ -1,7 +1,7 @@
 <template>
     <div id="clock">
-        <p class="time">{{ time }}</p>
-        <p class="date">{{ date }}</p>
+        <div class="time">{{ time }}</div>
+        <div class="date">{{ date }}</div>
     </div>
 </template>
 
@@ -28,17 +28,19 @@
 
 <style scoped>
     #clock {
-        text-align: center;
         color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     .time {
-        font-size: 6em;
+        font-size: 8em;
         font-weight: bold;
-        margin-bottom: -10px;
     }
 
     .date {
-        font-size: 2em;
+        font-size: 3em;
     }
 </style>

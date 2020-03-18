@@ -21,6 +21,7 @@ let vm = new Vue({
       props: {
         authenticated: this.authenticated,
         displayId: this.displayId,
+        screenConfigs: this.screenConfigs,
         showSplashScreen: this.showSplashScreen
       }
     });
@@ -28,11 +29,13 @@ let vm = new Vue({
   data: {
     authenticated: false,
     displayId: null,
-    showSplashScreen: true
+    showSplashScreen: true,
+    screenConfigs: null
   },
   created: function () {
     this.displayId = getIdentifier();
     this.$moment.locale('de');
+    this.resetData();
   },
   mounted: function () {
     setupSocket(this.displayId);
@@ -41,6 +44,30 @@ let vm = new Vue({
   methods: {
     setAuthentication: function (state) {
       this.authenticated = state;
+      if (state === false) {
+        this.resetData();
+      }
+    },
+    resetData: function () {
+      this.screenConfigs = {
+        'IdleScreen': {
+          columns: 3,
+          rows: 3,
+          components: [
+            {name: 'Clock', coords: [2,2,3,3]}
+          ]
+        }
+      };
+    },
+    updateScreenConfig: function (name, config) {
+      try {
+        validateScreenConfig(config);
+      } catch (e) {
+        Vue.$toast.error('Screen config rejected');
+        return;
+      }
+
+      this.screenConfigs[name] = config;
     },
     hideSplashScreen: function () {
       this.showSplashScreen = false;
@@ -103,10 +130,6 @@ function setupSocket(displayId) {
     Vue.$toast.error('Reconnect failed');
   });
 
-  socket.on('test message', function(data) {
-    console.log('Received data', data);
-  });
-
   socket.on('auth_error', function (error) {
     console.error('Auth error', error);
     vm.setAuthentication(false);
@@ -114,7 +137,18 @@ function setupSocket(displayId) {
 
   socket.on('auth_success', function (data) {
     console.log('Auth success', data);
+    if (data.screenConfigs) {
+      for (const [screenName, screenConfig] of Object.entries(data.screenConfigs)) {
+        vm.updateScreenConfig(screenName, screenConfig);
+      }
+    }
     vm.setAuthentication(true);
+  });
+
+  socket.on('update_screenconfigs', function(screenConfigs) {
+    for (const [screenName, screenConfig] of Object.entries(screenConfigs)) {
+      vm.updateScreenConfig(screenName, screenConfig);
+    }
   });
 }
 
@@ -155,4 +189,12 @@ function generateIdentifier(length) {
   }
 
   return identifier;
+}
+
+function validateScreenConfig(config) {
+  if (!config) {
+    throw new Error('Configuration is empty');
+  }
+
+  // TODO more validations
 }
