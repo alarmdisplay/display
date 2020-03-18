@@ -2,16 +2,21 @@ const socketIo = require('socket.io')
 const log4js = require('log4js')
 
 module.exports = class SocketController {
-  constructor (server, controller) {
+  constructor (controller) {
     this.logger = log4js.getLogger('SocketController')
-    this.io = socketIo(server)
     this.controller = controller
 
     this.sockets = new Map()
     this.pendingDisplayIds = new Set()
   }
 
-  openSockets () {
+  /**
+   * Start listening for socket connections.
+   *
+   * @param server
+   */
+  startListening (server) {
+    this.io = socketIo(server)
     this.io.use((socket, next) => this.verifyNewSocket(socket, next))
     this.io.on('connection', socket => this.onConnected(socket))
   }

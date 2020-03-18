@@ -64,8 +64,8 @@ controller.start(process.env.MONGODB_URI)
       res.json(swaggerSpec)
     })
 
-    socketController = new SocketController(server, controller)
-    socketController.openSockets()
+    socketController = new SocketController(controller)
+    socketController.startListening(server)
 
     server.on('error', err => {
       logger.error('Server error:', err)
