@@ -17,13 +17,17 @@ const layoutSchema = new Schema({
   rows: Number
 })
 
+const screenConfigSchema = new Schema({
+  layout: { type: layoutSchema, default: null }
+})
+
 const displaySchema = new Schema({
   _id: { type: String },
   active: { type: Boolean, default: false },
   description: { type: String, default: '' },
   lastSeen: { type: Date, default: null },
-  layout: { type: layoutSchema, default: null },
-  location: { type: String, default: '' }
+  location: { type: String, default: '' },
+  screenConfigs: { type: Map, of: screenConfigSchema, default: {} }
 }, { timestamps: true })
 
 module.exports = mongoose.model('Display', displaySchema)

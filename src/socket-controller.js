@@ -40,28 +40,8 @@ module.exports = class SocketController {
 
     this.sockets.set(displayId, socket)
     socket.emit('auth_success', {
-      screenConfigs: {
-        IdleScreen: {
-          columns: 4,
-          rows: 4,
-          components: [
-            { name: 'Clock', coords: [4, 1, 5, 2] }
-          ]
-        }
-      }
+      screenConfigs: display.screenConfigs
     })
-
-    setTimeout(function () {
-      socket.emit('update_screenconfigs', {
-        IdleScreen: {
-          columns: 3,
-          rows: 3,
-          components: [
-            { name: 'Clock', coords: [1, 3, 2, 4] }
-          ]
-        }
-      })
-    }, 6000)
   }
 
   onDisconnect (socket, reason) {
