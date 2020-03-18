@@ -59,6 +59,16 @@ let vm = new Vue({
         }
       };
     },
+    updateScreenConfig: function (name, config) {
+      try {
+        validateScreenConfig(config);
+      } catch (e) {
+        Vue.$toast.error('Screen config rejected');
+        return;
+      }
+
+      this.screenConfigs[name] = config;
+    },
     hideSplashScreen: function () {
       this.showSplashScreen = false;
     }
@@ -120,10 +130,6 @@ function setupSocket(displayId) {
     Vue.$toast.error('Reconnect failed');
   });
 
-  socket.on('test message', function(data) {
-    console.log('Received data', data);
-  });
-
   socket.on('auth_error', function (error) {
     console.error('Auth error', error);
     vm.setAuthentication(false);
@@ -131,7 +137,18 @@ function setupSocket(displayId) {
 
   socket.on('auth_success', function (data) {
     console.log('Auth success', data);
+    if (data.screenConfigs) {
+      for (const [screenName, screenConfig] of Object.entries(data.screenConfigs)) {
+        vm.updateScreenConfig(screenName, screenConfig);
+      }
+    }
     vm.setAuthentication(true);
+  });
+
+  socket.on('update_screenconfigs', function(screenConfigs) {
+    for (const [screenName, screenConfig] of Object.entries(screenConfigs)) {
+      vm.updateScreenConfig(screenName, screenConfig);
+    }
   });
 }
 
@@ -172,4 +189,12 @@ function generateIdentifier(length) {
   }
 
   return identifier;
+}
+
+function validateScreenConfig(config) {
+  if (!config) {
+    throw new Error('Configuration is empty');
+  }
+
+  // TODO more validations
 }
