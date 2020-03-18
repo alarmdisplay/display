@@ -30,20 +30,12 @@ let vm = new Vue({
     authenticated: false,
     displayId: null,
     showSplashScreen: true,
-    screenConfigs: {
-      'IdleScreen': {
-        columns: 3,
-        rows: 3,
-        components: [
-          {name: 'Clock', coords: [1,2,2,3]},
-          {name: 'Clock', coords: [2,3,3,4]}
-        ]
-      }
-    }
+    screenConfigs: null
   },
   created: function () {
     this.displayId = getIdentifier();
     this.$moment.locale('de');
+    this.resetData();
   },
   mounted: function () {
     setupSocket(this.displayId);
@@ -52,6 +44,20 @@ let vm = new Vue({
   methods: {
     setAuthentication: function (state) {
       this.authenticated = state;
+      if (state === false) {
+        this.resetData();
+      }
+    },
+    resetData: function () {
+      this.screenConfigs = {
+        'IdleScreen': {
+          columns: 3,
+          rows: 3,
+          components: [
+            {name: 'Clock', coords: [2,2,3,3]}
+          ]
+        }
+      };
     },
     hideSplashScreen: function () {
       this.showSplashScreen = false;
