@@ -51,7 +51,7 @@ module.exports = function (controller) {
    *         schema:
    *           $ref: '#/definitions/Display'
    */
-  router.post('/displays', async (req, res, next) => {
+  router.post('/', async (req, res, next) => {
     try {
       const display = await controller.createDisplay(req.body.identifier, req.body.active, req.body.description, req.body.location)
       const baseUrl = req.originalUrl.replace(/\/$/, '')
@@ -80,7 +80,7 @@ module.exports = function (controller) {
    *       404:
    *         description: The Display could not be found
    */
-  router.get('/displays/:id', async (req, res, next) => {
+  router.get('/:id', async (req, res, next) => {
     try {
       const display = await controller.findDisplay(req.params.id)
       if (!display) {
@@ -106,7 +106,7 @@ module.exports = function (controller) {
    *       204:
    *         description: Successfully deleted
    */
-  router.delete('/displays/:id', async (req, res, next) => {
+  router.delete('/:id', async (req, res, next) => {
     try {
       await controller.deleteDisplay(req.params.id)
       res.sendStatus(204)
