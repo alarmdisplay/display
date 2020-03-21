@@ -38,24 +38,58 @@ module.exports = class Controller {
   }
 
   deleteDisplay (identifier) {
-    return Display.deleteOne({ _id: identifier })
+    return new Promise((resolve, reject) => {
+      Display.deleteOne({ _id: identifier }, err => {
+        if (err) {
+          reject(err)
+        }
+
+        resolve()
+      })
+    })
   }
 
   findDisplay (identifier) {
-    return Display.findOne({ _id: identifier })
+    return new Promise((resolve, reject) => {
+      Display.findOne({ _id: identifier }, (err, display) => {
+        if (err) {
+          return reject(err)
+        }
+
+        resolve(display)
+      })
+    })
   }
 
   findDisplays () {
-    return Display.find()
+    return new Promise((resolve, reject) => {
+      Display.find((err, displays) => {
+        if (err) {
+          return reject(err)
+        }
+
+        resolve(displays)
+      })
+    })
   }
 
   async updateDisplay (identifier, data) {
-    const display = await Display.findOne({ _id: identifier })
-    display.active = data.active
-    display.description = data.description
-    display.location = data.location
-    display.screenConfigs = data.screenConfigs
+    return this.findDisplay(identifier).then(display => {
+      return new Promise((resolve, reject) => {
+        display.active = data.active
+        display.description = data.description
+        display.location = data.location
+        display.screenConfigs = data.screenConfigs
 
-    return display.save()
+        display.save((err, updatedDisplay) => {
+          if (err) {
+            reject(err)
+          }
+
+          // TODO notify listeners
+          resolve(updatedDisplay)
+        })
+      })
+    })
   }
 }
