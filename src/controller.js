@@ -26,12 +26,13 @@ module.exports = class Controller {
     return mongoose.disconnect()
   }
 
-  createDisplay (identifier, active, description, location) {
+  createDisplay (identifier, active, description, location, screenConfigs) {
     const display = new Display({
       _id: identifier,
       active: active,
       description: description,
-      location: location
+      location: location,
+      screenConfigs: screenConfigs
     })
     return display.save()
   }
@@ -48,12 +49,13 @@ module.exports = class Controller {
     return Display.find()
   }
 
-  updateDisplay (identifier, data) {
-    const update = {
-      active: data.active,
-      description: data.description,
-      location: data.location
-    }
-    return Display.findByIdAndUpdate(identifier, update, { omitUndefined: true, new: true })
+  async updateDisplay (identifier, data) {
+    const display = await Display.findOne({ _id: identifier })
+    display.active = data.active
+    display.description = data.description
+    display.location = data.location
+    display.screenConfigs = data.screenConfigs
+
+    return display.save()
   }
 }
