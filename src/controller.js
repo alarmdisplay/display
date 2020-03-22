@@ -1,10 +1,12 @@
+const EventEmitter = require('events')
 const log4js = require('log4js')
 const mongoose = require('mongoose')
 
 const Display = require('./models/display')
 
-module.exports = class Controller {
+module.exports = class Controller extends EventEmitter {
   constructor () {
+    super()
     this.logger = log4js.getLogger('Controller')
   }
 
@@ -27,14 +29,25 @@ module.exports = class Controller {
   }
 
   createDisplay (identifier, active, description, location, screenConfigs) {
-    const display = new Display({
-      _id: identifier,
-      active: active,
-      description: description,
-      location: location,
-      screenConfigs: screenConfigs
+    return new Promise((resolve, reject) => {
+      const display = new Display({
+        _id: identifier,
+        active: active,
+        description: description,
+        location: location,
+        screenConfigs: screenConfigs
+      })
+      display.save((err, newDisplay) => {
+        if (err) {
+          reject(err)
+        }
+
+        // notify listeners
+        this.emit('display_created', newDisplay)
+
+        resolve(newDisplay)
+      })
     })
-    return display.save()
   }
 
   deleteDisplay (identifier) {
@@ -43,6 +56,9 @@ module.exports = class Controller {
         if (err) {
           reject(err)
         }
+
+        // notify listeners
+        this.emit('display_deleted', identifier)
 
         resolve()
       })
@@ -86,7 +102,9 @@ module.exports = class Controller {
             reject(err)
           }
 
-          // TODO notify listeners
+          // notify listeners
+          this.emit('display_updated', updatedDisplay)
+
           resolve(updatedDisplay)
         })
       })

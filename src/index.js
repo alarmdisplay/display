@@ -65,6 +65,27 @@ controller.start(process.env.MONGODB_URI)
     })
 
     socketController = new SocketController(controller)
+    controller.on('display_created', display => {
+      logger.debug(`Display ${display.id} has been created`)
+      if (socketController.isDisplayPending(display.id)) {
+        // Try to authenticate again.
+        socketController.authenticateDisplay(display.id)
+      }
+    })
+    controller.on('display_updated', display => {
+      logger.debug(`Display ${display.id} has been updated`)
+      if (socketController.isDisplayPending(display.id)) {
+        // Try to authenticate again.
+        socketController.authenticateDisplay(display.id)
+        return
+      }
+
+      socketController.pushConfigToDisplay(display.id)
+    })
+    controller.on('display_deleted', displayId => {
+      logger.debug(`Display ${displayId} has been deleted`)
+      socketController.deauthenticateDisplay(displayId)
+    })
     socketController.startListening(server)
 
     server.on('error', err => {

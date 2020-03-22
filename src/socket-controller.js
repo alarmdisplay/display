@@ -21,27 +21,16 @@ module.exports = class SocketController {
     this.io.on('connection', socket => this.onConnected(socket))
   }
 
-  async onConnected (socket) {
+  onConnected (socket) {
     this.logger.debug(`Socket ${socket.id} connected`)
 
     socket.on('error', (error) => this.logger.error(`Socket ${socket.id}`, error))
     socket.once('disconnect', (reason) => this.onDisconnect(socket, reason))
 
     const displayId = socket.handshake.query.displayId
-    const display = await this.controller.findDisplay(displayId)
-
-    if (display === null || !display.active) {
-      this.logger.warn(`Could not find an active display with id ${displayId}`)
-      socket.emit('auth_error', { message: 'Display not active' })
-      this.pendingDisplayIds.add(displayId)
-      this.sockets.set(displayId, socket)
-      return
-    }
-
     this.sockets.set(displayId, socket)
-    socket.emit('auth_success', {
-      screenConfigs: display.screenConfigs
-    })
+
+    this.authenticateDisplay(displayId)
   }
 
   onDisconnect (socket, reason) {
@@ -49,6 +38,27 @@ module.exports = class SocketController {
     const displayId = socket.handshake.query.displayId
     this.sockets.delete(displayId)
     this.pendingDisplayIds.delete(displayId)
+  }
+
+  authenticateDisplay (displayId) {
+    this.controller.findDisplay(displayId).then(display => {
+      // For now the authentication check is only if there is display with that ID on file and set to active
+      if (display === null || !display.active) {
+        this.logger.warn(`Could not find an active display with id ${displayId}`)
+
+        this.deauthenticateDisplay(displayId)
+        return
+      }
+
+      this.sendMessageToDisplay(displayId, 'auth_success', {})
+      this.setDisplayNotPending(displayId)
+      this.pushConfigToDisplay(displayId)
+    })
+  }
+
+  deauthenticateDisplay (displayId) {
+    this.sendMessageToDisplay(displayId, 'auth_error', { message: 'Display not active' })
+    this.setDisplayPending(displayId)
   }
 
   /**
@@ -59,6 +69,36 @@ module.exports = class SocketController {
    */
   isDisplayPending (displayId) {
     return this.pendingDisplayIds.has(displayId)
+  }
+
+  pushConfigToDisplay (displayId) {
+    this.controller.findDisplay(displayId).then(display => {
+      this.sendMessageToDisplay(displayId, 'update_config', {
+        screenConfigs: display.screenConfigs
+      })
+    })
+  }
+
+  sendMessageToDisplay (identifier, eventName, message) {
+    const socket = this.sockets.get(identifier)
+    if (!socket) {
+      this.logger.warn(`No socket for ID ${identifier}, not sending message`)
+      return
+    }
+
+    socket.emit(eventName, message)
+  }
+
+  setDisplayPending (displayId) {
+    if (this.isDisplayPending(displayId)) {
+      return
+    }
+
+    this.pendingDisplayIds.add(displayId)
+  }
+
+  setDisplayNotPending (displayId) {
+    this.pendingDisplayIds.delete(displayId)
   }
 
   /**
