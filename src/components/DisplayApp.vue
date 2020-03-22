@@ -1,5 +1,5 @@
 <template>
-    <IdleScreen v-bind:number-of-columns="screenConfigs.IdleScreen.columns" v-bind:number-of-rows="screenConfigs.IdleScreen.rows" v-bind:component-configs="screenConfigs.IdleScreen.components"/>
+    <IdleScreen v-bind:screen-config="screenConfigs.IdleScreen"/>
 </template>
 
 <script>

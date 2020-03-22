@@ -51,11 +51,20 @@ let vm = new Vue({
     resetData: function () {
       this.screenConfigs = {
         'IdleScreen': {
-          columns: 3,
-          rows: 3,
-          components: [
-            {name: 'Clock', coords: [2,2,3,3]}
-          ]
+          layout: {
+            columns: 3,
+            rows: 3,
+            components: [
+              {
+                name: 'Clock', bounds: {
+                  colStart: 2,
+                  rowStart: 2,
+                  colEnd: 3,
+                  rowEnd: 3,
+                }
+              }
+            ]
+          }
         }
       };
     },
@@ -63,11 +72,12 @@ let vm = new Vue({
       try {
         validateScreenConfig(config);
       } catch (e) {
-        Vue.$toast.error('Screen config rejected');
+        Vue.$toast.error(`Screen config rejected: ${e.message}`);
         return;
       }
 
       this.screenConfigs[name] = config;
+      console.log('screenConfigs is now', this.screenConfigs)
     },
     hideSplashScreen: function () {
       this.showSplashScreen = false;
@@ -137,17 +147,13 @@ function setupSocket(displayId) {
 
   socket.on('auth_success', function (data) {
     console.log('Auth success', data);
-    if (data.screenConfigs) {
-      for (const [screenName, screenConfig] of Object.entries(data.screenConfigs)) {
-        vm.updateScreenConfig(screenName, screenConfig);
-      }
-    }
     vm.setAuthentication(true);
   });
 
-  socket.on('update_screenconfigs', function(screenConfigs) {
-    for (const [screenName, screenConfig] of Object.entries(screenConfigs)) {
-      vm.updateScreenConfig(screenName, screenConfig);
+  socket.on('update_config', function(config) {
+    console.log('Received config update', config);
+    if (config.screenConfigs["idleScreen"]) {
+      vm.updateScreenConfig('IdleScreen', config.screenConfigs["idleScreen"]);
     }
   });
 }
@@ -191,10 +197,55 @@ function generateIdentifier(length) {
   return identifier;
 }
 
+/**
+ * Validates a particular screen configuration for structural errors.
+ *
+ * @param config
+ * @throws {Error}
+ */
 function validateScreenConfig(config) {
+  console.log('Validating config', config);
+
   if (!config) {
     throw new Error('Configuration is empty');
   }
 
-  // TODO more validations
+  if (!Object.prototype.hasOwnProperty.call(config, 'layout')) {
+    throw new Error('Configuration has no layout');
+  }
+
+  if (!Object.prototype.hasOwnProperty.call(config.layout, 'columns') || config.layout.columns < 1) {
+    throw new Error('Number of columns is not valid');
+  }
+
+  if (!Object.prototype.hasOwnProperty.call(config.layout, 'rows') || config.layout.rows < 1) {
+    throw new Error('Number of rows is not valid');
+  }
+
+  if (!Object.prototype.hasOwnProperty.call(config.layout, 'components') || !Array.isArray(config.layout.components) || config.layout.components.length === 0) {
+    throw new Error('No components specified');
+  }
+
+  const validComponents = ['Clock'];
+  for (let component of config.layout.components) {
+    if (!component.name || !validComponents.includes(component.name)) {
+      throw new Error('No valid component name specified');
+    }
+
+    if (!component.bounds || typeof component.bounds !== 'object') {
+      throw new Error('No bounds specified');
+    }
+
+    if (!component.bounds.colStart || !component.bounds.rowStart || !component.bounds.colEnd || !component.bounds.rowEnd) {
+      throw new Error('Not all bounds specified');
+    }
+
+    if (component.bounds.colStart < 1 || component.bounds.rowStart < 1 || component.bounds.colEnd > (config.layout.columns + 1) || component.bounds.rowEnd > (config.layout.rows + 1)) {
+      throw new Error('Bounds exceed column/row count');
+    }
+
+    if (component.bounds.colEnd <= component.bounds.colStart || component.bounds.rowEnd <= component.bounds.rowStart) {
+      throw new Error('Column/row end value must be greater that respective start value');
+    }
+  }
 }

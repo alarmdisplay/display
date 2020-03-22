@@ -22,7 +22,7 @@
         },
         computed: {
             gridStyle: function () {
-                if (!this.numberOfColumns || !this.numberOfRows) {
+                if (!this.screenConfig.layout.columns || !this.screenConfig.layout.rows) {
                     return '';
                 }
 
@@ -31,26 +31,27 @@
                  * have the same height/width. Specifying all the entries as 'auto' should have the same effect, but
                  * causes rows/columns to shrink if they have no content.
                  */
-                let columnsPercentage = 100 / this.numberOfColumns;
+                let columnsPercentage = 100 / this.screenConfig.layout.columns;
                 let columnsPercentageString = columnsPercentage.toFixed(1) + '%';
-                let templateColumns = Array(this.numberOfColumns).fill(columnsPercentageString).join(' ');
+                let templateColumns = Array(this.screenConfig.layout.columns).fill(columnsPercentageString).join(' ');
 
-                let rowsPercentage = 100 / this.numberOfRows;
+                let rowsPercentage = 100 / this.screenConfig.layout.rows;
                 let rowPercentageString = rowsPercentage.toFixed(1) + '%';
-                let templateRows = Array(this.numberOfRows).fill(rowPercentageString).join(' ');
+                let templateRows = Array(this.screenConfig.layout.rows).fill(rowPercentageString).join(' ');
 
                 return 'grid-template-columns: ' + templateColumns + '; grid-template-rows: ' + templateRows + ';';
             },
             getChildComponents: function () {
                 let components = [];
-                for (let config of this.componentConfigs) {
-                    if (!config.name || !config.coords || config.coords.length < 4) {
+                console.log('Component configs', this.screenConfig.layout.components);
+                for (let config of this.screenConfig.layout.components) {
+                    if (!config.name || !config.bounds) {
                         continue;
                     }
 
                     components.push({
                         name: config.name,
-                        style: `grid-column-start: ${config.coords[0]}; grid-row-start: ${config.coords[1]}; grid-column-end: ${config.coords[2]}; grid-row-end: ${config.coords[3]}`
+                        style: `grid-column-start: ${config.bounds.colStart}; grid-row-start: ${config.bounds.rowStart}; grid-column-end: ${config.bounds.colEnd}; grid-row-end: ${config.bounds.rowEnd}`
                     });
                 }
 
@@ -58,9 +59,7 @@
             }
         },
         props: {
-            componentConfigs: Array,
-            numberOfColumns: Number,
-            numberOfRows: Number
+            screenConfig: Object
         }
     }
 </script>
