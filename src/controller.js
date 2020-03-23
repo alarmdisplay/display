@@ -1,10 +1,12 @@
+const EventEmitter = require('events')
 const log4js = require('log4js')
 const mongoose = require('mongoose')
 
 const Display = require('./models/display')
 
-module.exports = class Controller {
+module.exports = class Controller extends EventEmitter {
   constructor () {
+    super()
     this.logger = log4js.getLogger('Controller')
   }
 
@@ -26,34 +28,86 @@ module.exports = class Controller {
     return mongoose.disconnect()
   }
 
-  createDisplay (identifier, active, description, location) {
-    const display = new Display({
-      _id: identifier,
-      active: active,
-      description: description,
-      location: location
+  createDisplay (identifier, data) {
+    return new Promise((resolve, reject) => {
+      const display = new Display({
+        _id: identifier,
+        active: data.active,
+        description: data.description || '',
+        location: data.location || '',
+        screenConfigs: data.screenConfigs
+      })
+      display.save((err, newDisplay) => {
+        if (err) {
+          reject(err)
+        }
+
+        // notify listeners
+        this.emit('display_created', newDisplay)
+
+        resolve(newDisplay)
+      })
     })
-    return display.save()
   }
 
   deleteDisplay (identifier) {
-    return Display.deleteOne({ _id: identifier })
+    return new Promise((resolve, reject) => {
+      Display.deleteOne({ _id: identifier }, err => {
+        if (err) {
+          reject(err)
+        }
+
+        // notify listeners
+        this.emit('display_deleted', identifier)
+
+        resolve()
+      })
+    })
   }
 
   findDisplay (identifier) {
-    return Display.findOne({ _id: identifier })
+    return new Promise((resolve, reject) => {
+      Display.findOne({ _id: identifier }, (err, display) => {
+        if (err) {
+          return reject(err)
+        }
+
+        resolve(display)
+      })
+    })
   }
 
   findDisplays () {
-    return Display.find()
+    return new Promise((resolve, reject) => {
+      Display.find((err, displays) => {
+        if (err) {
+          return reject(err)
+        }
+
+        resolve(displays)
+      })
+    })
   }
 
-  updateDisplay (identifier, data) {
-    const update = {
-      active: data.active,
-      description: data.description,
-      location: data.location
-    }
-    return Display.findByIdAndUpdate(identifier, update, { omitUndefined: true, new: true })
+  async updateDisplay (identifier, data) {
+    return this.findDisplay(identifier).then(display => {
+      return new Promise((resolve, reject) => {
+        display.active = data.active
+        display.description = data.description || ''
+        display.location = data.location || ''
+        display.screenConfigs = data.screenConfigs
+
+        display.save((err, updatedDisplay) => {
+          if (err) {
+            reject(err)
+          }
+
+          // notify listeners
+          this.emit('display_updated', updatedDisplay)
+
+          resolve(updatedDisplay)
+        })
+      })
+    })
   }
 }

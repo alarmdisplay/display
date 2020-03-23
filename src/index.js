@@ -58,14 +58,29 @@ controller.start(process.env.MONGODB_URI)
           version: '1.0.0'
         }
       },
-      apis: ['./routes/*.js']
+      apis: ['./src/routes/*.js']
     })
     app.get('/api-docs.json', cors(), (req, res) => {
       res.json(swaggerSpec)
     })
 
-    socketController = new SocketController(server, controller)
-    socketController.openSockets()
+    socketController = new SocketController(controller)
+    controller.on('display_created', display => {
+      logger.debug(`Display ${display.id} has been created`)
+      if (socketController.isDisplayPending(display.id)) {
+        // Try to authenticate again.
+        socketController.authenticateDisplay(display.id)
+      }
+    })
+    controller.on('display_updated', display => {
+      logger.debug(`Display ${display.id} has been updated`)
+      socketController.authenticateDisplay(display.id)
+    })
+    controller.on('display_deleted', displayId => {
+      logger.debug(`Display ${displayId} has been deleted`)
+      socketController.deauthenticateDisplay(displayId)
+    })
+    socketController.startListening(server)
 
     server.on('error', err => {
       logger.error('Server error:', err)

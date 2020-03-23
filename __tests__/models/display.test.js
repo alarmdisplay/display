@@ -20,12 +20,42 @@ describe('Display model', () => {
       _id: 'ABC123',
       active: true,
       description: 'A description text',
-      location: 'The Cupboard under the Stairs'
+      location: 'The Cupboard under the Stairs',
+      screenConfigs: {
+        idleScreen: {
+          layout: {
+            columns: 3,
+            components: [
+              { name: 'aComponent', bounds: { colStart: 1, rowStart: 1, colEnd: 3, rowEnd: 4 } },
+              { name: 'anotherComponent', bounds: { colStart: 3, rowStart: 2, colEnd: 4, rowEnd: 3 } }
+            ],
+            rows: 5
+          }
+        }
+      }
     })
     const savedDisplay = await display.save()
     expect(savedDisplay._id).toBe('ABC123')
     expect(savedDisplay.active).toBeTruthy()
     expect(savedDisplay.description).toBe('A description text')
+    const idleScreen = savedDisplay.screenConfigs.idleScreen
+    expect(idleScreen._id).toBeDefined()
+    expect(idleScreen.layout.columns).toBe(3)
+    expect(idleScreen.layout.components).toBeInstanceOf(Array)
+    expect(idleScreen.layout.components.length).toBe(2)
+    expect(idleScreen.layout.components[0]._id).toBeDefined()
+    expect(idleScreen.layout.components[0].name).toBe('aComponent')
+    expect(idleScreen.layout.components[0].bounds.colStart).toBe(1)
+    expect(idleScreen.layout.components[0].bounds.rowStart).toBe(1)
+    expect(idleScreen.layout.components[0].bounds.colEnd).toBe(3)
+    expect(idleScreen.layout.components[0].bounds.rowEnd).toBe(4)
+    expect(idleScreen.layout.components[1]._id).toBeDefined()
+    expect(idleScreen.layout.components[1].name).toBe('anotherComponent')
+    expect(idleScreen.layout.components[1].bounds.colStart).toBe(3)
+    expect(idleScreen.layout.components[1].bounds.rowStart).toBe(2)
+    expect(idleScreen.layout.components[1].bounds.colEnd).toBe(4)
+    expect(idleScreen.layout.components[1].bounds.rowEnd).toBe(3)
+    expect(idleScreen.layout.rows).toBe(5)
     expect(savedDisplay.location).toBe('The Cupboard under the Stairs')
     expect(savedDisplay.createdAt).toBeInstanceOf(Date)
     expect(savedDisplay.updatedAt).toBeInstanceOf(Date)
@@ -38,6 +68,11 @@ describe('Display model', () => {
     expect(savedDisplay.active).toBeFalsy()
     expect(savedDisplay.description).toBe('')
     expect(savedDisplay.lastSeen).toBeNull()
+    const idleScreenLayout = savedDisplay.screenConfigs.idleScreen.layout
+    expect(idleScreenLayout.columns).toBe(4)
+    expect(idleScreenLayout.components).toBeInstanceOf(Array)
+    expect(idleScreenLayout.components.length).toBe(0)
+    expect(idleScreenLayout.rows).toBe(4)
     expect(savedDisplay.location).toBe('')
   })
 
