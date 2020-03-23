@@ -53,7 +53,7 @@ module.exports = function (controller) {
    */
   router.post('/', async (req, res, next) => {
     try {
-      const display = await controller.createDisplay(req.body.identifier, req.body.active, req.body.description, req.body.location, req.body.screenConfigs)
+      const display = await controller.createDisplay(req.body.identifier, req.body)
       const baseUrl = req.originalUrl.replace(/\/$/, '')
       const newLocation = `${baseUrl}/${display.id}`
       res.set('Location', newLocation).status(201).json(display)
@@ -140,7 +140,7 @@ module.exports = function (controller) {
     try {
       const display = await controller.findDisplay(req.params.id)
       if (!display) {
-        const newDisplay = await controller.createDisplay(req.params.id, req.body.active, req.body.description, req.body.location, req.body.screenConfigs)
+        const newDisplay = await controller.createDisplay(req.params.id, req.body)
         const baseUrl = req.originalUrl.replace(/\/$/, '')
         const newLocation = `${baseUrl}/${newDisplay.id}`
         res.set('Content-Location', newLocation).status(201).json(newDisplay)

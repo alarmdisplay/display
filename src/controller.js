@@ -28,14 +28,14 @@ module.exports = class Controller extends EventEmitter {
     return mongoose.disconnect()
   }
 
-  createDisplay (identifier, active, description, location, screenConfigs) {
+  createDisplay (identifier, data) {
     return new Promise((resolve, reject) => {
       const display = new Display({
         _id: identifier,
-        active: active,
-        description: description,
-        location: location,
-        screenConfigs: screenConfigs
+        active: data.active,
+        description: data.description || '',
+        location: data.location || '',
+        screenConfigs: data.screenConfigs
       })
       display.save((err, newDisplay) => {
         if (err) {
@@ -93,8 +93,8 @@ module.exports = class Controller extends EventEmitter {
     return this.findDisplay(identifier).then(display => {
       return new Promise((resolve, reject) => {
         display.active = data.active
-        display.description = data.description
-        display.location = data.location
+        display.description = data.description || ''
+        display.location = data.location || ''
         display.screenConfigs = data.screenConfigs
 
         display.save((err, updatedDisplay) => {
