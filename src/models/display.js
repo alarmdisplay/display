@@ -8,9 +8,9 @@ const screenConfigSchema = new Schema({
       {
         name: { type: String, required: true },
         bounds: {
-          colStart: { type: Number, min: 1, default: 1 },
+          columnStart: { type: Number, min: 1, default: 1 },
           rowStart: { type: Number, min: 1, default: 1 },
-          colEnd: { type: Number, min: 2, default: 2 },
+          columnEnd: { type: Number, min: 2, default: 2 },
           rowEnd: { type: Number, min: 2, default: 2 }
         }
       }
