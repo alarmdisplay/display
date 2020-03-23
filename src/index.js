@@ -74,13 +74,7 @@ controller.start(process.env.MONGODB_URI)
     })
     controller.on('display_updated', display => {
       logger.debug(`Display ${display.id} has been updated`)
-      if (socketController.isDisplayPending(display.id)) {
-        // Try to authenticate again.
-        socketController.authenticateDisplay(display.id)
-        return
-      }
-
-      socketController.pushConfigToDisplay(display.id)
+      socketController.authenticateDisplay(display.id)
     })
     controller.on('display_deleted', displayId => {
       logger.debug(`Display ${displayId} has been deleted`)
