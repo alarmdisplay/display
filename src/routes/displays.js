@@ -7,13 +7,77 @@ module.exports = function (controller) {
    * definitions:
    *   Display:
    *     type: object
+   *     required:
+   *     - id
+   *     - active
+   *     - screenConfigs
    *     properties:
+   *       id:
+   *         type: string
+   *         readOnly: true
    *       active:
    *         type: boolean
    *       description:
    *         type: string
    *       location:
    *         type: string
+   *       screenConfigs:
+   *         type: object
+   *         properties:
+   *           idleScreen:
+   *             $ref: '#/definitions/ScreenConfig'
+   *       createdAt:
+   *         type: string
+   *         format: date-time
+   *         readOnly: true
+   *       updatedAt:
+   *         type: string
+   *         format: date-time
+   *         readOnly: true
+   *
+   *   ScreenConfig:
+   *     type: object
+   *     properties:
+   *       layout:
+   *         type: object
+   *         required:
+   *         - columns
+   *         - components
+   *         - rows
+   *         properties:
+   *           columns:
+   *             type: integer
+   *           components:
+   *             type: array
+   *             items:
+   *               $ref: '#/definitions/ScreenConfigComponent'
+   *           rows:
+   *             type: integer
+   *
+   *   ScreenConfigComponent:
+   *     type: object
+   *     required:
+   *     - name
+   *     - bounds
+   *     properties:
+   *       name:
+   *         type: string
+   *       bounds:
+   *         type: object
+   *         required:
+   *         - columnStart
+   *         - rowStart
+   *         - columnEnd
+   *         - rowEnd
+   *         properties:
+   *           columnStart:
+   *             type: integer
+   *           rowStart:
+   *             type: integer
+   *           columnEnd:
+   *             type: integer
+   *           rowEnd:
+   *             type: integer
    */
 
   /**
