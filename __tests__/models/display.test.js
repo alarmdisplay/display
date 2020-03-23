@@ -26,8 +26,8 @@ describe('Display model', () => {
           layout: {
             columns: 3,
             components: [
-              { name: 'aComponent', bounds: { colStart: 1, rowStart: 1, colEnd: 3, rowEnd: 4 } },
-              { name: 'anotherComponent', bounds: { colStart: 3, rowStart: 2, colEnd: 4, rowEnd: 3 } }
+              { name: 'aComponent', bounds: { columnStart: 1, rowStart: 1, columnEnd: 3, rowEnd: 4 } },
+              { name: 'anotherComponent', bounds: { columnStart: 3, rowStart: 2, columnEnd: 4, rowEnd: 3 } }
             ],
             rows: 5
           }
@@ -45,15 +45,15 @@ describe('Display model', () => {
     expect(idleScreen.layout.components.length).toBe(2)
     expect(idleScreen.layout.components[0]._id).toBeDefined()
     expect(idleScreen.layout.components[0].name).toBe('aComponent')
-    expect(idleScreen.layout.components[0].bounds.colStart).toBe(1)
+    expect(idleScreen.layout.components[0].bounds.columnStart).toBe(1)
     expect(idleScreen.layout.components[0].bounds.rowStart).toBe(1)
-    expect(idleScreen.layout.components[0].bounds.colEnd).toBe(3)
+    expect(idleScreen.layout.components[0].bounds.columnEnd).toBe(3)
     expect(idleScreen.layout.components[0].bounds.rowEnd).toBe(4)
     expect(idleScreen.layout.components[1]._id).toBeDefined()
     expect(idleScreen.layout.components[1].name).toBe('anotherComponent')
-    expect(idleScreen.layout.components[1].bounds.colStart).toBe(3)
+    expect(idleScreen.layout.components[1].bounds.columnStart).toBe(3)
     expect(idleScreen.layout.components[1].bounds.rowStart).toBe(2)
-    expect(idleScreen.layout.components[1].bounds.colEnd).toBe(4)
+    expect(idleScreen.layout.components[1].bounds.columnEnd).toBe(4)
     expect(idleScreen.layout.components[1].bounds.rowEnd).toBe(3)
     expect(idleScreen.layout.rows).toBe(5)
     expect(savedDisplay.location).toBe('The Cupboard under the Stairs')
