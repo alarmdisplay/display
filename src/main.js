@@ -57,9 +57,9 @@ let vm = new Vue({
             components: [
               {
                 name: 'Clock', bounds: {
-                  colStart: 2,
+                  columnStart: 2,
                   rowStart: 2,
-                  colEnd: 3,
+                  columnEnd: 3,
                   rowEnd: 3,
                 }
               }
@@ -236,15 +236,15 @@ function validateScreenConfig(config) {
       throw new Error('No bounds specified');
     }
 
-    if (!component.bounds.colStart || !component.bounds.rowStart || !component.bounds.colEnd || !component.bounds.rowEnd) {
+    if (!component.bounds.columnStart || !component.bounds.rowStart || !component.bounds.columnEnd || !component.bounds.rowEnd) {
       throw new Error('Not all bounds specified');
     }
 
-    if (component.bounds.colStart < 1 || component.bounds.rowStart < 1 || component.bounds.colEnd > (config.layout.columns + 1) || component.bounds.rowEnd > (config.layout.rows + 1)) {
+    if (component.bounds.columnStart < 1 || component.bounds.rowStart < 1 || component.bounds.columnEnd > (config.layout.columns + 1) || component.bounds.rowEnd > (config.layout.rows + 1)) {
       throw new Error('Bounds exceed column/row count');
     }
 
-    if (component.bounds.colEnd <= component.bounds.colStart || component.bounds.rowEnd <= component.bounds.rowStart) {
+    if (component.bounds.columnEnd <= component.bounds.columnStart || component.bounds.rowEnd <= component.bounds.rowStart) {
       throw new Error('Column/row end value must be greater that respective start value');
     }
   }

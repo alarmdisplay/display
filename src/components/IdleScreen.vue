@@ -51,7 +51,7 @@
 
                     components.push({
                         name: config.name,
-                        style: `grid-column-start: ${config.bounds.colStart}; grid-row-start: ${config.bounds.rowStart}; grid-column-end: ${config.bounds.colEnd}; grid-row-end: ${config.bounds.rowEnd}`
+                        style: `grid-column-start: ${config.bounds.columnStart}; grid-row-start: ${config.bounds.rowStart}; grid-column-end: ${config.bounds.columnEnd}; grid-row-end: ${config.bounds.rowEnd}`
                     });
                 }
 
