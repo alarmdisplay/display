@@ -1,28 +1,48 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+      <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" v-on:click="toggleSidebar"><font-awesome-icon icon="bars" /> Menu</button>
+      <span class="w3-bar-item w3-right">Display Console</span>
+    </div>
+    <Sidebar></Sidebar>
+    <!-- Overlay effect when opening sidebar on small screens -->
+    <div class="w3-overlay w3-hide-large w3-animate-opacity" v-on:click="hideSidebar" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+    <Overview></Overview>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Overview from '@/components/Overview'
+import Sidebar from '@/components/Sidebar'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Overview,
+    Sidebar
+  },
+  methods: {
+    toggleSidebar: function () {
+      const mySidebar = document.getElementById('mySidebar')
+      const overlayBg = document.getElementById('myOverlay')
+      if (mySidebar.style.display === 'block') {
+        mySidebar.style.display = 'none'
+        overlayBg.style.display = 'none'
+      } else {
+        mySidebar.style.display = 'block'
+        overlayBg.style.display = 'block'
+      }
+    },
+    hideSidebar: function () {
+      const mySidebar = document.getElementById('mySidebar')
+      const overlayBg = document.getElementById('myOverlay')
+      mySidebar.style.display = 'none'
+      overlayBg.style.display = 'none'
+    }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
