@@ -5,7 +5,7 @@
         </header>
 
         <div class="w3-row-padding w3-margin-bottom w3-margin-top">
-            <template v-for="display in this.$root.$data.displays">
+            <template v-for="display in displays">
                 <div class="w3-quarter" v-bind:key="display.id">
                     <DisplayCard v-bind:display="display" />
                 </div>
@@ -21,6 +21,11 @@ export default {
   name: 'DisplayList',
   components: {
     DisplayCard
+  },
+  computed: {
+    displays: function () {
+      return this.$store.state.displays
+    }
   }
 }
 </script>

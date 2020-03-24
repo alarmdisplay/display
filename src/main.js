@@ -21,6 +21,14 @@ Vue.use(VueRouter)
 
 Vue.config.productionTip = false
 
+// Set up the Vuex store
+const store = new Vuex.Store({
+  state: {
+    displays: []
+  }
+})
+
+// Set up the Vue Router
 const routes = [
   { path: '/', component: Overview },
   { path: '/displays', component: DisplayList }
@@ -31,13 +39,9 @@ const router = new VueRouter({
   linkActiveClass: 'w3-blue'
 })
 
+// Set up the Vue root instance
 new Vue({
-  data: {
-    displays: [
-      { id: 'ABCD1234', location: 'somewhere' },
-      { id: 'EFGH5678', location: 'nowhere' }
-    ]
-  },
+  store,
   render: h => h(App),
   router: router
 }).$mount('#app')
