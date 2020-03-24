@@ -7,18 +7,16 @@
     <Sidebar></Sidebar>
     <!-- Overlay effect when opening sidebar on small screens -->
     <div class="w3-overlay w3-hide-large w3-animate-opacity" v-on:click="hideSidebar" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
-    <Overview></Overview>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Overview from '@/components/Overview'
 import Sidebar from '@/components/Sidebar'
 
 export default {
   name: 'App',
   components: {
-    Overview,
     Sidebar
   },
   methods: {
