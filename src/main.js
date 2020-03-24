@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 
 // Import Font Awesome
@@ -15,6 +16,7 @@ import Overview from '@/components/Overview'
 library.add(faBars, faDesktop, faHome, faTimes)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
+Vue.use(Vuex)
 Vue.use(VueRouter)
 
 Vue.config.productionTip = false
