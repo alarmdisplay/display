@@ -25,6 +25,21 @@ Vue.config.productionTip = false
 const store = new Vuex.Store({
   state: {
     displays: []
+  },
+  mutations: {
+    setDisplays (state, displays) {
+      state.displays = displays
+    }
+  },
+  actions: {
+    updateTheDisplays (context) {
+      setTimeout(() => {
+        context.commit('setDisplays', [
+          { id: 'ABCD1234', location: 'somewhere' },
+          { id: 'EFGH5678', location: 'nowhere' }
+        ])
+      }, 3000)
+    }
   }
 })
 
