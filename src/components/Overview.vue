@@ -1,7 +1,7 @@
 <template>
-    <div class="w3-main" style="margin-left:300px;margin-top:43px;">
-        <header class="w3-container" style="padding-top:22px">
-            <h2><b>&Uuml;bersicht</b></h2>
+    <div class="w3-main">
+        <header class="w3-container">
+            <h2>&Uuml;bersicht</h2>
         </header>
     </div>
 </template>
@@ -13,5 +13,7 @@ export default {
 </script>
 
 <style scoped>
-
+  header {
+    padding-top: 22px;
+  }
 </style>

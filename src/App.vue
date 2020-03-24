@@ -42,5 +42,8 @@ export default {
 </script>
 
 <style>
-
+  .w3-main {
+    margin-left: 300px;
+    margin-top: 43px;
+  }
 </style>
