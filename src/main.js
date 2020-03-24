@@ -30,6 +30,12 @@ const router = new VueRouter({
 })
 
 new Vue({
+  data: {
+    displays: [
+      { id: 'ABCD1234', location: 'somewhere' },
+      { id: 'EFGH5678', location: 'nowhere' }
+    ]
+  },
   render: h => h(App),
   router: router
 }).$mount('#app')
