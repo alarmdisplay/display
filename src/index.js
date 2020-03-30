@@ -1,7 +1,7 @@
 require('dotenv').config()
-const app = require('express')()
 const cors = require('cors')
-const server = require('http').createServer(app)
+const express = require('express')
+const fs = require('fs')
 const log4js = require('log4js')
 const swaggerJSDoc = require('swagger-jsdoc')
 
@@ -41,11 +41,20 @@ const controller = new Controller()
 let socketController
 controller.start(process.env.MONGODB_URI)
   .then(() => {
+    const app = express()
+    const server = require('http').createServer(app)
+
     const port = process.env.PORT || 3000
 
     app.get('/', function (req, res) {
       res.send('Hello World!')
     })
+
+    if (fs.existsSync('ext-display')) {
+      app.use('/display', express.static('ext-display'))
+    } else {
+      logger.warn('The static files for the display frontend could not be found, the path /display will not work')
+    }
 
     const APIv1 = require('./api')
     app.use('/api/v1', cors(), new APIv1(controller).router)
