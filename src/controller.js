@@ -39,7 +39,7 @@ module.exports = class Controller extends EventEmitter {
       })
       display.save((err, newDisplay) => {
         if (err) {
-          reject(err)
+          return reject(err)
         }
 
         // notify listeners
@@ -54,7 +54,7 @@ module.exports = class Controller extends EventEmitter {
     return new Promise((resolve, reject) => {
       Display.deleteOne({ _id: identifier }, err => {
         if (err) {
-          reject(err)
+          return reject(err)
         }
 
         // notify listeners
@@ -99,7 +99,7 @@ module.exports = class Controller extends EventEmitter {
 
         display.save((err, updatedDisplay) => {
           if (err) {
-            reject(err)
+            return reject(err)
           }
 
           // notify listeners
