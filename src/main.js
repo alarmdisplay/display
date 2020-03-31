@@ -28,9 +28,10 @@ let vm = new Vue({
   },
   data: {
     authenticated: false,
+    content: {},
     displayId: null,
-    showSplashScreen: true,
-    screenConfigs: null
+    screenConfigs: null,
+    showSplashScreen: true
   },
   created: function () {
     this.displayId = getIdentifier();
@@ -49,6 +50,7 @@ let vm = new Vue({
       }
     },
     resetData: function () {
+      this.content = {};
       this.screenConfigs = {
         'IdleScreen': {
           layout: {
@@ -226,7 +228,7 @@ function validateScreenConfig(config) {
     throw new Error('No components specified');
   }
 
-  const validComponents = ['Clock'];
+  const validComponents = ['AnnouncementList', 'Clock'];
   for (let component of config.layout.components) {
     if (!component.name || !validComponents.includes(component.name)) {
       throw new Error('No valid component name specified');

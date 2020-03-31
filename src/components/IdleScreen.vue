@@ -1,4 +1,5 @@
 <script>
+    import AnnouncementList from "@/components/announcements/AnnouncementList";
     import Clock from "@/components/Clock";
 
     export default {
@@ -18,6 +19,7 @@
         },
         name: "IdleScreen",
         components: {
+            AnnouncementList,
             Clock
         },
         computed: {
@@ -67,6 +69,8 @@
 <style scoped>
     .idle-screen {
         display: grid;
-        height: 100%;
+        height: 96%;
+        width: 96%;
+        margin: 2%;
     }
 </style>
