@@ -117,7 +117,7 @@ module.exports = function (controller) {
    */
   router.post('/', async (req, res, next) => {
     try {
-      const display = await controller.createDisplay(req.body.identifier, req.body)
+      const display = await controller.createDisplay(req.body.id, req.body)
       const baseUrl = req.originalUrl.replace(/\/$/, '')
       const newLocation = `${baseUrl}/${display.id}`
       res.set('Location', newLocation).status(201).json(display)
