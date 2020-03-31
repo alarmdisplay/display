@@ -7,6 +7,13 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alarmdisplay/display-frontend-vue.git"
+  },
+  "keywords": [],
+  "author": "Andreas Brain",
+  "license": "AGPL-3.0-only",
   "dependencies": {
     "core-js": "^3.6.4",
     "socket.io-client": "^2.3.0",
