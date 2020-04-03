@@ -7,7 +7,7 @@
 
             let childComponents = [];
             for (let cc of this.getChildComponents) {
-                childComponents.push(createElement(cc.name, {attrs: {style: cc.style}}));
+                childComponents.push(createElement(cc.name, {attrs: {style: cc.style}, props: {instanceId: cc.instanceId}}));
             }
 
             return createElement('div', {
@@ -47,11 +47,12 @@
                 let components = [];
                 console.log('Component configs', this.screenConfig.layout.components);
                 for (let config of this.screenConfig.layout.components) {
-                    if (!config.name || !config.bounds) {
+                    if (!config.name || !config.instanceId || !config.bounds) {
                         continue;
                     }
 
                     components.push({
+                        instanceId: config.instanceId,
                         name: config.name,
                         style: `grid-column-start: ${config.bounds.columnStart}; grid-row-start: ${config.bounds.rowStart}; grid-column-end: ${config.bounds.columnEnd}; grid-row-end: ${config.bounds.rowEnd}`
                     });

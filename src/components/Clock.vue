@@ -22,6 +22,9 @@
                 this.time = this.$moment(Date.now()).format("LT");
                 this.date = this.$moment(Date.now()).format("LL");
             }
+        },
+        props: {
+            instanceId: Number
         }
     }
 </script>

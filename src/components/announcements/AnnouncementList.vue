@@ -17,13 +17,16 @@
         },
         computed: {
             announcements: function () {
-                let content = this.$root.$data.content['announcements'];
+                let content = this.$root.$data.content[this.instanceId];
                 if (!Array.isArray(content)) {
                     return []
                 }
 
                 return content
             }
+        },
+        props: {
+            instanceId: Number
         }
     }
 </script>

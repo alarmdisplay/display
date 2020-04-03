@@ -58,7 +58,9 @@ let vm = new Vue({
             rows: 3,
             components: [
               {
-                name: 'Clock', bounds: {
+                name: 'Clock',
+                instanceId: -1,
+                bounds: {
                   columnStart: 2,
                   rowStart: 2,
                   columnEnd: 3,
@@ -69,6 +71,9 @@ let vm = new Vue({
           }
         }
       };
+    },
+    updateDataSource: function (id, data) {
+      this.content[id] = data;
     },
     updateScreenConfig: function (name, config) {
       try {
