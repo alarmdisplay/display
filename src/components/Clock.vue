@@ -1,5 +1,5 @@
 <template>
-    <div id="clock">
+    <div v-bind:id="elementId" class="clock">
         <div class="time">{{ time }}</div>
         <div class="date">{{ date }}</div>
     </div>
@@ -10,6 +10,7 @@
         name: 'Clock',
         data() {
             return {
+                elementId: `clock-${this.instanceId}`,
                 time: this.$moment(Date.now()).format("LT"),
                 date: this.$moment(Date.now()).format("LL")
             }
@@ -30,7 +31,7 @@
 </script>
 
 <style scoped>
-    #clock {
+    .clock {
         color: white;
         display: flex;
         flex-direction: column;
