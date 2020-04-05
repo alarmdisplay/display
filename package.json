@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon src/index.js --exec 'npm run lint --silent && node'",
     "lint": "eslint src/",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
