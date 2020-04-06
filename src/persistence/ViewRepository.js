@@ -1,12 +1,12 @@
 class ViewRepository {
   constructor () {
     this.views = new Map()
+    this.instanceCounter = 1
   }
 
   /**
    * Stores a new View object.
    *
-   * @param {Number} id A unique ID
    * @param {String} name A human-readable name for this View
    * @param {Number} columns The number of columns the View's layout should have
    * @param {Number} rows The number of rows the View's layout should have
@@ -16,14 +16,10 @@ class ViewRepository {
    *
    * @return {Promise}
    */
-  createView (id, name, columns, rows, displayId, order, screenType) {
-    return new Promise((resolve, reject) => {
-      if (this.views.has(id)) {
-        return reject(new Error(`View with ID ${id} already exists`))
-      }
-
+  createView (name, columns, rows, displayId, order, screenType) {
+    return new Promise((resolve) => {
       const view = {
-        id: id,
+        id: this.instanceCounter++,
         name: name,
         columns: columns,
         rows: rows,
@@ -31,7 +27,7 @@ class ViewRepository {
         order: order,
         screenType: screenType
       }
-      this.views.set(id, view)
+      this.views.set(view.id, view)
       resolve(view)
     })
   }
@@ -94,8 +90,12 @@ class ViewRepository {
    */
   deleteView (id) {
     return new Promise(resolve => {
-      this.views.delete(id)
-      resolve()
+      const itemDidExist = this.views.delete(id)
+      if (itemDidExist) {
+        resolve(id)
+      } else {
+        resolve(undefined)
+      }
     })
   }
 

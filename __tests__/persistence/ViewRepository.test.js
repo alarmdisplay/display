@@ -3,9 +3,9 @@ const ViewRepository = require('../../src/persistence/ViewRepository')
 describe('The ViewRepository', () => {
   it('should store a new object', () => {
     const viewRepository = new ViewRepository()
-    return viewRepository.createView(123, 'Some cool name', 6, 4, 42, 1, 'IdleScreen')
+    return viewRepository.createView('Some cool name', 6, 4, 42, 1, 'IdleScreen')
       .then(view => {
-        expect(view.id).toBe(123)
+        expect(view.id).toBeGreaterThan(0)
         expect(view.name).toBe('Some cool name')
         expect(view.columns).toBe(6)
         expect(view.rows).toBe(4)
@@ -15,38 +15,46 @@ describe('The ViewRepository', () => {
       })
   })
 
-  it('should reject to store two Views with the same ID', () => {
-    const viewRepository = new ViewRepository()
-    return viewRepository.createView(22, 'Some name', 6, 4, 42, 1, 'IdleScreen')
-      .then((view) => {
-        expect(viewRepository.createView(22, 'Some name', 6, 4, 42, 1, 'IdleScreen')).rejects.toBeInstanceOf(Error)
-      })
-  })
-
   it('should get all views', () => {
     const viewRepository = new ViewRepository()
-    return viewRepository.createView(77, 'A', 1, 2, 3, 4, '1')
-      .then(() => viewRepository.createView(78, 'B', 5, 6, 7, 8, '2'))
-      .then(() => viewRepository.createView(79, 'C', 9, 10, 11, 12, '3'))
+    return viewRepository.createView('A', 1, 2, 3, 4, '1')
+      .then(() => viewRepository.createView('B', 5, 6, 7, 8, '2'))
+      .then(() => viewRepository.createView('C', 9, 10, 11, 12, '3'))
       .then(() => viewRepository.getAllViews())
       .then(views => {
         expect(views).toBeInstanceOf(Array)
         expect(views).toHaveLength(3)
-        expect(views).toStrictEqual([
-          { id: 77, name: 'A', columns: 1, rows: 2, displayId: 3, order: 4, screenType: '1' },
-          { id: 78, name: 'B', columns: 5, rows: 6, displayId: 7, order: 8, screenType: '2' },
-          { id: 79, name: 'C', columns: 9, rows: 10, displayId: 11, order: 12, screenType: '3' }
-        ])
+        expect(views[0].id).toBeGreaterThan(0)
+        expect(views[0].name).toBe('A')
+        expect(views[0].columns).toBe(1)
+        expect(views[0].rows).toBe(2)
+        expect(views[0].displayId).toBe(3)
+        expect(views[0].order).toBe(4)
+        expect(views[0].screenType).toBe('1')
+        expect(views[0].id).toBeGreaterThan(0)
+        expect(views[1].name).toBe('B')
+        expect(views[1].columns).toBe(5)
+        expect(views[1].rows).toBe(6)
+        expect(views[1].displayId).toBe(7)
+        expect(views[1].order).toBe(8)
+        expect(views[1].screenType).toBe('2')
+        expect(views[2].id).toBeGreaterThan(0)
+        expect(views[2].name).toBe('C')
+        expect(views[2].columns).toBe(9)
+        expect(views[2].rows).toBe(10)
+        expect(views[2].displayId).toBe(11)
+        expect(views[2].order).toBe(12)
+        expect(views[2].screenType).toBe('3')
       })
   })
 
   it('should get a view by its ID', () => {
     const viewRepository = new ViewRepository()
-    return viewRepository.createView(237, 'Irrelevant name', 2, 1, 66, 8, 'IdleScreen')
-      .then(() => {
-        return viewRepository.getViewById(237)
+    return viewRepository.createView('Irrelevant name', 2, 1, 66, 8, 'IdleScreen')
+      .then(view => {
+        return viewRepository.getViewById(view.id)
       }).then(view => {
-        expect(view.id).toBe(237)
+        expect(view.id).toBeGreaterThan(0)
         expect(view.name).toBe('Irrelevant name')
         expect(view.columns).toBe(2)
         expect(view.rows).toBe(1)
@@ -63,37 +71,43 @@ describe('The ViewRepository', () => {
 
   it('should get views by a Display ID and sort them by order property', () => {
     const viewRepository = new ViewRepository()
-    return viewRepository.createView(174, '', 3, 4, 11, 2, '')
-      .then(() => viewRepository.createView(234, '', 3, 4, 41, 1, ''))
-      .then(() => viewRepository.createView(823, '', 3, 4, 11, 3, ''))
-      .then(() => viewRepository.createView(743, '', 3, 4, 11, 1, ''))
+    return viewRepository.createView('', 3, 4, 11, 2, '')
+      .then(() => viewRepository.createView('', 3, 4, 41, 1, ''))
+      .then(() => viewRepository.createView('', 3, 4, 11, 3, ''))
+      .then(() => viewRepository.createView('', 3, 4, 11, 1, ''))
       .then(() => viewRepository.getViewsByDisplayId(11))
       .then(views => {
         expect(views).toBeInstanceOf(Array)
         expect(views).toHaveLength(3)
-        const ids = views.map(view => view.id)
-        expect(ids).toStrictEqual([743, 174, 823])
+        const orderProps = views.map(view => view.order)
+        expect(orderProps).toStrictEqual([1, 2, 3])
       })
   })
 
   it('should delete a View', () => {
     const viewRepository = new ViewRepository()
-    return viewRepository.createView(3825, 'Irrelevant name', 5, 5, 8623, 4, 'IdleScreen')
-      .then(() => viewRepository.deleteView(3825))
+    return viewRepository.createView('Irrelevant name', 5, 5, 8623, 4, 'IdleScreen')
+      .then(view => viewRepository.getViewById(view.id))
+      .then(view => viewRepository.deleteView(view.id))
+      .then(viewId => {
+        expect(viewId).toBeGreaterThan(0)
+        return viewId
+      })
+      .then(viewId => expect(viewRepository.getViewById(viewId)).rejects.toBeInstanceOf(Error))
   })
 
   it('should delete a non-existing View without error', () => {
     const viewRepository = new ViewRepository()
-    return viewRepository.deleteView(123)
+    return expect(viewRepository.deleteView(123)).resolves.toBeUndefined()
   })
 
   it('should update a view', () => {
     const viewRepository = new ViewRepository()
-    return viewRepository.createView(5262, 'Irrelevant name', 2, 1, 66, 8, 'IdleScreen')
-      .then(() => {
-        return viewRepository.updateView(5262, 'New name', 99, 135, 999, 12, 'something')
+    return viewRepository.createView('Irrelevant name', 2, 1, 66, 8, 'IdleScreen')
+      .then(view => {
+        return viewRepository.updateView(view.id, 'New name', 99, 135, 999, 12, 'something')
       }).then((view) => {
-        expect(view.id).toBe(5262)
+        expect(view.id).toBeGreaterThan(0)
         expect(view.name).toBe('New name')
         expect(view.columns).toBe(99)
         expect(view.rows).toBe(135)
