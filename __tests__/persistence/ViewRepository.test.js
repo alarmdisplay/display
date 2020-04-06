@@ -61,17 +61,18 @@ describe('The ViewRepository', () => {
     return expect(viewRepository.getViewById(555)).rejects.toBeInstanceOf(Error)
   })
 
-  it('should get views by a Display ID', () => {
+  it('should get views by a Display ID and sort them by order property', () => {
     const viewRepository = new ViewRepository()
-    return viewRepository.createView(174, '', 3, 4, 11, 1, '')
+    return viewRepository.createView(174, '', 3, 4, 11, 2, '')
       .then(() => viewRepository.createView(234, '', 3, 4, 41, 1, ''))
-      .then(() => viewRepository.createView(823, '', 3, 4, 11, 1, ''))
+      .then(() => viewRepository.createView(823, '', 3, 4, 11, 3, ''))
+      .then(() => viewRepository.createView(743, '', 3, 4, 11, 1, ''))
       .then(() => viewRepository.getViewsByDisplayId(11))
       .then(views => {
         expect(views).toBeInstanceOf(Array)
-        expect(views).toHaveLength(2)
+        expect(views).toHaveLength(3)
         const ids = views.map(view => view.id)
-        expect(ids).toStrictEqual([174, 823])
+        expect(ids).toStrictEqual([743, 174, 823])
       })
   })
 

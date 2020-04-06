@@ -76,6 +76,11 @@ class ViewRepository {
         }
       }
 
+      // Sort the views by order property
+      views.sort((a, b) => {
+        return a.order - b.order
+      })
+
       resolve(views)
     })
   }
