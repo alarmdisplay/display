@@ -20,6 +20,14 @@ class SocketController {
         this.checkAuthentication(display.clientId)
       }
     })
+    this.displayService.on('display_updated', display => {
+      this.logger.debug(`Display ${display.id} has been updated`)
+      this.checkAuthentication(display.clientId)
+    })
+    this.displayService.on('display_deleted', displayId => {
+      this.logger.debug(`Display ${displayId} has been deleted`)
+      // TODO deauthenticate Display
+    })
   }
 
   onSocketConnected (clientId) {

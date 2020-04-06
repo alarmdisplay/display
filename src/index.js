@@ -65,24 +65,6 @@ connectDatabase(process.env.MONGODB_URI)
 
     const port = process.env.PORT || 3000
 
-    /* socketController = new SocketController(controller)
-    controller.on('display_created', display => {
-      logger.debug(`Display ${display.id} has been created`)
-      if (socketController.isDisplayPending(display.id)) {
-        // Try to authenticate again.
-        socketController.authenticateDisplay(display.id)
-      }
-    })
-    controller.on('display_updated', display => {
-      logger.debug(`Display ${display.id} has been updated`)
-      socketController.authenticateDisplay(display.id)
-    })
-    controller.on('display_deleted', displayId => {
-      logger.debug(`Display ${displayId} has been deleted`)
-      socketController.deauthenticateDisplay(displayId)
-    })
-    socketController.startListening(server) */
-
     const socketServer = new SocketServer()
     const socketController = new SocketController(socketServer, displayService)
     socketController.registerListeners()
