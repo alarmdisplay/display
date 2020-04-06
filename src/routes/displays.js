@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-module.exports = function (controller) {
+module.exports = function (displayService) {
   /**
    * @swagger
    * definitions:
@@ -96,7 +96,7 @@ module.exports = function (controller) {
    */
   router.get('/', async (req, res, next) => {
     try {
-      const displays = await controller.findDisplays()
+      const displays = await displayService.getAllDisplays()
       res.json(displays)
     } catch (e) {
       return next(e)
@@ -117,7 +117,7 @@ module.exports = function (controller) {
    */
   router.post('/', async (req, res, next) => {
     try {
-      const display = await controller.createDisplay(req.body.id, req.body)
+      const display = await displayService.createDisplay(req.body.name, req.body.active, req.body.clientId, req.body.description, req.body.location)
       const baseUrl = req.originalUrl.replace(/\/$/, '')
       const newLocation = `${baseUrl}/${display.id}`
       res.set('Location', newLocation).status(201).json(display)
@@ -146,7 +146,7 @@ module.exports = function (controller) {
    */
   router.get('/:id', async (req, res, next) => {
     try {
-      const display = await controller.findDisplay(req.params.id)
+      const display = await displayService.getDisplayById(req.params.id)
       if (!display) {
         return res.sendStatus(404)
       }
@@ -172,7 +172,7 @@ module.exports = function (controller) {
    */
   router.delete('/:id', async (req, res, next) => {
     try {
-      await controller.deleteDisplay(req.params.id)
+      await displayService.deleteDisplay(req.params.id)
       res.sendStatus(204)
     } catch (e) {
       return next(e)
@@ -202,16 +202,16 @@ module.exports = function (controller) {
    */
   router.put('/:id', async (req, res, next) => {
     try {
-      const display = await controller.findDisplay(req.params.id)
+      const display = await displayService.getDisplayById(req.params.id)
       if (!display) {
-        const newDisplay = await controller.createDisplay(req.params.id, req.body)
+        const newDisplay = await displayService.createDisplay(req.body.name, req.body.active, req.body.clientId, req.body.description, req.body.location)
         const baseUrl = req.originalUrl.replace(/\/$/, '')
         const newLocation = `${baseUrl}/${newDisplay.id}`
         res.set('Content-Location', newLocation).status(201).json(newDisplay)
         return
       }
 
-      const updatedDisplay = await controller.updateDisplay(req.params.id, req.body)
+      const updatedDisplay = await displayService.updateDisplay(req.params.id, req.body.name, req.body.active, req.body.clientId, req.body.description, req.body.location)
       res.json(updatedDisplay)
     } catch (e) {
       return next(e)

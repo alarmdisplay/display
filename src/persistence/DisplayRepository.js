@@ -62,6 +62,22 @@ class DisplayRepository {
   }
 
   /**
+   * @param {String} clientId
+   */
+  getDisplayByClientId (clientId) {
+    return new Promise((resolve, reject) => {
+      const displays = Array.from(this.displays.values())
+      const displayWithClientId = displays.filter(display => display.clientId === clientId)
+
+      if (displayWithClientId.length !== 1) {
+        return reject(new Error(`Could not find Display with client ID ${clientId}`))
+      }
+
+      resolve(displayWithClientId[0])
+    })
+  }
+
+  /**
    * Updates an existing Display.
    *
    * @param {Number} displayId
