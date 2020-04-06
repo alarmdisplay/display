@@ -1,4 +1,5 @@
 const DisplayRepository = require('../../src/persistence/DisplayRepository')
+const NotFoundError = require('../../src/errors/NotFoundError')
 
 describe('The DisplayRepository', () => {
   it('should store a new Display', () => {
@@ -61,7 +62,7 @@ describe('The DisplayRepository', () => {
 
   it('should reject when requesting a Display with an unknown ID', () => {
     const displayRepository = new DisplayRepository()
-    return expect(displayRepository.getDisplayById(555)).rejects.toBeInstanceOf(Error)
+    return expect(displayRepository.getDisplayById(555)).rejects.toBeInstanceOf(NotFoundError)
   })
 
   it('should delete a Display', () => {
@@ -69,7 +70,7 @@ describe('The DisplayRepository', () => {
     return displayRepository.createDisplay('Irrelevant name', true, 'abc', '', '')
       .then(display => displayRepository.getDisplayById(display.id))
       .then(display => displayRepository.deleteDisplay(display.id))
-      .then(displayId => expect(displayRepository.getDisplayById(displayId)).rejects.toBeInstanceOf(Error))
+      .then(displayId => expect(displayRepository.getDisplayById(displayId)).rejects.toBeInstanceOf(NotFoundError))
   })
 
   it('should delete a non-existing Display without error', () => {

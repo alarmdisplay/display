@@ -1,3 +1,5 @@
+const NotFoundError = require('../errors/NotFoundError')
+
 class DisplayRepository {
   constructor () {
     this.displays = new Map()
@@ -54,7 +56,7 @@ class DisplayRepository {
   getDisplayById (displayId) {
     return new Promise((resolve, reject) => {
       if (!this.displays.has(displayId)) {
-        return reject(new Error(`No Display with ID ${displayId} found`))
+        return reject(new NotFoundError(`No Display with ID ${displayId} found`))
       }
 
       resolve(this.displays.get(displayId))
@@ -70,7 +72,7 @@ class DisplayRepository {
       const displayWithClientId = displays.filter(display => display.clientId === clientId)
 
       if (displayWithClientId.length !== 1) {
-        return reject(new Error(`Could not find Display with client ID ${clientId}`))
+        return reject(new NotFoundError(`Could not find Display with client ID ${clientId}`))
       }
 
       resolve(displayWithClientId[0])

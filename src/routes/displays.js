@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 
+const NotFoundError = require('../errors/NotFoundError')
+
 module.exports = function (displayService) {
   /**
    * @swagger
@@ -144,16 +146,17 @@ module.exports = function (displayService) {
    *       404:
    *         description: The Display could not be found
    */
-  router.get('/:id', async (req, res, next) => {
-    try {
-      const display = await displayService.getDisplayById(req.params.id)
-      if (!display) {
-        return res.sendStatus(404)
-      }
-      res.json(display)
-    } catch (e) {
-      return next(e)
-    }
+  router.get('/:id', (req, res, next) => {
+    displayService.getDisplayById(parseInt(req.params.id))
+      .then(display => {
+        res.json(display)
+      }, reason => {
+        if (reason instanceof NotFoundError) {
+          return res.sendStatus(404)
+        }
+
+        return next(reason)
+      })
   })
 
   /**
@@ -172,7 +175,7 @@ module.exports = function (displayService) {
    */
   router.delete('/:id', async (req, res, next) => {
     try {
-      await displayService.deleteDisplay(req.params.id)
+      await displayService.deleteDisplay(parseInt(req.params.id))
       res.sendStatus(204)
     } catch (e) {
       return next(e)
@@ -200,22 +203,26 @@ module.exports = function (displayService) {
    *       201:
    *         description: Display did not exist before and got created
    */
-  router.put('/:id', async (req, res, next) => {
-    try {
-      const display = await displayService.getDisplayById(req.params.id)
-      if (!display) {
-        const newDisplay = await displayService.createDisplay(req.body.name, req.body.active, req.body.clientId, req.body.description, req.body.location)
-        const baseUrl = req.originalUrl.replace(/\/$/, '')
-        const newLocation = `${baseUrl}/${newDisplay.id}`
-        res.set('Content-Location', newLocation).status(201).json(newDisplay)
-        return
-      }
+  router.put('/:id', (req, res, next) => {
+    displayService.getDisplayById(parseInt(req.params.id))
+      .then(() => {
+        // Display exists
+        return displayService.updateDisplay(parseInt(req.params.id), req.body.name, req.body.active, req.body.clientId, req.body.description, req.body.location)
+          .then(updatedDisplay => res.json(updatedDisplay))
+      }, (reason) => {
+        if (reason instanceof NotFoundError) {
+          // Display does not exist
+          displayService.createDisplay(req.body.name, req.body.active, req.body.clientId, req.body.description, req.body.location)
+            .then(newDisplay => {
+              const baseUrl = req.originalUrl.replace(/\/$/, '')
+              const newLocation = `${baseUrl}/${newDisplay.id}`
+              res.set('Content-Location', newLocation).status(201).json(newDisplay)
+            })
+        }
 
-      const updatedDisplay = await displayService.updateDisplay(req.params.id, req.body.name, req.body.active, req.body.clientId, req.body.description, req.body.location)
-      res.json(updatedDisplay)
-    } catch (e) {
-      return next(e)
-    }
+        throw reason
+      })
+      .catch(reason => next(reason))
   })
 
   return router
