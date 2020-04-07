@@ -90,7 +90,7 @@ class DisplayRepository {
    * @param {String} location
    * @return {Promise}
    */
-  updateDisplay (displayId, name, active, clientId, description = '', location = '') {
+  updateDisplay (displayId, name, active, clientId, description, location) {
     return new Promise((resolve, reject) => {
       if (!this.displays.has(displayId)) {
         return reject(new Error(`No Display with ID ${displayId} found`))
