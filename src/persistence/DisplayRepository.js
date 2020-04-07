@@ -16,7 +16,7 @@ class DisplayRepository {
    * @param {String} location
    * @return {Promise}
    */
-  createDisplay (name, active, clientId, description = '', location = '') {
+  createDisplay (name, active, clientId, description, location) {
     return new Promise((resolve) => {
       const display = {
         id: this.idCounter++,

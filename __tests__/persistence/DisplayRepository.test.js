@@ -80,7 +80,7 @@ describe('The DisplayRepository', () => {
 
   it('should update a Display', () => {
     const displayRepository = new DisplayRepository()
-    return displayRepository.createDisplay('Irrelevant name', false, 'ABC')
+    return displayRepository.createDisplay('Irrelevant name', false, 'ABC', '', '')
       .then(display => displayRepository.updateDisplay(display.id, 'New name', true, 'XYZ', 'A new description', 'Another location'))
       .then((display) => {
         expect(display.id).toBeGreaterThan(0)
