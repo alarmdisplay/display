@@ -212,7 +212,7 @@ module.exports = function (displayService) {
       }, (reason) => {
         if (reason instanceof NotFoundError) {
           // Display does not exist
-          displayService.createDisplay(req.body.name, req.body.active, req.body.clientId, req.body.description, req.body.location)
+          return displayService.createDisplay(req.body.name, req.body.active, req.body.clientId, req.body.description, req.body.location)
             .then(newDisplay => {
               const baseUrl = req.originalUrl.replace(/\/$/, '')
               const newLocation = `${baseUrl}/${newDisplay.id}`
