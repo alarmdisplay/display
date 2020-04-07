@@ -200,8 +200,10 @@ module.exports = function (displayService) {
    *     responses:
    *       200:
    *         description: Successfully updated
-   *       201:
-   *         description: Display did not exist before and got created
+   *         schema:
+   *           $ref: '#/definitions/Display'
+   *       404:
+   *         description: Display does not exist and cannot be updated. Please use POST to create a new Display
    */
   router.put('/:id', (req, res, next) => {
     displayService.getDisplayById(parseInt(req.params.id))
@@ -212,12 +214,7 @@ module.exports = function (displayService) {
       }, (reason) => {
         if (reason instanceof NotFoundError) {
           // Display does not exist
-          return displayService.createDisplay(req.body.name, req.body.active, req.body.clientId, req.body.description, req.body.location)
-            .then(newDisplay => {
-              const baseUrl = req.originalUrl.replace(/\/$/, '')
-              const newLocation = `${baseUrl}/${newDisplay.id}`
-              res.set('Content-Location', newLocation).status(201).json(newDisplay)
-            })
+          return res.sendStatus(404)
         }
 
         throw reason
