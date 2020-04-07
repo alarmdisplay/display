@@ -10,76 +10,25 @@ module.exports = function (displayService) {
    *   Display:
    *     type: object
    *     required:
-   *     - id
-   *     - active
-   *     - screenConfigs
+   *     - name
    *     properties:
    *       id:
-   *         type: string
+   *         type: number
    *         readOnly: true
-   *       active:
-   *         type: boolean
-   *       description:
-   *         type: string
-   *       location:
-   *         type: string
-   *       screenConfigs:
-   *         type: object
-   *         properties:
-   *           idleScreen:
-   *             $ref: '#/definitions/ScreenConfig'
-   *       createdAt:
-   *         type: string
-   *         format: date-time
-   *         readOnly: true
-   *       updatedAt:
-   *         type: string
-   *         format: date-time
-   *         readOnly: true
-   *
-   *   ScreenConfig:
-   *     type: object
-   *     properties:
-   *       layout:
-   *         type: object
-   *         required:
-   *         - columns
-   *         - components
-   *         - rows
-   *         properties:
-   *           columns:
-   *             type: integer
-   *           components:
-   *             type: array
-   *             items:
-   *               $ref: '#/definitions/ScreenConfigComponent'
-   *           rows:
-   *             type: integer
-   *
-   *   ScreenConfigComponent:
-   *     type: object
-   *     required:
-   *     - name
-   *     - bounds
-   *     properties:
    *       name:
    *         type: string
-   *       bounds:
-   *         type: object
-   *         required:
-   *         - columnStart
-   *         - rowStart
-   *         - columnEnd
-   *         - rowEnd
-   *         properties:
-   *           columnStart:
-   *             type: integer
-   *           rowStart:
-   *             type: integer
-   *           columnEnd:
-   *             type: integer
-   *           rowEnd:
-   *             type: integer
+   *       active:
+   *         type: boolean
+   *         default: false
+   *       clientId:
+   *         type: string
+   *         default: ''
+   *       description:
+   *         type: string
+   *         default: ''
+   *       location:
+   *         type: string
+   *         default: ''
    */
 
   /**
@@ -111,15 +60,32 @@ module.exports = function (displayService) {
    *   post:
    *     description: Create a new Display
    *     produces: application/json
+   *     parameters:
+   *       - name: display
+   *         in: body
+   *         required: true
+   *         description: Fields for the Display resource
+   *         schema:
+   *           $ref: '#/definitions/Display'
    *     responses:
    *       201:
    *         description: The newly created Display
    *         schema:
    *           $ref: '#/definitions/Display'
+   *         headers:
+   *           Location:
+   *             description: The URI of the newly created Display resource
+   *             type: string
    */
   router.post('/', async (req, res, next) => {
     try {
-      const display = await displayService.createDisplay(req.body.name, req.body.active, req.body.clientId, req.body.description, req.body.location)
+      const display = await displayService.createDisplay(
+        req.body.name,
+        req.body.active || false,
+        req.body.clientId || '',
+        req.body.description || '',
+        req.body.location || ''
+      )
       const baseUrl = req.originalUrl.replace(/\/$/, '')
       const newLocation = `${baseUrl}/${display.id}`
       res.set('Location', newLocation).status(201).json(display)
@@ -137,7 +103,7 @@ module.exports = function (displayService) {
    *     parameters:
    *       - name: id
    *         in: path
-   *         type: string
+   *         type: number
    *     responses:
    *       200:
    *         description: The Display model
@@ -191,7 +157,8 @@ module.exports = function (displayService) {
    *     parameters:
    *       - name: id
    *         in: path
-   *         type: string
+   *         required: true
+   *         type: number
    *       - name: display
    *         in: body
    *         description: Fields for the Display resource
