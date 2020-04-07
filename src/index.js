@@ -1,16 +1,14 @@
 require('dotenv').config()
-const cors = require('cors')
-const express = require('express')
-const fs = require('fs')
 const log4js = require('log4js')
-const swaggerJSDoc = require('swagger-jsdoc')
+const mongoose = require('mongoose')
 
 const logger = log4js.getLogger()
 const debugEnabled = process.env.DEBUG === '1'
 logger.level = debugEnabled ? 'debug' : 'info'
 
-const Controller = require('./controller')
-const SocketController = require('./socket-controller')
+const DisplayService = require('./services/DisplayService')
+const SocketController = require('./sockets/SocketController')
+const SocketServer = require('./sockets/SocketServer')
 
 /**
  * Make sure that all required environment variables are set.
@@ -37,59 +35,40 @@ process.setUncaughtExceptionCaptureCallback(err => {
 
 checkEnvironment()
 
-const controller = new Controller()
-let socketController
-controller.start(process.env.MONGODB_URI)
+/**
+ * Sets up the connection to MongoDB.
+ *
+ * @param mongoDbUri
+ * @return {Promise}
+ * @throws Error If the connection to the database fails
+ */
+function connectDatabase (mongoDbUri) {
+  logger.debug('Connecting to database...')
+  return mongoose.connect(mongoDbUri, {
+    useFindAndModify: false,
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  }).then(() => {
+    logger.info('Connected to database')
+  }).catch((reason) => {
+    throw new Error(`Could not connect to database: ${reason}`)
+  })
+}
+
+connectDatabase(process.env.MONGODB_URI)
   .then(() => {
-    const app = express()
+    const DisplayRepository = require('./persistence/DisplayRepository')
+    const ViewRepository = require('./persistence/ViewRepository')
+    const displayService = new DisplayService(new DisplayRepository(), new ViewRepository())
+    const app = require('./app')(displayService)
     const server = require('http').createServer(app)
 
     const port = process.env.PORT || 3000
 
-    app.get('/', function (req, res) {
-      res.send('Hello World!')
-    })
-
-    if (fs.existsSync('ext-display')) {
-      app.use('/display', express.static('ext-display'))
-    } else {
-      logger.warn('The static files for the display frontend could not be found, the path /display will not work')
-    }
-
-    const APIv1 = require('./api')
-    app.use('/api/v1', cors(), new APIv1(controller).router)
-
-    // Collect the Swagger spec from the routes files and serve the JSON
-    const swaggerSpec = swaggerJSDoc({
-      definition: {
-        info: {
-          title: 'display-backend',
-          version: '1.0.0'
-        }
-      },
-      apis: ['./src/routes/*.js']
-    })
-    app.get('/api-docs.json', cors(), (req, res) => {
-      res.json(swaggerSpec)
-    })
-
-    socketController = new SocketController(controller)
-    controller.on('display_created', display => {
-      logger.debug(`Display ${display.id} has been created`)
-      if (socketController.isDisplayPending(display.id)) {
-        // Try to authenticate again.
-        socketController.authenticateDisplay(display.id)
-      }
-    })
-    controller.on('display_updated', display => {
-      logger.debug(`Display ${display.id} has been updated`)
-      socketController.authenticateDisplay(display.id)
-    })
-    controller.on('display_deleted', displayId => {
-      logger.debug(`Display ${displayId} has been deleted`)
-      socketController.deauthenticateDisplay(displayId)
-    })
-    socketController.startListening(server)
+    const socketServer = new SocketServer()
+    const socketController = new SocketController(socketServer, displayService)
+    socketController.registerListeners()
+    socketServer.startListening(server)
 
     server.on('error', err => {
       logger.error('Server error:', err)

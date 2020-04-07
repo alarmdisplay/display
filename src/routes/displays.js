@@ -1,83 +1,34 @@
 const express = require('express')
 const router = express.Router()
 
-module.exports = function (controller) {
+const NotFoundError = require('../errors/NotFoundError')
+
+module.exports = function (displayService) {
   /**
    * @swagger
    * definitions:
    *   Display:
    *     type: object
    *     required:
-   *     - id
-   *     - active
-   *     - screenConfigs
+   *     - name
    *     properties:
    *       id:
-   *         type: string
+   *         type: number
    *         readOnly: true
-   *       active:
-   *         type: boolean
-   *       description:
-   *         type: string
-   *       location:
-   *         type: string
-   *       screenConfigs:
-   *         type: object
-   *         properties:
-   *           idleScreen:
-   *             $ref: '#/definitions/ScreenConfig'
-   *       createdAt:
-   *         type: string
-   *         format: date-time
-   *         readOnly: true
-   *       updatedAt:
-   *         type: string
-   *         format: date-time
-   *         readOnly: true
-   *
-   *   ScreenConfig:
-   *     type: object
-   *     properties:
-   *       layout:
-   *         type: object
-   *         required:
-   *         - columns
-   *         - components
-   *         - rows
-   *         properties:
-   *           columns:
-   *             type: integer
-   *           components:
-   *             type: array
-   *             items:
-   *               $ref: '#/definitions/ScreenConfigComponent'
-   *           rows:
-   *             type: integer
-   *
-   *   ScreenConfigComponent:
-   *     type: object
-   *     required:
-   *     - name
-   *     - bounds
-   *     properties:
    *       name:
    *         type: string
-   *       bounds:
-   *         type: object
-   *         required:
-   *         - columnStart
-   *         - rowStart
-   *         - columnEnd
-   *         - rowEnd
-   *         properties:
-   *           columnStart:
-   *             type: integer
-   *           rowStart:
-   *             type: integer
-   *           columnEnd:
-   *             type: integer
-   *           rowEnd:
-   *             type: integer
+   *       active:
+   *         type: boolean
+   *         default: false
+   *       clientId:
+   *         type: string
+   *         default: ''
+   *       description:
+   *         type: string
+   *         default: ''
+   *       location:
+   *         type: string
+   *         default: ''
    */
 
   /**
@@ -96,7 +47,7 @@ module.exports = function (controller) {
    */
   router.get('/', async (req, res, next) => {
     try {
-      const displays = await controller.findDisplays()
+      const displays = await displayService.getAllDisplays()
       res.json(displays)
     } catch (e) {
       return next(e)
@@ -109,15 +60,32 @@ module.exports = function (controller) {
    *   post:
    *     description: Create a new Display
    *     produces: application/json
+   *     parameters:
+   *       - name: display
+   *         in: body
+   *         required: true
+   *         description: Fields for the Display resource
+   *         schema:
+   *           $ref: '#/definitions/Display'
    *     responses:
    *       201:
    *         description: The newly created Display
    *         schema:
    *           $ref: '#/definitions/Display'
+   *         headers:
+   *           Location:
+   *             description: The URI of the newly created Display resource
+   *             type: string
    */
   router.post('/', async (req, res, next) => {
     try {
-      const display = await controller.createDisplay(req.body.id, req.body)
+      const display = await displayService.createDisplay(
+        req.body.name,
+        req.body.active || false,
+        req.body.clientId || '',
+        req.body.description || '',
+        req.body.location || ''
+      )
       const baseUrl = req.originalUrl.replace(/\/$/, '')
       const newLocation = `${baseUrl}/${display.id}`
       res.set('Location', newLocation).status(201).json(display)
@@ -135,7 +103,7 @@ module.exports = function (controller) {
    *     parameters:
    *       - name: id
    *         in: path
-   *         type: string
+   *         type: number
    *     responses:
    *       200:
    *         description: The Display model
@@ -144,16 +112,17 @@ module.exports = function (controller) {
    *       404:
    *         description: The Display could not be found
    */
-  router.get('/:id', async (req, res, next) => {
-    try {
-      const display = await controller.findDisplay(req.params.id)
-      if (!display) {
-        return res.sendStatus(404)
-      }
-      res.json(display)
-    } catch (e) {
-      return next(e)
-    }
+  router.get('/:id', (req, res, next) => {
+    displayService.getDisplayById(parseInt(req.params.id))
+      .then(display => {
+        res.json(display)
+      }, reason => {
+        if (reason instanceof NotFoundError) {
+          return res.sendStatus(404)
+        }
+
+        return next(reason)
+      })
   })
 
   /**
@@ -172,7 +141,7 @@ module.exports = function (controller) {
    */
   router.delete('/:id', async (req, res, next) => {
     try {
-      await controller.deleteDisplay(req.params.id)
+      await displayService.deleteDisplay(parseInt(req.params.id))
       res.sendStatus(204)
     } catch (e) {
       return next(e)
@@ -188,7 +157,8 @@ module.exports = function (controller) {
    *     parameters:
    *       - name: id
    *         in: path
-   *         type: string
+   *         required: true
+   *         type: number
    *       - name: display
    *         in: body
    *         description: Fields for the Display resource
@@ -197,25 +167,26 @@ module.exports = function (controller) {
    *     responses:
    *       200:
    *         description: Successfully updated
-   *       201:
-   *         description: Display did not exist before and got created
+   *         schema:
+   *           $ref: '#/definitions/Display'
+   *       404:
+   *         description: Display does not exist and cannot be updated. Please use POST to create a new Display
    */
-  router.put('/:id', async (req, res, next) => {
-    try {
-      const display = await controller.findDisplay(req.params.id)
-      if (!display) {
-        const newDisplay = await controller.createDisplay(req.params.id, req.body)
-        const baseUrl = req.originalUrl.replace(/\/$/, '')
-        const newLocation = `${baseUrl}/${newDisplay.id}`
-        res.set('Content-Location', newLocation).status(201).json(newDisplay)
-        return
-      }
+  router.put('/:id', (req, res, next) => {
+    displayService.getDisplayById(parseInt(req.params.id))
+      .then(() => {
+        // Display exists
+        return displayService.updateDisplay(parseInt(req.params.id), req.body.name, req.body.active, req.body.clientId, req.body.description, req.body.location)
+          .then(updatedDisplay => res.json(updatedDisplay))
+      }, (reason) => {
+        if (reason instanceof NotFoundError) {
+          // Display does not exist
+          return res.sendStatus(404)
+        }
 
-      const updatedDisplay = await controller.updateDisplay(req.params.id, req.body)
-      res.json(updatedDisplay)
-    } catch (e) {
-      return next(e)
-    }
+        throw reason
+      })
+      .catch(reason => next(reason))
   })
 
   return router

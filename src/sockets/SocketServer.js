@@ -1,13 +1,13 @@
+const EventEmitter = require('events')
 const socketIo = require('socket.io')
 const log4js = require('log4js')
 
-module.exports = class SocketController {
-  constructor (controller) {
-    this.logger = log4js.getLogger('SocketController')
-    this.controller = controller
-
+class SocketServer extends EventEmitter {
+  constructor () {
+    super()
     this.sockets = new Map()
     this.pendingDisplayIds = new Set()
+    this.logger = log4js.getLogger('SocketServer')
   }
 
   /**
@@ -27,55 +27,44 @@ module.exports = class SocketController {
     socket.on('error', (error) => this.logger.error(`Socket ${socket.id}`, error))
     socket.once('disconnect', (reason) => this.onDisconnect(socket, reason))
 
-    const displayId = socket.handshake.query.displayId
-    this.sockets.set(displayId, socket)
-
-    this.authenticateDisplay(displayId)
+    const clientId = socket.handshake.query.clientId
+    this.setDisplayPending(clientId)
+    this.sockets.set(clientId, socket)
+    this.emit('socket_connected', clientId)
   }
 
   onDisconnect (socket, reason) {
     this.logger.debug(`Socket ${socket.id} disconnected with reason ${reason}`)
-    const displayId = socket.handshake.query.displayId
-    this.sockets.delete(displayId)
-    this.pendingDisplayIds.delete(displayId)
+    const clientId = socket.handshake.query.clientId
+    this.sockets.delete(clientId)
+    this.setDisplayNotPending(clientId)
   }
 
-  authenticateDisplay (displayId) {
-    this.controller.findDisplay(displayId).then(display => {
-      // For now the authentication check is only if there is display with that ID on file and set to active
-      if (display === null || !display.active) {
-        this.logger.warn(`Could not find an active display with id ${displayId}`)
-
-        this.deauthenticateDisplay(displayId)
-        return
-      }
-
-      this.sendMessageToDisplay(displayId, 'auth_success', {})
-      this.setDisplayNotPending(displayId)
-      this.pushConfigToDisplay(displayId)
-    })
+  authenticateDisplay (clientId) {
+    this.sendMessageToDisplay(clientId, 'auth_success', {})
+    this.setDisplayNotPending(clientId)
   }
 
-  deauthenticateDisplay (displayId) {
-    this.sendMessageToDisplay(displayId, 'auth_error', { message: 'Display not active' })
+  deauthenticateDisplay (displayId, message) {
+    this.sendMessageToDisplay(displayId, 'auth_error', { message: message })
     this.setDisplayPending(displayId)
   }
 
   /**
    * Checks if the respective Display is not yet fully authenticated.
    *
-   * @param {String} displayId
+   * @param {Number} displayId
    * @return {boolean} True if the Display has not been fully authenticated, False otherwise.
    */
   isDisplayPending (displayId) {
     return this.pendingDisplayIds.has(displayId)
   }
 
-  pushConfigToDisplay (displayId) {
-    this.controller.findDisplay(displayId).then(display => {
-      this.sendMessageToDisplay(displayId, 'update_config', {
-        screenConfigs: display.screenConfigs
-      })
+  pushConfigToDisplay (clientId, config) {
+    // TODO
+    this.sendMessageToDisplay(clientId, 'update_config', {
+      screenConfigs: [],
+      config
     })
   }
 
@@ -108,10 +97,13 @@ module.exports = class SocketController {
    * @param next
    */
   verifyNewSocket (socket, next) {
-    if (!Object.prototype.hasOwnProperty.call(socket.handshake.query, 'displayId')) {
-      return next(new Error('Parameter displayId is missing'))
+    if (!Object.prototype.hasOwnProperty.call(socket.handshake.query, 'clientId')) {
+      this.logger.warn(`Socket ${socket.id} rejected because of missing Client ID`)
+      return next(new Error('Parameter clientId is missing'))
     }
 
     return next()
   }
 }
+
+module.exports = SocketServer

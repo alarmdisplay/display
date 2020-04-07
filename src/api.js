@@ -2,14 +2,16 @@ const express = require('express')
 const log4js = require('log4js')
 
 module.exports = class APIv1 {
-  constructor (controller) {
+  /**
+   * @param {DisplayService} displayService
+   */
+  constructor (displayService) {
     this.logger = log4js.getLogger('APIv1')
-    this.controller = controller
     this.router = express.Router()
     this.router.use(express.json())
 
     // Register the routes and their handlers
-    const displayRoutes = require('./routes/displays')(controller)
+    const displayRoutes = require('./routes/displays')(displayService)
     this.router.use('/displays', displayRoutes)
 
     // Add our own error handler to override the built-in one
