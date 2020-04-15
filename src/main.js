@@ -3,6 +3,8 @@ import App from './App.vue'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 
+import * as axios from 'axios'
+
 // Import Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faBars, faDesktop, faHome, faTimes } from '@fortawesome/free-solid-svg-icons'
@@ -34,12 +36,8 @@ const store = new Vuex.Store({
   },
   actions: {
     updateTheDisplays (context) {
-      setTimeout(() => {
-        context.commit('setDisplays', [
-          { id: 'ABCD1234', location: 'somewhere' },
-          { id: 'EFGH5678', location: 'nowhere' }
-        ])
-      }, 3000)
+      axios.get('/api/v1/displays')
+        .then(response => (context.commit('setDisplays', response.data)))
     }
   }
 })
