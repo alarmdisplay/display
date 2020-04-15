@@ -1,7 +1,8 @@
 <template>
     <div class="w3-card-4">
         <header class="w3-container w3-light-grey">
-            <h3><font-awesome-icon v-bind:icon="icon" />{{ display.id }}</h3>
+            <h3><font-awesome-icon v-bind:icon="icon" />{{ display.name }}</h3>
+            <span class="tech-info">ID {{ display.id }} | Zuletzt online: {{ lastSeen }}</span>
         </header>
 
         <div class="w3-container">
@@ -18,6 +19,14 @@ export default {
   computed: {
     icon: function () {
       return 'desktop'
+    },
+    lastSeen: function () {
+      if (!this.display.lastSeen) {
+        return 'unbekannt'
+      }
+
+      // TODO use human-readable date representation
+      return this.display.lastSeen
     }
   },
   props: {
@@ -29,5 +38,13 @@ export default {
 <style scoped>
 h3 svg {
     margin-right: 0.4em;
+}
+
+header {
+    border-bottom: 1px solid gray;
+}
+
+.tech-info {
+    font-size: small;
 }
 </style>
