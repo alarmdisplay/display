@@ -9,7 +9,7 @@
             <p>{{ display.location }}</p>
         </div>
 
-        <button class="w3-button w3-block w3-dark-grey">Edit</button>
+        <router-link tag="button" :to="`/displays/${display.id}`" class="w3-button w3-block w3-dark-grey">Bearbeiten</router-link>
     </div>
 </template>
 

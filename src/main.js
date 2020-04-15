@@ -9,6 +9,7 @@ import { faBars, faDesktop, faHome, faTimes } from '@fortawesome/free-solid-svg-
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 // Import components
+import DisplayEditForm from '@/components/DisplayEditForm'
 import DisplayList from '@/components/DisplayList'
 import Overview from '@/components/Overview'
 
@@ -46,7 +47,8 @@ const store = new Vuex.Store({
 // Set up the Vue Router
 const routes = [
   { path: '/', component: Overview },
-  { path: '/displays', component: DisplayList }
+  { path: '/displays', component: DisplayList },
+  { path: '/displays/:id', component: DisplayEditForm, props: true }
 ]
 
 const router = new VueRouter({

@@ -2,6 +2,7 @@
     <div class="w3-main">
         <header class="w3-container">
             <h2>Displays</h2>
+            <router-link tag="button" :to="`/displays/new`" class="w3-btn w3-blue w3-right">Neu</router-link>
         </header>
 
         <div class="w3-row-padding w3-margin-bottom w3-margin-top">
