@@ -88,10 +88,10 @@ let vm = new Vue({
   }
 }).$mount('#app');
 
-function setupSocket(displayId) {
+function setupSocket(clientId) {
   socket = io({
     query: {
-      displayId: displayId
+      clientId: clientId
     },
     timeout: 6000
   });
