@@ -38,15 +38,22 @@ class SocketController {
   checkAuthentication (clientId) {
     this.displayService.getDisplayByClientId(clientId)
       .then(display => {
-        if (display.active) {
-          this.socketServer.authenticateDisplay(clientId)
-          this.socketServer.pushConfigToDisplay(clientId, {})
-        } else {
-          this.socketServer.deauthenticateDisplay(clientId, 'Display not active')
+        if (!display.active) {
+          throw new Error('Display not active')
         }
+
+        this.socketServer.authenticateDisplay(clientId)
+
+        return this.displayService.getViewsForDisplay(display.id)
+          .then(views => {
+            this.socketServer.pushConfigToDisplay(clientId, {
+              views: views
+            })
+          })
       })
-      .catch(() => {
-        this.socketServer.deauthenticateDisplay(clientId, 'Display not active')
+      .catch(reason => {
+        const message = (reason instanceof Error) ? reason.message : reason
+        this.socketServer.deauthenticateDisplay(clientId, message)
       })
   }
 }

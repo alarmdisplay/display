@@ -49,6 +49,10 @@ class DisplayService extends EventEmitter {
         return updatedDisplay
       })
   }
+
+  getViewsForDisplay (displayId) {
+    return this.viewRepository.getViewsByDisplayId(displayId)
+  }
 }
 
 module.exports = DisplayService

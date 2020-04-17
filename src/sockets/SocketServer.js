@@ -61,11 +61,7 @@ class SocketServer extends EventEmitter {
   }
 
   pushConfigToDisplay (clientId, config) {
-    // TODO
-    this.sendMessageToDisplay(clientId, 'update_config', {
-      screenConfigs: [],
-      config
-    })
+    this.sendMessageToDisplay(clientId, 'update_config', config)
   }
 
   sendMessageToDisplay (identifier, eventName, message) {
