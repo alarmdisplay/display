@@ -47,7 +47,7 @@
                 let components = [];
                 console.log('Component configs', this.screenConfig.components);
                 for (let config of this.screenConfig.components) {
-                    if (!config.name || !config.instanceId || !config) {
+                    if (!config || !config.name || !config.instanceId) {
                         continue;
                     }
 
