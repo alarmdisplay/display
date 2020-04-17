@@ -1,6 +1,6 @@
 <template>
     <div class="idle-screen">
-        <GridView v-for="view of sortedChildViews" v-bind:key="view.id" v-bind:id="`view-${view.id}`" :view="view"/>
+        <GridView v-for="(view, index) in sortedChildViews" v-show="activeViewIndex === index" :key="view.id" :view="view"/>
     </div>
 </template>
 
@@ -21,6 +21,17 @@
                 }));
                 return views;
             }
+        },
+        data : function () {
+            return {
+                activeViewIndex: 0
+            }
+        },
+        mounted: function () {
+            // If there are multiple views, show each one for 60 seconds
+            setInterval(() => {
+                this.activeViewIndex = (this.activeViewIndex + 1) % this.childViews.length
+            }, 60000);
         },
         props: {
             childViews: Array
