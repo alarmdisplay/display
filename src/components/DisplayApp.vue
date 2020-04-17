@@ -14,7 +14,8 @@
             idleScreenConfig: function () {
               let idleScreenConfigs = this.views.filter(view => view.screenType === 'IdleScreen')
               if (idleScreenConfigs.length === 0) {
-                idleScreenConfigs = [{
+                // Return a fallback config that just shows the clock in the center
+                return {
                   columns: 3,
                   rows: 3,
                   components: [
@@ -27,7 +28,7 @@
                       rowEnd: 3
                     }
                   ]
-                }]
+                }
               }
 
               // We return the first view config only, as multiple views per screen are not yet supported
