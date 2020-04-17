@@ -51,7 +51,6 @@ let vm = new Vue({
     },
     resetData: function () {
       this.content = {};
-      };
       this.views = [];
     },
     updateDataSource: function (id, data) {
