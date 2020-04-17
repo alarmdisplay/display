@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div v-bind:id="elementId" class="announcement-list">
         <p class="header">Announcements</p>
         <ul>
             <li v-if="announcements.length === 0" class="no-announcements">Keine Ankündigungen</li>
@@ -17,19 +17,27 @@
         },
         computed: {
             announcements: function () {
-                let content = this.$root.$data.content['announcements'];
+                let content = this.$root.$data.content[this.instanceId];
                 if (!Array.isArray(content)) {
                     return []
                 }
 
                 return content
             }
+        },
+        data() {
+            return {
+                elementId: `announcement-list-${this.instanceId}`,
+            }
+        },
+        props: {
+            instanceId: Number
         }
     }
 </script>
 
 <style scoped>
-    .card {
+    .announcement-list {
         box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
     }
 
