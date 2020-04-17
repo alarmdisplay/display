@@ -31,7 +31,8 @@
             }
         },
         props: {
-            instanceId: Number
+            instanceId: Number,
+            options: Object
         }
     }
 </script>

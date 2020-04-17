@@ -7,7 +7,7 @@
 
             let childComponents = [];
             for (let cc of this.getChildComponents) {
-                childComponents.push(createElement(cc.name, {attrs: {style: cc.style}, props: {instanceId: cc.instanceId}}));
+                childComponents.push(createElement(cc.name, {attrs: {style: cc.style}, props: {instanceId: cc.instanceId, options: cc.options}}));
             }
 
             return createElement('div', {
@@ -54,6 +54,7 @@
                     components.push({
                         instanceId: config.instanceId,
                         name: config.name,
+                        options: config.options || {},
                         style: `grid-column-start: ${config.columnStart}; grid-row-start: ${config.rowStart}; grid-column-end: ${config.columnEnd}; grid-row-end: ${config.rowEnd}`
                     });
                 }
