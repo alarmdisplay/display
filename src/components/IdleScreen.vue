@@ -24,7 +24,7 @@
         },
         computed: {
             gridStyle: function () {
-                if (!this.screenConfig.layout.columns || !this.screenConfig.layout.rows) {
+                if (!this.screenConfig.columns || !this.screenConfig.rows) {
                     return '';
                 }
 
@@ -33,28 +33,28 @@
                  * have the same height/width. Specifying all the entries as 'auto' should have the same effect, but
                  * causes rows/columns to shrink if they have no content.
                  */
-                let columnsPercentage = 100 / this.screenConfig.layout.columns;
+                let columnsPercentage = 100 / this.screenConfig.columns;
                 let columnsPercentageString = columnsPercentage.toFixed(1) + '%';
-                let templateColumns = Array(this.screenConfig.layout.columns).fill(columnsPercentageString).join(' ');
+                let templateColumns = Array(this.screenConfig.columns).fill(columnsPercentageString).join(' ');
 
-                let rowsPercentage = 100 / this.screenConfig.layout.rows;
+                let rowsPercentage = 100 / this.screenConfig.rows;
                 let rowPercentageString = rowsPercentage.toFixed(1) + '%';
-                let templateRows = Array(this.screenConfig.layout.rows).fill(rowPercentageString).join(' ');
+                let templateRows = Array(this.screenConfig.rows).fill(rowPercentageString).join(' ');
 
                 return 'grid-template-columns: ' + templateColumns + '; grid-template-rows: ' + templateRows + ';';
             },
             getChildComponents: function () {
                 let components = [];
-                console.log('Component configs', this.screenConfig.layout.components);
-                for (let config of this.screenConfig.layout.components) {
-                    if (!config.name || !config.instanceId || !config.bounds) {
+                console.log('Component configs', this.screenConfig.components);
+                for (let config of this.screenConfig.components) {
+                    if (!config.name || !config.instanceId || !config) {
                         continue;
                     }
 
                     components.push({
                         instanceId: config.instanceId,
                         name: config.name,
-                        style: `grid-column-start: ${config.bounds.columnStart}; grid-row-start: ${config.bounds.rowStart}; grid-column-end: ${config.bounds.columnEnd}; grid-row-end: ${config.bounds.rowEnd}`
+                        style: `grid-column-start: ${config.columnStart}; grid-row-start: ${config.rowStart}; grid-column-end: ${config.columnEnd}; grid-row-end: ${config.rowEnd}`
                     });
                 }
 

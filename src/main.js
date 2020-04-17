@@ -53,22 +53,18 @@ let vm = new Vue({
       this.content = {};
       this.screenConfigs = {
         'IdleScreen': {
-          layout: {
-            columns: 3,
-            rows: 3,
-            components: [
-              {
-                name: 'Clock',
-                instanceId: -1,
-                bounds: {
-                  columnStart: 2,
-                  rowStart: 2,
-                  columnEnd: 3,
-                  rowEnd: 3,
-                }
-              }
-            ]
-          }
+          columns: 3,
+          rows: 3,
+          components: [
+            {
+              name: 'Clock',
+              instanceId: -1,
+              columnStart: 2,
+              rowStart: 2,
+              columnEnd: 3,
+              rowEnd: 3
+            }
+          ]
         }
       };
     },
@@ -217,41 +213,33 @@ function validateScreenConfig(config) {
     throw new Error('Configuration is empty');
   }
 
-  if (!Object.prototype.hasOwnProperty.call(config, 'layout')) {
-    throw new Error('Configuration has no layout');
-  }
-
-  if (!Object.prototype.hasOwnProperty.call(config.layout, 'columns') || config.layout.columns < 1) {
+  if (!Object.prototype.hasOwnProperty.call(config, 'columns') || config.columns < 1) {
     throw new Error('Number of columns is not valid');
   }
 
-  if (!Object.prototype.hasOwnProperty.call(config.layout, 'rows') || config.layout.rows < 1) {
+  if (!Object.prototype.hasOwnProperty.call(config, 'rows') || config.rows < 1) {
     throw new Error('Number of rows is not valid');
   }
 
-  if (!Object.prototype.hasOwnProperty.call(config.layout, 'components') || !Array.isArray(config.layout.components) || config.layout.components.length === 0) {
+  if (!Object.prototype.hasOwnProperty.call(config, 'components') || !Array.isArray(config.components) || config.components.length === 0) {
     throw new Error('No components specified');
   }
 
   const validComponents = ['AnnouncementList', 'Clock'];
-  for (let component of config.layout.components) {
+  for (let component of config.components) {
     if (!component.name || !validComponents.includes(component.name)) {
       throw new Error('No valid component name specified');
     }
 
-    if (!component.bounds || typeof component.bounds !== 'object') {
-      throw new Error('No bounds specified');
-    }
-
-    if (!component.bounds.columnStart || !component.bounds.rowStart || !component.bounds.columnEnd || !component.bounds.rowEnd) {
+    if (!component.columnStart || !component.rowStart || !component.columnEnd || !component.rowEnd) {
       throw new Error('Not all bounds specified');
     }
 
-    if (component.bounds.columnStart < 1 || component.bounds.rowStart < 1 || component.bounds.columnEnd > (config.layout.columns + 1) || component.bounds.rowEnd > (config.layout.rows + 1)) {
+    if (component.columnStart < 1 || component.rowStart < 1 || component.columnEnd > (config.columns + 1) || component.rowEnd > (config.rows + 1)) {
       throw new Error('Bounds exceed column/row count');
     }
 
-    if (component.bounds.columnEnd <= component.bounds.columnStart || component.bounds.rowEnd <= component.bounds.rowStart) {
+    if (component.columnEnd <= component.columnStart || component.rowEnd <= component.rowStart) {
       throw new Error('Column/row end value must be greater that respective start value');
     }
   }
