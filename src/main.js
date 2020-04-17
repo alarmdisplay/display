@@ -21,8 +21,8 @@ let vm = new Vue({
       props: {
         authenticated: this.authenticated,
         displayId: this.displayId,
-        screenConfigs: this.screenConfigs,
-        showSplashScreen: this.showSplashScreen
+        showSplashScreen: this.showSplashScreen,
+        views: this.views
       }
     });
   },
@@ -30,8 +30,8 @@ let vm = new Vue({
     authenticated: false,
     content: {},
     displayId: null,
-    screenConfigs: null,
-    showSplashScreen: true
+    showSplashScreen: true,
+    views: []
   },
   created: function () {
     this.displayId = getIdentifier();
@@ -51,36 +51,28 @@ let vm = new Vue({
     },
     resetData: function () {
       this.content = {};
-      this.screenConfigs = {
-        'IdleScreen': {
-          columns: 3,
-          rows: 3,
-          components: [
-            {
-              name: 'Clock',
-              instanceId: -1,
-              columnStart: 2,
-              rowStart: 2,
-              columnEnd: 3,
-              rowEnd: 3
-            }
-          ]
-        }
-      };
+      this.views = [];
     },
     updateDataSource: function (id, data) {
       this.content[id] = data;
     },
-    updateScreenConfig: function (name, config) {
-      try {
-        validateScreenConfig(config);
-      } catch (e) {
-        Vue.$toast.error(`Screen config rejected: ${e.message}`);
-        return;
+    setViews: function (views) {
+      if (!Array.isArray(views)) {
+        return
       }
 
-      this.screenConfigs[name] = config;
-      console.log('screenConfigs is now', this.screenConfigs)
+      this.views = views.filter(view => {
+        try {
+          validateView(view);
+        } catch (e) {
+          Vue.$toast.error(`View config rejected: ${e.message}`);
+          return false;
+        }
+
+        return true;
+      });
+
+      console.log('views is now', this.views)
     },
     hideSplashScreen: function () {
       this.showSplashScreen = false;
@@ -155,8 +147,8 @@ function setupSocket(clientId) {
 
   socket.on('update_config', function(config) {
     console.log('Received config update', config);
-    if (config.screenConfigs["idleScreen"]) {
-      vm.updateScreenConfig('IdleScreen', config.screenConfigs["idleScreen"]);
+    if (config.views) {
+      vm.setViews(config.views)
     }
   });
 
@@ -206,32 +198,37 @@ function generateIdentifier(length) {
 }
 
 /**
- * Validates a particular screen configuration for structural errors.
+ * Validates a particular view configuration for structural errors.
  *
- * @param config
+ * @param view
  * @throws {Error}
  */
-function validateScreenConfig(config) {
-  console.log('Validating config', config);
+function validateView(view) {
+  console.log('Validating view', view);
 
-  if (!config) {
+  if (!view) {
     throw new Error('Configuration is empty');
   }
 
-  if (!Object.prototype.hasOwnProperty.call(config, 'columns') || config.columns < 1) {
+  const validScreenTypes = ['IdleScreen']
+  if (!Object.prototype.hasOwnProperty.call(view, 'screenType') || !validScreenTypes.includes(view.screenType)) {
+    throw new Error('Screen type is not valid');
+  }
+
+  if (!Object.prototype.hasOwnProperty.call(view, 'columns') || view.columns < 1) {
     throw new Error('Number of columns is not valid');
   }
 
-  if (!Object.prototype.hasOwnProperty.call(config, 'rows') || config.rows < 1) {
+  if (!Object.prototype.hasOwnProperty.call(view, 'rows') || view.rows < 1) {
     throw new Error('Number of rows is not valid');
   }
 
-  if (!Object.prototype.hasOwnProperty.call(config, 'components') || !Array.isArray(config.components) || config.components.length === 0) {
+  if (!Object.prototype.hasOwnProperty.call(view, 'components') || !Array.isArray(view.components) || view.components.length === 0) {
     throw new Error('No components specified');
   }
 
   const validComponents = ['AnnouncementList', 'Clock'];
-  for (let component of config.components) {
+  for (let component of view.components) {
     if (!component.name || !validComponents.includes(component.name)) {
       throw new Error('No valid component name specified');
     }
@@ -240,7 +237,7 @@ function validateScreenConfig(config) {
       throw new Error('Not all bounds specified');
     }
 
-    if (component.columnStart < 1 || component.rowStart < 1 || component.columnEnd > (config.columns + 1) || component.rowEnd > (config.rows + 1)) {
+    if (component.columnStart < 1 || component.rowStart < 1 || component.columnEnd > (view.columns + 1) || component.rowEnd > (view.rows + 1)) {
       throw new Error('Bounds exceed column/row count');
     }
 
