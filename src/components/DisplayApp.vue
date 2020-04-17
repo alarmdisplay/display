@@ -1,5 +1,5 @@
 <template>
-    <IdleScreen v-bind:screen-config="idleScreenConfig"/>
+    <IdleScreen v-bind:child-views="getViewsForScreenType('IdleScreen')"/>
 </template>
 
 <script>
@@ -10,10 +10,14 @@
         components: {
             IdleScreen
         },
-        computed: {
-            idleScreenConfig: function () {
-              let idleScreenConfigs = this.views.filter(view => view.screenType === 'IdleScreen')
-              if (idleScreenConfigs.length === 0) {
+        methods: {
+          getViewsForScreenType: function (screenType) {
+              if (!screenType) {
+                return []
+              }
+
+              let views = this.views.filter(view => view.screenType === screenType)
+              if (views.length === 0) {
                 // Return a fallback config that just shows the clock in the center
                 return {
                   columns: 3,
@@ -31,8 +35,7 @@
                 }
               }
 
-              // We return the first view config only, as multiple views per screen are not yet supported
-              return idleScreenConfigs[0]
+              return views
             }
         },
         props: {
