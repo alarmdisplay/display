@@ -159,6 +159,11 @@ function setupSocket(clientId) {
       vm.updateScreenConfig('IdleScreen', config.screenConfigs["idleScreen"]);
     }
   });
+
+  socket.on('update_data_source', function(update) {
+    console.log('Received data source update', update);
+    vm.updateDataSource(update.id, update.data);
+  });
 }
 
 /**
