@@ -49,4 +49,10 @@ export default {
     margin-left: 300px;
     margin-top: 43px;
   }
+
+  .error {
+    background-color: rgba(255, 0, 0, 0.5);
+    border: 1px solid red;
+    padding: 1em;
+  }
 </style>
