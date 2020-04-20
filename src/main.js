@@ -48,8 +48,8 @@ const store = new Vuex.Store({
         })
     },
     updateTheDisplays (context) {
-      axios.get('/api/v1/displays')
-        .then(response => (context.commit('setDisplays', response.data)))
+      return axios.get('/api/v1/displays')
+        .then(response => context.commit('setDisplays', response.data))
     }
   }
 })
