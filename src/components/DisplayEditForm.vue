@@ -36,10 +36,17 @@
                         <label for="input-location">Ort:</label>
                         <input id="input-location" type="text" class="w3-input w3-border" v-model.trim="displayData.location">
                     </p>
-                    <p>
-                        <button class="w3-btn w3-gray" @click="maybeCancel">Abbrechen</button>
-                        <button id="button-save" class="w3-btn w3-blue" v-on:click="saveChanges" :disabled="!saveButtonEnabled">Speichern</button>
-                    </p>
+                    <div class="w3-row">
+                        <div class="w3-third w3-padding">
+                            <button class="w3-btn w3-block w3-gray" @click="maybeCancel">Abbrechen</button>
+                        </div>
+                        <div class="w3-third w3-padding">
+                            <button class="w3-btn w3-block w3-red" @click="deleteDisplay">Löschen</button>
+                        </div>
+                        <div class="w3-third w3-padding">
+                            <button id="button-save" class="w3-btn w3-block w3-green" v-on:click="saveChanges" :disabled="!saveButtonEnabled">Speichern</button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -63,6 +70,13 @@ export default {
     this.fetchData()
   },
   methods: {
+    deleteDisplay: function () {
+      // TODO are you sure?
+      this.$store.dispatch('deleteDisplay', this.id)
+        .then(() => {
+          this.$router.replace('/displays')
+        })
+    },
     fetchData: function () {
       this.displayData = null
       this.loading = true

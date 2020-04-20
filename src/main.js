@@ -47,6 +47,10 @@ const store = new Vuex.Store({
           return newDisplay
         })
     },
+    deleteDisplay (context, displayId) {
+      return axios.delete('/api/v1/displays/' + displayId)
+        .then(() => context.dispatch('updateTheDisplays'))
+    },
     updateTheDisplays (context) {
       return axios.get('/api/v1/displays')
         .then(response => context.commit('setDisplays', response.data))
