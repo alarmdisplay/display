@@ -1,3 +1,6 @@
+const IllegalArgumentError = require('../errors/IllegalArgumentError')
+const NotFoundError = require('../errors/NotFoundError')
+
 const componentTypes = ['AnnouncementList', 'Clock', 'DWDWarningsMap']
 
 class ComponentRepository {
@@ -17,7 +20,7 @@ class ComponentRepository {
   createComponent (type, name) {
     return new Promise((resolve, reject) => {
       if (!componentTypes.includes(type)) {
-        reject(new Error(`Component type '${type} is unknown'`))
+        reject(new IllegalArgumentError(`Component type '${type} is unknown'`))
       }
 
       const newComponent = {
@@ -50,7 +53,7 @@ class ComponentRepository {
   getComponent (id) {
     return new Promise((resolve, reject) => {
       if (!this.components.has(id)) {
-        return reject(new Error(`No Component with ID ${id} found`))
+        return reject(new NotFoundError(`No Component with ID ${id} found`))
       }
 
       resolve(this.components.get(id))
@@ -110,7 +113,7 @@ class ComponentRepository {
   updateComponent (id, type, name) {
     return new Promise((resolve, reject) => {
       if (!this.components.has(id)) {
-        return reject(new Error(`No Component with ID ${id} found`))
+        return reject(new NotFoundError(`No Component with ID ${id} found`))
       }
 
       const component = {

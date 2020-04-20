@@ -1,3 +1,5 @@
+const NotFoundError = require('../errors/NotFoundError')
+
 class ViewRepository {
   constructor () {
     this.views = new Map()
@@ -49,7 +51,7 @@ class ViewRepository {
   getViewById (id) {
     return new Promise((resolve, reject) => {
       if (!this.views.has(id)) {
-        return reject(new Error(`No View with ID ${id} found`))
+        return reject(new NotFoundError(`No View with ID ${id} found`))
       }
 
       resolve(this.views.get(id))
@@ -115,7 +117,7 @@ class ViewRepository {
   updateView (id, name, columns, rows, displayId, order, screenType) {
     return new Promise((resolve, reject) => {
       if (!this.views.has(id)) {
-        return reject(new Error(`No View with ID ${id} found`))
+        return reject(new NotFoundError(`No View with ID ${id} found`))
       }
 
       const view = {
