@@ -25,7 +25,7 @@
                     <input id="input-location" type="text" class="w3-input w3-border" v-model.trim="location">
                 </p>
                 <p>
-                    <router-link to="/displays" tag="button" class="w3-btn w3-gray">Abbrechen</router-link>
+                    <button class="w3-btn w3-gray" @click="maybeCancel">Abbrechen</button>
                     <button id="button-create" class="w3-btn w3-blue" v-on:click="createDisplay" :disabled="!createButtonEnabled">Anlegen</button>
                 </p>
             </form>
@@ -65,6 +65,10 @@ export default {
         }, error => {
           console.error('Fehler beim Anlegen:', error)
         })
+    },
+    maybeCancel: function () {
+      // TODO should we ask about being sure if some fields have been filled?
+      this.$router.back()
     }
   }
 }
