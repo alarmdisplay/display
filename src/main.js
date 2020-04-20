@@ -227,7 +227,7 @@ function validateView(view) {
     throw new Error('No components specified');
   }
 
-  const validComponents = ['AnnouncementList', 'Clock'];
+  const validComponents = ['AnnouncementList', 'Clock', 'DWDWarningMap'];
   for (let component of view.components) {
     if (!component.name || !validComponents.includes(component.name)) {
       throw new Error('No valid component name specified');

@@ -1,6 +1,7 @@
 <script>
     import AnnouncementList from "@/components/announcements/AnnouncementList";
     import Clock from "@/components/Clock";
+    import DWDWarningMap from "@/components/DWDWarningMap";
 
     export default {
         name: "GridView",
@@ -20,7 +21,8 @@
         },
         components: {
             AnnouncementList,
-            Clock
+            Clock,
+            DWDWarningMap
         },
         computed: {
             gridStyle: function () {
