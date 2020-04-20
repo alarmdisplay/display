@@ -1,12 +1,12 @@
 <template>
-    <div class="w3-card-4">
+    <div class="w3-card-4 display-card">
         <header class="w3-container w3-light-grey">
             <h3><font-awesome-icon v-bind:icon="icon" />{{ display.name }}</h3>
             <span class="tech-info">ID {{ display.id }} | Zuletzt online: {{ lastSeen }}</span>
         </header>
 
         <div class="w3-container">
-            <p>{{ display.location }}</p>
+            <p><strong>Ort:</strong> {{ display.location }}</p>
         </div>
 
         <router-link tag="button" :to="`/displays/${display.id}`" class="w3-button w3-block w3-dark-grey">Bearbeiten</router-link>
@@ -36,6 +36,10 @@ export default {
 </script>
 
 <style scoped>
+.display-card {
+    margin-bottom: 2em;
+}
+
 h3 svg {
     margin-right: 0.4em;
 }
