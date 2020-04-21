@@ -1,5 +1,7 @@
 const EventEmitter = require('events')
 
+const IllegalArgumentError = require('../errors/IllegalArgumentError')
+
 class DisplayService extends EventEmitter {
   /**
    * @param {DisplayRepository} displayRepository
@@ -50,8 +52,35 @@ class DisplayService extends EventEmitter {
       })
   }
 
+  /**
+   * Creates a new View for a Display and appends it as the last View for that screen type.
+   *
+   * @param {String} name
+   * @param {Number} columns
+   * @param {Number} rows
+   * @param {Number} displayId
+   * @param {String} screenType
+   *
+   * @return {Promise}
+   */
+  createView (name, columns, rows, displayId, screenType) {
+    return this.viewRepository.getViewsByDisplayIdAndScreenType(displayId, screenType)
+      .then(views => {
+        return this.viewRepository.createView(name, columns, rows, displayId, views.length + 1, screenType)
+      })
+  }
+
   getViewsForDisplay (displayId) {
     return this.viewRepository.getViewsByDisplayId(displayId)
+  }
+
+  /**
+   * @param {Number} viewId
+   * @return {Promise}
+   */
+  getView (viewId) {
+    // TODO include components
+    return this.viewRepository.getViewById(viewId)
   }
 }
 

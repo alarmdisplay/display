@@ -59,7 +59,7 @@ class ViewRepository {
   }
 
   /**
-   * Finds and returns a View object with a certain Display ID.
+   * Finds and returns View objects for a certain Display.
    *
    * @param {Number} displayId The ID of the Display
    *
@@ -70,6 +70,32 @@ class ViewRepository {
       const views = []
       for (const view of this.views.values()) {
         if (view.displayId === displayId) {
+          views.push(view)
+        }
+      }
+
+      // Sort the views by order property
+      views.sort((a, b) => {
+        return a.order - b.order
+      })
+
+      resolve(views)
+    })
+  }
+
+  /**
+   * Finds and returns View objects for a certain Display and of a certain screen type.
+   *
+   * @param {Number} displayId The ID of the Display
+   * @param {String} screenType An identifier for the type of screen the View is used for (e.g. IdleScreen)
+   *
+   * @return {Promise}
+   */
+  getViewsByDisplayIdAndScreenType (displayId, screenType) {
+    return new Promise((resolve) => {
+      const views = []
+      for (const view of this.views.values()) {
+        if (view.displayId === displayId && view.screenType === screenType) {
           views.push(view)
         }
       }

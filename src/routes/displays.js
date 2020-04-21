@@ -189,5 +189,50 @@ module.exports = function (displayService) {
       .catch(reason => next(reason))
   })
 
+  router.get('/:id/views', (req, res, next) => {
+    displayService.getDisplayById(parseInt(req.params.id))
+      .then(display => {
+        // Display exists
+        return displayService.getViewsForDisplay(display.id)
+          .then(views => res.json(views))
+      })
+      .catch(reason => next(reason))
+  })
+
+  router.post('/:id/views', (req, res, next) => {
+    displayService.getDisplayById(parseInt(req.params.id))
+      .then(display => {
+        // Display exists
+        return displayService.createView(
+          req.body.name,
+          req.body.columns,
+          req.body.rows,
+          display.id,
+          req.body.screenType
+        )
+          .then(view => {
+            const baseUrl = req.originalUrl.replace(/\/$/, '')
+            const newLocation = `${baseUrl}/${display.id}/views/${view.id}`
+            res.set('Location', newLocation).status(201).json(view)
+          })
+      })
+      .catch(reason => next(reason))
+  })
+
+  router.get('/:id/views/:viewId', (req, res, next) => {
+    displayService.getDisplayById(parseInt(req.params.id))
+      .then(display => {
+        // Display exists
+        return displayService.getView(parseInt(req.params.viewId))
+          .then(view => {
+            if (view.displayId !== display.id) {
+              throw new NotFoundError(`The Display ${display.id} does not have a View with ID ${view.id}`)
+            }
+            res.json(view)
+          })
+      })
+      .catch(reason => next(reason))
+  })
+
   return router
 }
