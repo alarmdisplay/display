@@ -59,10 +59,12 @@ function connectDatabase (mongoDbUri) {
 connectDatabase(process.env.MONGODB_URI)
   .then(() => {
     const ComponentRepository = require('./persistence/ComponentRepository')
+    const ContentSlotRepository = require('./persistence/ContentSlotRepository')
     const DisplayRepository = require('./persistence/DisplayRepository')
     const ViewRepository = require('./persistence/ViewRepository')
-    const displayService = new DisplayService(new DisplayRepository(), new ViewRepository())
+
     const componentService = new ComponentService(new ComponentRepository())
+    const displayService = new DisplayService(new DisplayRepository(), new ViewRepository(), new ContentSlotRepository(), componentService)
     const app = require('./app')(displayService, componentService)
     const server = require('http').createServer(app)
 

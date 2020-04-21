@@ -60,7 +60,7 @@ class ContentSlotRepository {
    *
    * @param {Number} viewId The ID of the View
    *
-   * @return {Promise}
+   * @return {Promise<Object[]>}
    */
   getContentSlotsByViewId (viewId) {
     return new Promise((resolve) => {

@@ -26,6 +26,20 @@ class ComponentService {
   }
 
   /**
+   * @return {Promise<Map<Number, Object>>}
+   */
+  getAllComponentsAsMap () {
+    return this.componentRepository.getAllComponents()
+      .then(components => {
+        const map = new Map()
+        for (const component of components) {
+          map.set(component.id, component)
+        }
+        return map
+      })
+  }
+
+  /**
    * @param {Number} id
    *
    * @return {Promise}
