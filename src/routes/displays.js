@@ -234,5 +234,13 @@ module.exports = function (displayService) {
       .catch(reason => next(reason))
   })
 
+  router.put('/:id/views/:viewId', (req, res, next) => {
+    next(new Error('Not yet implemented'))
+  })
+
+  router.delete('/:id/views/:viewId', (req, res, next) => {
+    next(new Error('Not yet implemented'))
+  })
+
   return router
 }
