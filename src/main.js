@@ -7,10 +7,12 @@ import axios from 'axios'
 
 // Import Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faBars, faBullhorn, faClock, faCloudShowersHeavy, faCube, faCubes, faDesktop, faHome, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faBullhorn, faClock, faCloudShowersHeavy, faCube, faCubes, faDesktop, faHome, faPencilAlt, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 // Import components
+import ComponentCreateForm from '@/components/ComponentCreateForm'
+import ComponentEditForm from '@/components/ComponentEditForm'
 import ComponentList from '@/components/ComponentList'
 import DisplayCreateForm from '@/components/DisplayCreateForm'
 import DisplayEditForm from '@/components/DisplayEditForm'
@@ -18,7 +20,7 @@ import DisplayList from '@/components/DisplayList'
 import Overview from '@/components/Overview'
 
 // Configure Font Awesome
-library.add(faBars, faBullhorn, faClock, faCloudShowersHeavy, faCube, faCubes, faDesktop, faHome, faSpinner, faTimes)
+library.add(faBars, faBullhorn, faClock, faCloudShowersHeavy, faCube, faCubes, faDesktop, faHome, faPencilAlt, faSpinner, faTimes)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(Vuex)
@@ -33,6 +35,9 @@ const store = new Vuex.Store({
     components: []
   },
   mutations: {
+    appendComponent (state, component) {
+      state.components.push(component)
+    },
     appendDisplay (state, display) {
       state.displays.push(display)
     },
@@ -44,6 +49,14 @@ const store = new Vuex.Store({
     }
   },
   actions: {
+    createComponent (context, component) {
+      return axios.post('/api/v1/components', component)
+        .then(response => {
+          const newComponent = response.data
+          context.commit('appendComponent', newComponent)
+          return newComponent
+        })
+    },
     createDisplay (context, display) {
       return axios.post('/api/v1/displays', display)
         .then(response => {
@@ -51,6 +64,10 @@ const store = new Vuex.Store({
           context.commit('appendDisplay', newDisplay)
           return newDisplay
         })
+    },
+    deleteComponent (context, componentId) {
+      return axios.delete('/api/v1/components/' + componentId)
+        .then(() => context.dispatch('updateTheComponents'))
     },
     deleteDisplay (context, displayId) {
       return axios.delete('/api/v1/displays/' + displayId)
@@ -71,6 +88,8 @@ const store = new Vuex.Store({
 const routes = [
   { path: '/', component: Overview },
   { path: '/components', component: ComponentList },
+  { path: '/components/new', component: ComponentCreateForm },
+  { path: '/components/:id', component: ComponentEditForm, props: true },
   { path: '/displays', component: DisplayList },
   { path: '/displays/new', component: DisplayCreateForm },
   { path: '/displays/:id', component: DisplayEditForm, props: true }

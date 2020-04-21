@@ -7,6 +7,9 @@
             <span class="w3-large">{{ componentObject.name || 'Kein Name' }}</span><br>
             <span>{{ componentName }}</span>
         </div>
+        <router-link :to="`/components/${componentObject.id}`" tag="button" class="w3-bar-item w3-button w3-border w3-border-blue w3-hover-blue w3-round-medium w3-right">
+            <font-awesome-icon icon="pencil-alt"/> Bearbeiten
+        </router-link>
     </li>
 </template>
 
