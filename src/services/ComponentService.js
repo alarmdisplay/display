@@ -1,6 +1,6 @@
 const IllegalArgumentError = require('../errors/IllegalArgumentError')
 
-const componentTypes = ['AnnouncementList', 'Clock', 'DWDWarningsMap']
+const componentTypes = ['AnnouncementList', 'Clock', 'DWDWarningMap']
 
 class ComponentService {
   /**
