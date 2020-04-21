@@ -41,6 +41,7 @@ export default {
     }
   },
   mounted () {
+    this.$store.dispatch('updateTheComponents')
     this.$store.dispatch('updateTheDisplays')
   }
 }

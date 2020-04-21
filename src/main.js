@@ -7,17 +7,18 @@ import axios from 'axios'
 
 // Import Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faBars, faDesktop, faHome, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faBullhorn, faClock, faCloudShowersHeavy, faCube, faCubes, faDesktop, faHome, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 // Import components
+import ComponentList from '@/components/ComponentList'
 import DisplayCreateForm from '@/components/DisplayCreateForm'
 import DisplayEditForm from '@/components/DisplayEditForm'
 import DisplayList from '@/components/DisplayList'
 import Overview from '@/components/Overview'
 
 // Configure Font Awesome
-library.add(faBars, faDesktop, faHome, faSpinner, faTimes)
+library.add(faBars, faBullhorn, faClock, faCloudShowersHeavy, faCube, faCubes, faDesktop, faHome, faSpinner, faTimes)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(Vuex)
@@ -28,11 +29,15 @@ Vue.config.productionTip = false
 // Set up the Vuex store
 const store = new Vuex.Store({
   state: {
-    displays: []
+    displays: [],
+    components: []
   },
   mutations: {
     appendDisplay (state, display) {
       state.displays.push(display)
+    },
+    setComponents (state, components) {
+      state.components = components
     },
     setDisplays (state, displays) {
       state.displays = displays
@@ -51,6 +56,10 @@ const store = new Vuex.Store({
       return axios.delete('/api/v1/displays/' + displayId)
         .then(() => context.dispatch('updateTheDisplays'))
     },
+    updateTheComponents (context) {
+      return axios.get('/api/v1/components')
+        .then(response => context.commit('setComponents', response.data))
+    },
     updateTheDisplays (context) {
       return axios.get('/api/v1/displays')
         .then(response => context.commit('setDisplays', response.data))
@@ -61,6 +70,7 @@ const store = new Vuex.Store({
 // Set up the Vue Router
 const routes = [
   { path: '/', component: Overview },
+  { path: '/components', component: ComponentList },
   { path: '/displays', component: DisplayList },
   { path: '/displays/new', component: DisplayCreateForm },
   { path: '/displays/:id', component: DisplayEditForm, props: true }
