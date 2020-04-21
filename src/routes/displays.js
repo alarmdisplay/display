@@ -239,7 +239,17 @@ module.exports = function (displayService) {
   })
 
   router.delete('/:id/views/:viewId', (req, res, next) => {
-    next(new Error('Not yet implemented'))
+    displayService.getView(parseInt(req.params.viewId))
+      .then(view => {
+        if (view.displayId !== parseInt(req.params.id)) {
+          // The View that is supposed to be deleted does not belong to this Display, so reply nicely but don't delete
+          return Promise.resolve()
+        }
+
+        return displayService.deleteView(parseInt(req.params.viewId))
+      })
+      .then(() => res.sendStatus(204))
+      .catch(reason => next(reason))
   })
 
   return router

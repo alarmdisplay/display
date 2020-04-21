@@ -140,6 +140,15 @@ class DisplayService extends EventEmitter {
     view.components = components
     return view
   }
+
+  /**
+   * @param {Number} viewId
+   *
+   * @return {Promise}
+   */
+  deleteView (viewId) {
+    return this.viewRepository.deleteView(viewId)
+  }
 }
 
 module.exports = DisplayService
