@@ -89,8 +89,8 @@ export default {
     },
     saveChanges: function () {
       this.saveButtonEnabled = false
-      axios.put('/api/v1/components/' + this.id, this.componentData)
-        .then(response => {
+      this.$store.dispatch('updateComponent', { id: this.id, data: this.componentData })
+        .then(() => {
           this.$router.replace('/components')
         })
         .catch(error => {
@@ -110,10 +110,6 @@ export default {
 </script>
 
 <style scoped>
-#input-client-id {
-    width: unset;
-}
-
 #button-save {
     float: right;
 }

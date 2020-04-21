@@ -67,19 +67,23 @@ const store = new Vuex.Store({
     },
     deleteComponent (context, componentId) {
       return axios.delete('/api/v1/components/' + componentId)
-        .then(() => context.dispatch('updateTheComponents'))
+        .then(() => context.dispatch('fetchTheComponents'))
     },
     deleteDisplay (context, displayId) {
       return axios.delete('/api/v1/displays/' + displayId)
-        .then(() => context.dispatch('updateTheDisplays'))
+        .then(() => context.dispatch('fetchTheDisplays'))
     },
-    updateTheComponents (context) {
+    fetchTheComponents (context) {
       return axios.get('/api/v1/components')
         .then(response => context.commit('setComponents', response.data))
     },
-    updateTheDisplays (context) {
+    fetchTheDisplays (context) {
       return axios.get('/api/v1/displays')
         .then(response => context.commit('setDisplays', response.data))
+    },
+    updateComponent (context, update) {
+      return axios.put(`/api/v1/components/${update.id}`, update.data)
+        .then(() => context.dispatch('fetchTheComponents'))
     }
   }
 })

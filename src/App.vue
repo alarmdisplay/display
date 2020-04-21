@@ -41,8 +41,8 @@ export default {
     }
   },
   mounted () {
-    this.$store.dispatch('updateTheComponents')
-    this.$store.dispatch('updateTheDisplays')
+    this.$store.dispatch('fetchTheComponents')
+    this.$store.dispatch('fetchTheDisplays')
   }
 }
 </script>
