@@ -35,7 +35,7 @@
 
 <script>
 export default {
-  name: 'DisplayEditForm',
+  name: 'DisplayCreateForm',
   computed: {
     createButtonEnabled: function () {
       return this.displayName !== ''
