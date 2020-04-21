@@ -1,5 +1,5 @@
 <template>
-    <div class="w3-main">
+    <div>
         <header class="w3-container">
             <h2>&Uuml;bersicht</h2>
         </header>
@@ -13,7 +13,4 @@ export default {
 </script>
 
 <style scoped>
-  header {
-    padding-top: 22px;
-  }
 </style>

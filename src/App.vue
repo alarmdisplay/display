@@ -7,7 +7,9 @@
     <Sidebar></Sidebar>
     <!-- Overlay effect when opening sidebar on small screens -->
     <div class="w3-overlay w3-hide-large w3-animate-opacity" v-on:click="hideSidebar" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
-    <router-view></router-view>
+    <div class="w3-main">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
@@ -48,6 +50,10 @@ export default {
   .w3-main {
     margin-left: 300px;
     margin-top: 43px;
+  }
+
+  .w3-main header {
+    padding-top: 22px;
   }
 
   .error {

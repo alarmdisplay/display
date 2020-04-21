@@ -1,5 +1,5 @@
 <template>
-    <div class="w3-main">
+    <div>
         <header class="w3-container">
             <h2>Displays</h2>
             <router-link tag="button" :to="`/displays/new`" class="w3-btn w3-blue w3-right">Neu</router-link>
@@ -32,7 +32,4 @@ export default {
 </script>
 
 <style scoped>
-header {
-    padding-top: 22px;
-}
 </style>

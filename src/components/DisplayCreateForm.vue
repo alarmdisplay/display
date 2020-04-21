@@ -1,5 +1,5 @@
 <template>
-    <div class="w3-main">
+    <div>
         <header class="w3-container">
             <h2>Display anlegen</h2>
         </header>
@@ -75,10 +75,6 @@ export default {
 </script>
 
 <style scoped>
-    header {
-        padding-top: 22px;
-    }
-
     #input-client-id {
         width: unset;
     }
