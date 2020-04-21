@@ -7,6 +7,7 @@ const debugEnabled = process.env.DEBUG === '1'
 logger.level = debugEnabled ? 'debug' : 'info'
 
 const DisplayService = require('./services/DisplayService')
+const ComponentService = require('./services/ComponentService')
 const SocketController = require('./sockets/SocketController')
 const SocketServer = require('./sockets/SocketServer')
 
@@ -57,10 +58,12 @@ function connectDatabase (mongoDbUri) {
 
 connectDatabase(process.env.MONGODB_URI)
   .then(() => {
+    const ComponentRepository = require('./persistence/ComponentRepository')
     const DisplayRepository = require('./persistence/DisplayRepository')
     const ViewRepository = require('./persistence/ViewRepository')
     const displayService = new DisplayService(new DisplayRepository(), new ViewRepository())
-    const app = require('./app')(displayService)
+    const componentService = new ComponentService(new ComponentRepository())
+    const app = require('./app')(displayService, componentService)
     const server = require('http').createServer(app)
 
     const port = process.env.PORT || 3000

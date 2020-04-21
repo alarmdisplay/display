@@ -1,7 +1,4 @@
-const IllegalArgumentError = require('../errors/IllegalArgumentError')
 const NotFoundError = require('../errors/NotFoundError')
-
-const componentTypes = ['AnnouncementList', 'Clock', 'DWDWarningsMap']
 
 class ComponentRepository {
   constructor () {
@@ -19,10 +16,6 @@ class ComponentRepository {
    */
   createComponent (type, name) {
     return new Promise((resolve, reject) => {
-      if (!componentTypes.includes(type)) {
-        reject(new IllegalArgumentError(`Component type '${type} is unknown'`))
-      }
-
       const newComponent = {
         id: this.instanceCounter++,
         name: name,
