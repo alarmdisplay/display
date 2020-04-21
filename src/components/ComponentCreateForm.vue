@@ -14,7 +14,7 @@
                     <select id="select-type" class="w3-select" v-model="type">
                         <option value="" disabled selected>Bitte wählen</option>
                         <option value="AnnouncementList">Ankündigungen</option>
-                        <option value="DWDWarningsMap">DWD-Warnkarte</option>
+                        <option value="DWDWarningMap">DWD-Warnkarte</option>
                         <option value="Clock">Uhr</option>
                     </select>
                 </p>

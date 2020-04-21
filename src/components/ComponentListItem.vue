@@ -23,7 +23,7 @@ export default {
           return 'Ankündigungen'
         case 'Clock':
           return 'Uhr'
-        case 'DWDWarningsMap':
+        case 'DWDWarningMap':
           return 'DWD-Warnkarte'
         default:
           return this.componentObject.type
@@ -35,7 +35,7 @@ export default {
           return 'bullhorn'
         case 'Clock':
           return 'clock'
-        case 'DWDWarningsMap':
+        case 'DWDWarningMap':
           return 'cloud-showers-heavy'
         default:
           return 'cube'
