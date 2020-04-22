@@ -44,7 +44,7 @@ class SocketController {
 
         this.socketServer.authenticateDisplay(clientId)
 
-        return this.displayService.getViewsForDisplay(display.id)
+        return this.displayService.getViewsForDisplayWithComponents(display.id)
           .then(views => {
             this.socketServer.pushConfigToDisplay(clientId, {
               views: views

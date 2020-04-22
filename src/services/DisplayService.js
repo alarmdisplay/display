@@ -74,7 +74,27 @@ class DisplayService extends EventEmitter {
       })
   }
 
+  /**
+   * Returns the Views and their Content Slots for a specific Display.
+   *
+   * @param {Number} displayId The ID of the Display
+   *
+   * @return {Promise<Object[]>}
+   */
   getViewsForDisplay (displayId) {
+    return this.viewRepository.getViewsByDisplayId(displayId)
+      .then(async views => {
+        const enrichedViews = []
+        for (const view of views) {
+          view.contentSlots = await this.contentSlotRepository.getContentSlotsByViewId(view.id)
+          enrichedViews.push(view)
+        }
+
+        return enrichedViews
+      })
+  }
+
+  getViewsForDisplayWithComponents (displayId) {
     return Promise.all([
       this.viewRepository.getViewsByDisplayId(displayId),
       this.componentService.getAllComponentsAsMap()
@@ -100,6 +120,21 @@ class DisplayService extends EventEmitter {
   getView (viewId) {
     return Promise.all([
       this.viewRepository.getViewById(viewId),
+      this.contentSlotRepository.getContentSlotsByViewId(viewId)
+    ])
+      .then(([view, contentSlots]) => {
+        view.contentSlots = contentSlots
+        return view
+      })
+  }
+
+  /**
+   * @param {Number} viewId
+   * @return {Promise}
+   */
+  getViewWithComponents (viewId) {
+    return Promise.all([
+      this.viewRepository.getViewById(viewId),
       this.contentSlotRepository.getContentSlotsByViewId(viewId),
       this.componentService.getAllComponentsAsMap()
     ])
@@ -109,7 +144,7 @@ class DisplayService extends EventEmitter {
   }
 
   /**
-   * Adds the Components to the View, based on the configured Content Slots.
+   * Resolves the configured Content Slots to the respective components. This format is required by the Displays.
    *
    * @param {Object} view
    * @param {Object[]} contentSlots
@@ -138,6 +173,7 @@ class DisplayService extends EventEmitter {
     }
 
     view.components = components
+    delete view.contentSlots
     return view
   }
 
