@@ -28,6 +28,10 @@ class SocketController {
       this.logger.debug(`Display ${displayId} has been deleted`)
       // TODO deauthenticate Display
     })
+    this.displayService.on('views_updated', display => {
+      this.logger.debug(`Views for Display ${display.id} have been updated`)
+      return this.pushConfigToDisplay(display)
+    })
   }
 
   onSocketConnected (clientId) {
@@ -43,17 +47,25 @@ class SocketController {
         }
 
         this.socketServer.authenticateDisplay(clientId)
-
-        return this.displayService.getViewsForDisplayWithComponents(display.id)
-          .then(views => {
-            this.socketServer.pushConfigToDisplay(clientId, {
-              views: views
-            })
-          })
+        return this.pushConfigToDisplay(display)
       })
       .catch(reason => {
         const message = (reason instanceof Error) ? reason.message : reason
         this.socketServer.deauthenticateDisplay(clientId, message)
+      })
+  }
+
+  /**
+   * @param {Object} display
+   *
+   * @return {Promise}
+   */
+  pushConfigToDisplay (display) {
+    return this.displayService.getViewsForDisplayWithComponents(display.id)
+      .then(views => {
+        this.socketServer.pushConfigToDisplay(display.clientId, {
+          views: views
+        })
       })
   }
 }

@@ -199,7 +199,19 @@ class DisplayService extends EventEmitter {
     return this.viewRepository.getViewById(id)
       .then(view => this.viewRepository.updateView(view.id, name, columns, rows, view.displayId, view.order, view.screenType))
       .then(updatedView => this.updateContentSlotsForView(updatedView.id, contentSlots))
-      .then(() => this.getView(id))
+      .then(() => {
+        return this.getView(id)
+          .then(updatedView => {
+            this.getDisplayById(updatedView.displayId)
+              .then(display => this.emit('views_updated', display))
+              .catch(error => {
+                // We don't really handle this error as it only affects the internal event, but not the update function
+                console.error(error)
+              })
+
+            return updatedView
+          })
+      })
   }
 
   updateContentSlotsForView (viewId, newContentSlots) {
