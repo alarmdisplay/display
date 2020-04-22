@@ -1,3 +1,5 @@
+const NotFoundError = require('../errors/NotFoundError')
+
 class ContentSlotRepository {
   constructor () {
     this.contentSlots = new Map()
@@ -72,6 +74,19 @@ class ContentSlotRepository {
       }
 
       resolve(contentSlots)
+    })
+  }
+
+  getContentSlotForComponentAndView (viewId, componentId) {
+    return new Promise((resolve, reject) => {
+      for (const contentSlot of this.contentSlots.values()) {
+        if (contentSlot.viewId === viewId && contentSlot.componentId === componentId) {
+          resolve(contentSlot)
+          return
+        }
+      }
+
+      reject(new NotFoundError(`There is no Content Slot for Component ${componentId} and View ${viewId}`))
     })
   }
 

@@ -235,7 +235,20 @@ module.exports = function (displayService) {
   })
 
   router.put('/:id/views/:viewId', (req, res, next) => {
-    next(new Error('Not yet implemented'))
+    displayService.getDisplayById(parseInt(req.params.id))
+      .then(display => {
+        // Display exists
+        return displayService.getView(parseInt(req.params.viewId))
+          .then(view => {
+            if (view.displayId !== display.id) {
+              throw new NotFoundError(`The Display ${display.id} does not have a View with ID ${view.id}`)
+            }
+
+            return displayService.updateView(view.id, req.body.name, req.body.columns, req.body.rows, req.body.contentSlots)
+          })
+      })
+      .then(updatedView => res.json(updatedView))
+      .catch(reason => next(reason))
   })
 
   router.delete('/:id/views/:viewId', (req, res, next) => {

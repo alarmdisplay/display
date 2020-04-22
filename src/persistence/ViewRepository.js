@@ -138,7 +138,7 @@ class ViewRepository {
    * @param {Number} order A number that defines the order of Views per screenType of a Display
    * @param {String} screenType An identifier for the type of screen the View is used for (e.g. IdleScreen)
    *
-   * @return {Promise}
+   * @return {Promise<Object>}
    */
   updateView (id, name, columns, rows, displayId, order, screenType) {
     return new Promise((resolve, reject) => {
