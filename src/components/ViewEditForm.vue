@@ -29,6 +29,22 @@
                         <label for="input-rows">Zeilen:</label>
                         <input id="input-rows" type="number" min="1" class="w3-input w3-border" v-model.number="viewData.rows">
                     </p>
+
+                    <h3>Komponenten</h3>
+                    <ul class="w3-ul">
+                        <li v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" class="w3-bar">
+                            <h4>Component #{{contentSlot.componentId}}</h4>
+                            <label :for="`input-col-start-${contentSlot.componentId}`">Startspalte:</label>
+                            <input :id="`input-col-start-${contentSlot.componentId}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.columnStart">
+                            <label :for="`input-row-start-${contentSlot.componentId}`">Startzeile:</label>
+                            <input :id="`input-row-start-${contentSlot.componentId}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.rowStart">
+                            <label :for="`input-col-end-${contentSlot.componentId}`">Endspalte:</label>
+                            <input :id="`input-col-end-${contentSlot.componentId}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.columnEnd">
+                            <label :for="`input-row-end-${contentSlot.componentId}`">Endzeile:</label>
+                            <input :id="`input-row-end-${contentSlot.componentId}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.rowEnd">
+                        </li>
+                    </ul>
+
                     <div class="w3-row">
                         <div class="w3-third w3-padding">
                             <button class="w3-btn w3-block w3-gray" @click="maybeCancel">Abbrechen</button>
