@@ -18,6 +18,7 @@ import DisplayCreateForm from '@/components/DisplayCreateForm'
 import DisplayEditForm from '@/components/DisplayEditForm'
 import DisplayList from '@/components/DisplayList'
 import Overview from '@/components/Overview'
+import ViewEditForm from '@/components/ViewEditForm'
 import ViewList from '@/components/ViewList'
 
 // Configure Font Awesome
@@ -81,6 +82,10 @@ const store = new Vuex.Store({
       return axios.delete('/api/v1/displays/' + displayId)
         .then(() => context.dispatch('fetchTheDisplays'))
     },
+    deleteView (context, data) {
+      return axios.delete(`/api/v1/displays/${data.displayId}/views/${data.viewId}`)
+        .then(() => context.dispatch('fetchTheViews', data.displayId))
+    },
     fetchTheComponents (context) {
       return axios.get('/api/v1/components')
         .then(response => context.commit('setComponents', response.data))
@@ -113,7 +118,8 @@ const routes = [
   { path: '/displays', component: DisplayList },
   { path: '/displays/new', component: DisplayCreateForm },
   { path: '/displays/:id', component: DisplayEditForm, props: true },
-  { path: '/displays/:display_id/views', component: ViewList, props: true }
+  { path: '/displays/:display_id/views', component: ViewList, props: true },
+  { path: '/displays/:display_id/views/:view_id', component: ViewEditForm, props: true }
 ]
 
 const router = new VueRouter({
