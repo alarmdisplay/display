@@ -25,7 +25,7 @@ export default {
   },
   computed: {
     displays: function () {
-      return this.$store.state.displays
+      return this.$store.state.displays.values()
     }
   }
 }

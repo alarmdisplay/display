@@ -9,7 +9,14 @@
             <p><strong>Ort:</strong> {{ display.location }}</p>
         </div>
 
-        <router-link tag="button" :to="`/displays/${display.id}`" class="w3-button w3-block w3-dark-grey">Bearbeiten</router-link>
+        <div class="w3-bar">
+            <router-link tag="button" :to="`/displays/${display.id}`" class="w3-bar-item w3-button w3-block w3-dark-grey w3-border" style="width: 50%">
+                <font-awesome-icon icon="pencil-alt"/> Bearbeiten
+            </router-link>
+            <router-link tag="button" :to="`/displays/${display.id}/views`" class="w3-bar-item w3-button w3-block w3-dark-grey w3-border" style="width: 50%">
+                <font-awesome-icon icon="columns"/> Ansichten
+            </router-link>
+        </div>
     </div>
 </template>
 
