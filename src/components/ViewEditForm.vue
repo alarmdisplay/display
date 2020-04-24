@@ -42,8 +42,15 @@
                             <input :id="`input-col-end-${contentSlot.componentId}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.columnEnd">
                             <label :for="`input-row-end-${contentSlot.componentId}`">Endzeile:</label>
                             <input :id="`input-row-end-${contentSlot.componentId}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.rowEnd">
+                            <button @click="removeContentSlotForComponent(contentSlot.componentId)" class="w3-btn w3-red">Komponente entfernen</button>
                         </li>
                     </ul>
+                    <label for="select-component-to-add">Verf&uuml;gbare Komponenten: </label>
+                    <select id="select-component-to-add">
+                        <option value="">Komponente wählen</option>
+                        <option v-for="component in usableComponents" :key="component.id" :value="component.id">{{ component.name }}</option>
+                    </select>
+                    <button @click="addContentSlot" class="w3-btn w3-gray w3-margin-left">Hinzuf&uuml;gen</button>
 
                     <div class="w3-row">
                         <div class="w3-third w3-padding">
@@ -67,6 +74,15 @@ import axios from 'axios'
 
 export default {
   name: 'ViewEditForm',
+  computed: {
+    usedComponentIds: function () {
+      const contentSlots = this.viewData.contentSlots || []
+      return contentSlots.map(contentSlot => contentSlot.componentId)
+    },
+    usableComponents: function () {
+      return this.$store.state.components.filter(component => !this.usedComponentIds.includes(component.id))
+    }
+  },
   data: function () {
     return {
       viewData: null,
@@ -79,6 +95,21 @@ export default {
     this.fetchData()
   },
   methods: {
+    addContentSlot: function () {
+      const select = document.getElementById('select-component-to-add')
+      const componentId = parseInt(select.value)
+      if (Number.isNaN(componentId)) {
+        return
+      }
+
+      this.viewData.contentSlots.push({
+        componentId: componentId,
+        columnStart: 1,
+        rowStart: 1,
+        columnEnd: 2,
+        rowEnd: 2
+      })
+    },
     deleteView: function () {
       // TODO are you sure?
       this.$store.dispatch('deleteView', { displayId: this.display_id, viewId: this.view_id })
@@ -108,6 +139,9 @@ export default {
     maybeCancel: function () {
       // TODO check if data is dirty
       this.$router.back()
+    },
+    removeContentSlotForComponent: function (id) {
+      this.viewData.contentSlots = this.viewData.contentSlots.filter(contentSlot => contentSlot.componentId !== id)
     },
     saveChanges: function () {
       this.saveButtonEnabled = false
