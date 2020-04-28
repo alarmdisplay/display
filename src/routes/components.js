@@ -30,6 +30,30 @@ module.exports = function (componentService) {
   /**
    * @swagger
    * /api/v1/components/:
+   *   get:
+   *     summary: Returns all Components
+   *     produces: application/json
+   *     responses:
+   *       200:
+   *         description: All available Components
+   *         schema:
+   *           type: array
+   *           items:
+   *             $ref: '#/definitions/Component'
+   *     tags:
+   *       - Components
+   */
+  router.get('/', (req, res, next) => {
+    componentService.getAllComponents()
+      .then(components => {
+        res.json(components)
+      })
+      .catch(error => next(error))
+  })
+
+  /**
+   * @swagger
+   * /api/v1/components/:
    *   post:
    *     summary: Create a new Component
    *     produces: application/json
@@ -58,30 +82,6 @@ module.exports = function (componentService) {
         const baseUrl = req.originalUrl.replace(/\/$/, '')
         const newLocation = `${baseUrl}/${component.id}`
         res.set('Location', newLocation).status(201).json(component)
-      })
-      .catch(error => next(error))
-  })
-
-  /**
-   * @swagger
-   * /api/v1/components/:
-   *   get:
-   *     summary: Returns all Components
-   *     produces: application/json
-   *     responses:
-   *       200:
-   *         description: All available Components
-   *         schema:
-   *           type: array
-   *           items:
-   *             $ref: '#/definitions/Component'
-   *     tags:
-   *       - Components
-   */
-  router.get('/', (req, res, next) => {
-    componentService.getAllComponents()
-      .then(components => {
-        res.json(components)
       })
       .catch(error => next(error))
   })
