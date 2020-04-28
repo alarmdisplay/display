@@ -183,7 +183,16 @@ class DisplayService extends EventEmitter {
    * @return {Promise}
    */
   deleteView (viewId) {
-    return this.viewRepository.deleteView(viewId)
+    return this.getView(viewId)
+      .then(view => this.getDisplayById(view.displayId))
+      .then(display => {
+        return this.viewRepository.deleteView(viewId)
+          .then(() => this.emit('views_updated', display))
+          .catch(error => {
+            // We don't really handle this error as it only affects the internal event, but not the update function
+            console.error(error)
+          })
+      })
   }
 
   /**
