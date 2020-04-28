@@ -1,3 +1,5 @@
+const log4js = require('log4js')
+
 const EventEmitter = require('events')
 
 class DisplayService extends EventEmitter {
@@ -13,6 +15,7 @@ class DisplayService extends EventEmitter {
     this.viewRepository = viewRepository
     this.contentSlotRepository = contentSlotRepository
     this.componentService = componentService
+    this.logger = log4js.getLogger('DisplayService')
   }
 
   createDisplay (name, active, clientId, description = '', location = '') {
@@ -188,7 +191,7 @@ class DisplayService extends EventEmitter {
           .then(() => this.emit('views_updated', display))
           .catch(error => {
             // We don't really handle this error as it only affects the internal event, but not the update function
-            console.error(error)
+            this.logger.error(error)
           })
       })
   }
@@ -213,7 +216,7 @@ class DisplayService extends EventEmitter {
               .then(display => this.emit('views_updated', display))
               .catch(error => {
                 // We don't really handle this error as it only affects the internal event, but not the update function
-                console.error(error)
+                this.logger.error(error)
               })
 
             return updatedView
@@ -226,16 +229,16 @@ class DisplayService extends EventEmitter {
       .then(async existingContentSlots => {
         const existingComponents = existingContentSlots.map(contentSlot => contentSlot.componentId)
         const newComponents = newContentSlots.map(contentSlot => contentSlot.componentId)
-        console.log('Existing components', existingComponents)
-        console.log('New components', newComponents)
+        this.logger.debug('Existing components', existingComponents)
+        this.logger.debug('New components', newComponents)
         const removedComponents = existingComponents.filter(componentId => !newComponents.includes(componentId))
         const addedComponents = newComponents.filter(componentId => !existingComponents.includes(componentId))
-        console.log('Removed components', removedComponents)
-        console.log('Added components', addedComponents)
+        this.logger.debug('Removed components', removedComponents)
+        this.logger.debug('Added components', addedComponents)
 
         try {
           for (const componentId of removedComponents) {
-            console.log(`Deleting Content Slot for View ${viewId}, Component ${componentId}`)
+            this.logger.debug(`Deleting Content Slot for View ${viewId}, Component ${componentId}`)
             const contentSlot = await this.contentSlotRepository.getContentSlotForComponentAndView(viewId, componentId)
             await this.contentSlotRepository.deleteContentSlot(contentSlot.id)
           }
@@ -243,13 +246,13 @@ class DisplayService extends EventEmitter {
           for (const contentSlot of newContentSlots) {
             if (addedComponents.includes(contentSlot.componentId)) {
               // Add a new Content Slot for this component
-              console.log(`Adding Content Slot for View ${viewId}, Component ${contentSlot.componentId}`)
+              this.logger.debug(`Adding Content Slot for View ${viewId}, Component ${contentSlot.componentId}`)
               await this.contentSlotRepository.createContentSlot(contentSlot.componentId, viewId, contentSlot.columnStart, contentSlot.rowStart, contentSlot.columnEnd, contentSlot.rowEnd)
               continue
             }
 
             // Update an existing Content Slot
-            console.log(`Updating Content Slot for View ${viewId}, Component ${contentSlot.componentId}`)
+            this.logger.debug(`Updating Content Slot for View ${viewId}, Component ${contentSlot.componentId}`)
             const existingContentSlot = await this.contentSlotRepository.getContentSlotForComponentAndView(viewId, contentSlot.componentId)
             await this.contentSlotRepository.updateContentSlot(existingContentSlot.id, contentSlot.componentId, viewId, contentSlot.columnStart, contentSlot.rowStart, contentSlot.columnEnd, contentSlot.rowEnd)
           }
