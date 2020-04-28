@@ -1,7 +1,5 @@
 const EventEmitter = require('events')
 
-const IllegalArgumentError = require('../errors/IllegalArgumentError')
-
 class DisplayService extends EventEmitter {
   /**
    * @param {DisplayRepository} displayRepository
