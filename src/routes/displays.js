@@ -99,6 +99,8 @@ module.exports = function (displayService) {
    *           type: array
    *           items:
    *             $ref: '#/definitions/Display'
+   *     tags:
+   *       - Displays
    */
   router.get('/', async (req, res, next) => {
     try {
@@ -131,6 +133,8 @@ module.exports = function (displayService) {
    *           Location:
    *             description: The URI of the newly created Display resource
    *             type: string
+   *     tags:
+   *       - Displays
    */
   router.post('/', async (req, res, next) => {
     try {
@@ -166,6 +170,8 @@ module.exports = function (displayService) {
    *           $ref: '#/definitions/Display'
    *       404:
    *         description: The Display could not be found
+   *     tags:
+   *       - Displays
    */
   router.get('/:id', (req, res, next) => {
     displayService.getDisplayById(parseInt(req.params.id))
@@ -203,6 +209,8 @@ module.exports = function (displayService) {
    *           $ref: '#/definitions/Display'
    *       404:
    *         description: Display does not exist and cannot be updated. Please use POST to create a new Display
+   *     tags:
+   *       - Displays
    */
   router.put('/:id', (req, res, next) => {
     displayService.getDisplayById(parseInt(req.params.id))
@@ -234,6 +242,8 @@ module.exports = function (displayService) {
    *     responses:
    *       204:
    *         description: Successfully deleted
+   *     tags:
+   *       - Displays
    */
   router.delete('/:id', async (req, res, next) => {
     try {
@@ -263,6 +273,8 @@ module.exports = function (displayService) {
    *           type: array
    *           items:
    *             $ref: '#/definitions/View'
+   *     tags:
+   *       - Views
    */
   router.get('/:id/views', (req, res, next) => {
     displayService.getDisplayById(parseInt(req.params.id))
@@ -301,6 +313,8 @@ module.exports = function (displayService) {
    *           Location:
    *             description: The URI of the newly created View resource
    *             type: string
+   *     tags:
+   *       - Views
    */
   router.post('/:id/views', (req, res, next) => {
     displayService.getDisplayById(parseInt(req.params.id))
@@ -344,6 +358,8 @@ module.exports = function (displayService) {
    *           $ref: '#/definitions/View'
    *       404:
    *         description: The View could not be found. It can also mean that the Display does not exist.
+   *     tags:
+   *       - Views
    */
   router.get('/:id/views/:viewId', (req, res, next) => {
     displayService.getDisplayById(parseInt(req.params.id))
@@ -387,6 +403,8 @@ module.exports = function (displayService) {
    *           $ref: '#/definitions/View'
    *       404:
    *         description: A View (or Display) with that ID does not exist and cannot be updated. Please use POST to add a View.
+   *     tags:
+   *       - Views
    */
   router.put('/:id/views/:viewId', (req, res, next) => {
     displayService.getDisplayById(parseInt(req.params.id))
@@ -423,6 +441,8 @@ module.exports = function (displayService) {
    *     responses:
    *       204:
    *         description: Successfully deleted
+   *     tags:
+   *       - Views
    */
   router.delete('/:id/views/:viewId', (req, res, next) => {
     displayService.getView(parseInt(req.params.viewId))
