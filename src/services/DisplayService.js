@@ -163,14 +163,22 @@ class DisplayService extends EventEmitter {
         continue
       }
 
-      components.push({
+      const newComponent = {
         name: component.type,
         instanceId: contentSlot.componentId,
         columnStart: contentSlot.columnStart,
         rowStart: contentSlot.rowStart,
         columnEnd: contentSlot.columnEnd,
-        rowEnd: contentSlot.rowEnd
-      })
+        rowEnd: contentSlot.rowEnd,
+        options: {}
+      }
+
+      // Fill the options Object from the Map
+      for (const [key, value] of component.options.entries()) {
+        newComponent.options[key] = value
+      }
+
+      components.push(newComponent)
     }
 
     view.components = components
