@@ -183,29 +183,6 @@ module.exports = function (displayService) {
   /**
    * @swagger
    * /api/v1/displays/{id}:
-   *   delete:
-   *     description: Deletes a single Display
-   *     produces: application/json
-   *     parameters:
-   *       - name: id
-   *         in: path
-   *         type: string
-   *     responses:
-   *       204:
-   *         description: Successfully deleted
-   */
-  router.delete('/:id', async (req, res, next) => {
-    try {
-      await displayService.deleteDisplay(parseInt(req.params.id))
-      res.sendStatus(204)
-    } catch (e) {
-      return next(e)
-    }
-  })
-
-  /**
-   * @swagger
-   * /api/v1/displays/{id}:
    *   put:
    *     description: Updates a single Display
    *     produces: application/json
@@ -242,6 +219,29 @@ module.exports = function (displayService) {
         throw reason
       })
       .catch(reason => next(reason))
+  })
+
+  /**
+   * @swagger
+   * /api/v1/displays/{id}:
+   *   delete:
+   *     description: Deletes a single Display
+   *     produces: application/json
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         type: string
+   *     responses:
+   *       204:
+   *         description: Successfully deleted
+   */
+  router.delete('/:id', async (req, res, next) => {
+    try {
+      await displayService.deleteDisplay(parseInt(req.params.id))
+      res.sendStatus(204)
+    } catch (e) {
+      return next(e)
+    }
   })
 
   /**
