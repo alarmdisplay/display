@@ -90,7 +90,7 @@ module.exports = function (displayService) {
    * @swagger
    * /api/v1/displays/:
    *   get:
-   *     description: Returns all Displays
+   *     summary: Returns all Displays
    *     produces: application/json
    *     responses:
    *       200:
@@ -113,7 +113,7 @@ module.exports = function (displayService) {
    * @swagger
    * /api/v1/displays/:
    *   post:
-   *     description: Create a new Display
+   *     summary: Create a new Display
    *     produces: application/json
    *     parameters:
    *       - name: display
@@ -153,7 +153,7 @@ module.exports = function (displayService) {
    * @swagger
    * /api/v1/displays/{id}:
    *   get:
-   *     description: Returns a single Display
+   *     summary: Returns a single Display
    *     produces: application/json
    *     parameters:
    *       - name: id
@@ -184,7 +184,7 @@ module.exports = function (displayService) {
    * @swagger
    * /api/v1/displays/{id}:
    *   put:
-   *     description: Updates a single Display
+   *     summary: Updates a single Display
    *     produces: application/json
    *     parameters:
    *       - name: id
@@ -225,7 +225,7 @@ module.exports = function (displayService) {
    * @swagger
    * /api/v1/displays/{id}:
    *   delete:
-   *     description: Deletes a single Display
+   *     summary: Deletes a single Display
    *     produces: application/json
    *     parameters:
    *       - name: id
@@ -248,7 +248,7 @@ module.exports = function (displayService) {
    * @swagger
    * /api/v1/displays/{id}/views:
    *   get:
-   *     description: Returns all Views for a Display
+   *     summary: Returns all Views for a Display
    *     produces: application/json
    *     parameters:
    *       - name: id
@@ -278,7 +278,7 @@ module.exports = function (displayService) {
    * @swagger
    * /api/v1/displays/{id}/views:
    *   post:
-   *     description: Adds a new View to a Display
+   *     summary: Adds a new View to a Display
    *     produces: application/json
    *     parameters:
    *       - name: id
@@ -326,7 +326,7 @@ module.exports = function (displayService) {
    * @swagger
    * /api/v1/displays/{displayId}/view/{viewId}:
    *   get:
-   *     description: Returns a single View of a specific Display
+   *     summary: Returns a single View of a specific Display
    *     produces: application/json
    *     parameters:
    *       - name: displayId
@@ -364,7 +364,7 @@ module.exports = function (displayService) {
    * @swagger
    * /api/v1/displays/{displayId}/view/{viewId}:
    *   put:
-   *     description: Updates a single View of a Display
+   *     summary: Updates a single View of a Display
    *     produces: application/json
    *     parameters:
    *       - name: displayId
@@ -409,7 +409,7 @@ module.exports = function (displayService) {
    * @swagger
    * /api/v1/displays/{displayId}/view/{viewId}:
    *   delete:
-   *     description: Removes a single View from a Display
+   *     summary: Removes a single View from a Display
    *     produces: application/json
    *     parameters:
    *       - name: displayId
