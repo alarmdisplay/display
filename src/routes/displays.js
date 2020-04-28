@@ -29,6 +29,61 @@ module.exports = function (displayService) {
    *       location:
    *         type: string
    *         default: ''
+   *
+   *   View:
+   *     type: object
+   *     required:
+   *     - name
+   *     - columns
+   *     - rows
+   *     - screenType
+   *     properties:
+   *       id:
+   *         type: number
+   *         readOnly: true
+   *       name:
+   *         type: string
+   *       columns:
+   *         type: number
+   *         minimum: 1
+   *       rows:
+   *         type: number
+   *         minimum: 1
+   *       displayId:
+   *         type: number
+   *         readOnly: true
+   *       order:
+   *         type: number
+   *         readOnly: true
+   *       screenType:
+   *         type: string
+   *       contentSlots:
+   *         type: array
+   *         items:
+   *           $ref: '#/definitions/ContentSlot'
+   *
+   *   ContentSlot:
+   *     type: object
+   *     required:
+   *       - componentId
+   *       - columnStart
+   *       - rowStart
+   *       - columnEnd
+   *       - rowEnd
+   *     properties:
+   *       componentId:
+   *         type: number
+   *       viewId:
+   *         type: number
+   *         readOnly: true
+   *       columnStart:
+   *         type: number
+   *       rowStart:
+   *         type: number
+   *       columnEnd:
+   *         type: number
+   *       rowEnd:
+   *         type: number
    */
 
   /**
@@ -189,6 +244,26 @@ module.exports = function (displayService) {
       .catch(reason => next(reason))
   })
 
+  /**
+   * @swagger
+   * /api/v1/displays/{id}/views:
+   *   get:
+   *     description: Returns all Views for a Display
+   *     produces: application/json
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         description: The ID of the Display
+   *         required: true
+   *         type: number
+   *     responses:
+   *       200:
+   *         description: All available Views for this Displays
+   *         schema:
+   *           type: array
+   *           items:
+   *             $ref: '#/definitions/View'
+   */
   router.get('/:id/views', (req, res, next) => {
     displayService.getDisplayById(parseInt(req.params.id))
       .then(display => {
@@ -199,6 +274,34 @@ module.exports = function (displayService) {
       .catch(reason => next(reason))
   })
 
+  /**
+   * @swagger
+   * /api/v1/displays/{id}/views:
+   *   post:
+   *     description: Adds a new View to a Display
+   *     produces: application/json
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         description: The ID of the Display
+   *         required: true
+   *         type: number
+   *       - name: view
+   *         in: body
+   *         required: true
+   *         description: Fields for the View resource
+   *         schema:
+   *           $ref: '#/definitions/View'
+   *     responses:
+   *       201:
+   *         description: The newly created View
+   *         schema:
+   *           $ref: '#/definitions/View'
+   *         headers:
+   *           Location:
+   *             description: The URI of the newly created View resource
+   *             type: string
+   */
   router.post('/:id/views', (req, res, next) => {
     displayService.getDisplayById(parseInt(req.params.id))
       .then(display => {
@@ -219,6 +322,29 @@ module.exports = function (displayService) {
       .catch(reason => next(reason))
   })
 
+  /**
+   * @swagger
+   * /api/v1/displays/{displayId}/view/{viewId}:
+   *   get:
+   *     description: Returns a single View of a specific Display
+   *     produces: application/json
+   *     parameters:
+   *       - name: displayId
+   *         in: path
+   *         description: The ID of the Display
+   *         type: number
+   *       - name: viewId
+   *         in: path
+   *         description: The ID of the View
+   *         type: number
+   *     responses:
+   *       200:
+   *         description: The View model
+   *         schema:
+   *           $ref: '#/definitions/View'
+   *       404:
+   *         description: The View could not be found. It can also mean that the Display does not exist.
+   */
   router.get('/:id/views/:viewId', (req, res, next) => {
     displayService.getDisplayById(parseInt(req.params.id))
       .then(display => {
@@ -234,6 +360,34 @@ module.exports = function (displayService) {
       .catch(reason => next(reason))
   })
 
+  /**
+   * @swagger
+   * /api/v1/displays/{displayId}/view/{viewId}:
+   *   put:
+   *     description: Updates a single View of a Display
+   *     produces: application/json
+   *     parameters:
+   *       - name: displayId
+   *         in: path
+   *         description: The ID of the Display
+   *         type: number
+   *       - name: viewId
+   *         in: path
+   *         description: The ID of the View
+   *         type: number
+   *       - name: view
+   *         in: body
+   *         description: Fields for the View resource
+   *         schema:
+   *           $ref: '#/definitions/View'
+   *     responses:
+   *       200:
+   *         description: Successfully updated
+   *         schema:
+   *           $ref: '#/definitions/View'
+   *       404:
+   *         description: A View (or Display) with that ID does not exist and cannot be updated. Please use POST to add a View.
+   */
   router.put('/:id/views/:viewId', (req, res, next) => {
     displayService.getDisplayById(parseInt(req.params.id))
       .then(display => {
@@ -251,6 +405,25 @@ module.exports = function (displayService) {
       .catch(reason => next(reason))
   })
 
+  /**
+   * @swagger
+   * /api/v1/displays/{displayId}/view/{viewId}:
+   *   delete:
+   *     description: Removes a single View from a Display
+   *     produces: application/json
+   *     parameters:
+   *       - name: displayId
+   *         in: path
+   *         description: The ID of the Display
+   *         type: number
+   *       - name: viewId
+   *         in: path
+   *         description: The ID of the View
+   *         type: number
+   *     responses:
+   *       204:
+   *         description: Successfully deleted
+   */
   router.delete('/:id/views/:viewId', (req, res, next) => {
     displayService.getView(parseInt(req.params.viewId))
       .then(view => {
