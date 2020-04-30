@@ -13,15 +13,12 @@ class ComponentService {
   }
 
   createComponent (type, name, options = {}) {
-    return new Promise((resolve, reject) => {
-      if (!componentTypes.includes(type)) {
-        reject(new IllegalArgumentError(`Component type '${type}' is unknown`))
-        return
-      }
-
-      resolve(this.componentRepository.createComponent(type, name))
-    })
-      .then(component => this.setOptionsForComponent(component.id, options || {}))
+    return this.validateComponentType(type)
+      .then(validatedType => this.componentRepository.createComponent(validatedType, name))
+      .then(newComponent => {
+        return this.setOptionsForComponent(newComponent.id, options || {})
+          .then(() => this.getComponent(newComponent.id))
+      })
   }
 
   /**
@@ -105,12 +102,33 @@ class ComponentService {
   /**
    * @param {Number} id
    * @param {String} name
+   * @param {Object} options
    *
    * @return {Promise}
    */
-  updateComponent (id, name) {
+  updateComponent (id, name, options) {
     return this.componentRepository.getComponent(id)
       .then(component => this.componentRepository.updateComponent(component.id, component.type, name))
+      .then(() => this.setOptionsForComponent(id, options))
+      .then(() => this.getComponent(id))
+  }
+
+  /**
+   * Checks if the given Component type is known.
+   *
+   * @param {String} type
+   *
+   * @return {Promise<String>}
+   */
+  validateComponentType (type) {
+    return new Promise((resolve, reject) => {
+      if (!componentTypes.includes(type)) {
+        reject(new IllegalArgumentError(`Component type '${type}' is unknown`))
+        return
+      }
+
+      resolve(type)
+    })
   }
 
   /**
@@ -119,7 +137,8 @@ class ComponentService {
    * @return {Promise}
    */
   deleteComponent (id) {
-    return this.componentRepository.deleteComponent(id)
+    return this.componentOptionRepository.deleteOptionsForComponent(id)
+      .then(() => this.componentRepository.deleteComponent(id))
   }
 }
 

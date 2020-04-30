@@ -117,6 +117,23 @@ class ComponentOptionRepository {
       resolve()
     })
   }
+
+  /**
+   * @param {Number} componentId
+   *
+   * @return {Promise}
+   */
+  deleteOptionsForComponent (componentId) {
+    return new Promise(resolve => {
+      if (!this.options.has(componentId)) {
+        resolve()
+        return
+      }
+
+      this.options.delete(componentId)
+      resolve()
+    })
+  }
 }
 
 module.exports = ComponentOptionRepository

@@ -77,7 +77,7 @@ module.exports = function (componentService) {
    *       - Components
    */
   router.post('/', (req, res, next) => {
-    componentService.createComponent(req.body.type || '', req.body.name || '')
+    componentService.createComponent(req.body.type || '', req.body.name || '', req.body.options)
       .then(component => {
         const baseUrl = req.originalUrl.replace(/\/$/, '')
         const newLocation = `${baseUrl}/${component.id}`
@@ -132,9 +132,13 @@ module.exports = function (componentService) {
    *         description: Fields for the Component resource
    *         schema:
    *           type: object
+   *           required:
+   *           - name
    *           properties:
    *             name:
    *               type: string
+   *             options:
+   *               type: object
    *     responses:
    *       200:
    *         description: Successfully updated
@@ -147,7 +151,7 @@ module.exports = function (componentService) {
    */
   router.put('/:id', (req, res, next) => {
     componentService.getComponent(parseInt(req.params.id))
-      .then(component => componentService.updateComponent(component.id, req.body.name || ''))
+      .then(component => componentService.updateComponent(component.id, req.body.name || '', req.body.options || {}))
       .then(updatedComponent => res.json(updatedComponent))
       .catch(error => next(error))
   })
