@@ -21,6 +21,45 @@
                         <label for="input-name">Name:</label>
                         <input id="input-name" type="text" class="w3-input w3-border" v-model.trim="componentData.name">
                     </p>
+                    <div v-if="componentType === 'AnnouncementList'">
+                        <h3>Optionen</h3>
+                        <p>
+                            <label for="input-options-title">Titel:</label>
+                            <input id="input-options-title" type="text" class="w3-input w3-border" v-model.trim="componentData.options.title">
+                        </p>
+                    </div>
+                    <div v-if="componentType === 'DWDWarningMap'">
+                        <h3>Optionen</h3>
+                        <p>
+                            <label for="select-options-areacode">Bundesland / Region:</label>
+                            <select id="select-options-areacode" v-model="componentData.options.areaCode">
+                                <option value="DE">Deutschland</option>
+                                <option value="DE-BW">Baden-Württemberg</option>
+                                <option value="DE-BY">Bayern</option>
+                                <option value="DE-BE">Berlin</option>
+                                <option value="Bodensee" :disabled="componentData.options.mapType !== 'area'">Bodensee</option>
+                                <option value="DE-BB">Brandenburg</option>
+                                <option value="DE-HB">Bremen</option>
+                                <option value="DE-HH">Hamburg</option>
+                                <option value="DE-HE">Hessen</option>
+                                <option value="DE-MV">Mecklenburg-Vorpommern</option>
+                                <option value="DE-NI">Niedersachsen</option>
+                                <option value="DE-NW">Nordrhein-Westfalen</option>
+                                <option value="DE-RP">Rheinland-Pfalz</option>
+                                <option value="DE-SL">Saarland</option>
+                                <option value="DE-SN">Sachsen</option>
+                                <option value="DE-ST">Sachsen-Anhalt</option>
+                                <option value="DE-SH">Schleswig-Holstein</option>
+                                <option value="DE-TH">Thüringen</option>
+                            </select><br>
+
+                            <label for="select-options-maptype">Kartentyp:</label>
+                            <select id="select-options-maptype" v-model="componentData.options.mapType">
+                                <option value="simple">Karte ohne Legende</option>
+                                <option value="area">Gebietszusammenfassung mit Legende</option>
+                            </select>
+                        </p>
+                    </div>
                     <div class="w3-row">
                         <div class="w3-third w3-padding">
                             <button class="w3-btn w3-block w3-gray" @click="maybeCancel">Abbrechen</button>
@@ -46,6 +85,7 @@ export default {
   data: function () {
     return {
       componentData: null,
+      componentType: null,
       error: null,
       loading: false,
       saveButtonEnabled: false
@@ -64,13 +104,16 @@ export default {
     },
     fetchData: function () {
       this.componentData = null
+      this.componentType = null
       this.loading = true
       this.error = ''
       axios.get('/api/v1/components/' + this.id)
         .then(response => {
           this.componentData = {
-            name: response.data.name || ''
+            name: response.data.name || '',
+            options: response.data.options || {}
           }
+          this.componentType = response.data.type
           this.saveButtonEnabled = true
         })
         .catch(error => {
