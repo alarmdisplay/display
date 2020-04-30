@@ -25,7 +25,7 @@
                 return `${this.baseUrl}?${this.cacheBustingQuery}`;
             },
             mapType: function () {
-                return this.options.mapType || 'country';
+                return this.options.mapType || 'area';
             },
             schilderCode: function () {
 
