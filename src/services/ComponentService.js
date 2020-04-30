@@ -1,15 +1,20 @@
+const EventEmitter = require('events')
+const log4js = require('log4js')
+
 const IllegalArgumentError = require('../errors/IllegalArgumentError')
 
 const componentTypes = ['AnnouncementList', 'Clock', 'DWDWarningMap']
 
-class ComponentService {
+class ComponentService extends EventEmitter {
   /**
    * @param {ComponentRepository} componentRepository
    * @param {ComponentOptionRepository} componentOptionRepository
    */
   constructor (componentRepository, componentOptionRepository) {
+    super()
     this.componentRepository = componentRepository
     this.componentOptionRepository = componentOptionRepository
+    this.logger = log4js.getLogger('ComponentService')
   }
 
   createComponent (type, name, options = {}) {
@@ -110,7 +115,10 @@ class ComponentService {
     return this.componentRepository.getComponent(id)
       .then(component => this.componentRepository.updateComponent(component.id, component.type, name))
       .then(() => this.setOptionsForComponent(id, options))
-      .then(() => this.getComponent(id))
+      .then(() => {
+        this.emit('component_updated', id)
+        return this.getComponent(id)
+      })
   }
 
   /**
@@ -137,8 +145,11 @@ class ComponentService {
    * @return {Promise}
    */
   deleteComponent (id) {
+    // TODO reject if the component is still used
     return this.componentOptionRepository.deleteOptionsForComponent(id)
-      .then(() => this.componentRepository.deleteComponent(id))
+      .then(() => {
+        return this.componentRepository.deleteComponent(id)
+      })
   }
 }
 

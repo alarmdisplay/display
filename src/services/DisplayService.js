@@ -38,6 +38,19 @@ class DisplayService extends EventEmitter {
     return this.displayRepository.getDisplayByClientId(clientId)
   }
 
+  /**
+   * @param {Number} componentId
+   *
+   * @return {Promise<Object[]>}
+   */
+  getDisplaysContainingComponent (componentId) {
+    return this.contentSlotRepository.getContentSlotsByComponentId(componentId)
+      .then(contentSlots => contentSlots.map(contentSlot => contentSlot.viewId))
+      .then(viewIds => this.viewRepository.getViewsById(viewIds))
+      .then(views => views.map(view => view.displayId))
+      .then(displayIds => this.displayRepository.getDisplaysById(displayIds))
+  }
+
   deleteDisplay (displayId) {
     return this.displayRepository.deleteDisplay(displayId)
       .then(displayId => {

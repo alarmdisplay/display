@@ -72,7 +72,7 @@ connectDatabase(process.env.MONGODB_URI)
     const port = process.env.PORT || 3000
 
     const socketServer = new SocketServer()
-    const socketController = new SocketController(socketServer, displayService)
+    const socketController = new SocketController(socketServer, displayService, componentService)
     socketController.registerListeners()
     socketServer.startListening(server)
 

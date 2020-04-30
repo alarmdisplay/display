@@ -58,6 +58,26 @@ class ContentSlotRepository {
   }
 
   /**
+   * Finds and returns Content Slot objects that contain a certain Component.
+   *
+   * @param {Number} componentId The ID of the Component
+   *
+   * @return {Promise<Object[]>}
+   */
+  getContentSlotsByComponentId (componentId) {
+    return new Promise((resolve) => {
+      const contentSlots = []
+      for (const contentSlot of this.contentSlots.values()) {
+        if (contentSlot.componentId === componentId) {
+          contentSlots.push(contentSlot)
+        }
+      }
+
+      resolve(contentSlots)
+    })
+  }
+
+  /**
    * Finds and returns Content Slot objects that belong to a certain View.
    *
    * @param {Number} viewId The ID of the View

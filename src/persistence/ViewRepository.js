@@ -59,6 +59,26 @@ class ViewRepository {
   }
 
   /**
+   * Finds and returns View objects for a number of View IDs.
+   *
+   * @param {Number[]} viewIds The IDs of the Views
+   *
+   * @return {Promise<Object[]>}
+   */
+  getViewsById (viewIds) {
+    return new Promise((resolve) => {
+      const views = []
+      for (const view of this.views.values()) {
+        if (viewIds.includes(view.id)) {
+          views.push(view)
+        }
+      }
+
+      resolve(views)
+    })
+  }
+
+  /**
    * Finds and returns View objects for a certain Display.
    *
    * @param {Number} displayId The ID of the Display
