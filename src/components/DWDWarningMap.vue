@@ -11,9 +11,7 @@
             },
             baseUrl: function () {
                 switch (this.mapType) {
-                    case 'country':
-                        return 'https://www.dwd.de/DWD/warnungen/warnapp_gemeinden/json/warnungen_gemeinde_map_de.png';
-                    case 'state':
+                    case 'simple':
                         return `https://www.dwd.de/DWD/warnungen/warnapp_gemeinden/json/warnungen_gemeinde_map_${this.stateCode}.png`;
                     case 'area':
                         return `https://www.dwd.de/DWD/warnungen/warnstatus/Schilder${this.schilderCode}.jpg`;
@@ -64,6 +62,7 @@
             stateCode: function () {
                 switch (this.areaCode) {
                     case 'DE-BW':
+                    case 'Bodensee':
                         return 'baw';
                     case 'DE-BY':
                         return 'bay';
@@ -112,8 +111,8 @@
              * Possible options:
              * - areaCode: An ISO 3166-2 code for one of the 16 german states, 'DE' for entire Germany, or (only with
              *   mapType = area) 'Bodensee' for the Bodensee region
-             * - mapType: Can be 'country' for a map of entire Germany, 'state' for a map of a single state, or 'area'
-             *   for a map of one or more states including more detail about the warnings
+             * - mapType: Can be 'simple' for a map of a single state or entire Germany, or 'area' for a map of one or
+             *   more states including more detail about the warnings
              */
             options: Object
         }
