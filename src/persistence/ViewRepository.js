@@ -1,3 +1,5 @@
+const NotFoundError = require('../errors/NotFoundError')
+
 class ViewRepository {
   constructor () {
     this.views = new Map()
@@ -49,7 +51,7 @@ class ViewRepository {
   getViewById (id) {
     return new Promise((resolve, reject) => {
       if (!this.views.has(id)) {
-        return reject(new Error(`No View with ID ${id} found`))
+        return reject(new NotFoundError(`No View with ID ${id} found`))
       }
 
       resolve(this.views.get(id))
@@ -57,7 +59,27 @@ class ViewRepository {
   }
 
   /**
-   * Finds and returns a View object with a certain Display ID.
+   * Finds and returns View objects for a number of View IDs.
+   *
+   * @param {Number[]} viewIds The IDs of the Views
+   *
+   * @return {Promise<Object[]>}
+   */
+  getViewsById (viewIds) {
+    return new Promise((resolve) => {
+      const views = []
+      for (const view of this.views.values()) {
+        if (viewIds.includes(view.id)) {
+          views.push(view)
+        }
+      }
+
+      resolve(views)
+    })
+  }
+
+  /**
+   * Finds and returns View objects for a certain Display.
    *
    * @param {Number} displayId The ID of the Display
    *
@@ -68,6 +90,32 @@ class ViewRepository {
       const views = []
       for (const view of this.views.values()) {
         if (view.displayId === displayId) {
+          views.push(view)
+        }
+      }
+
+      // Sort the views by order property
+      views.sort((a, b) => {
+        return a.order - b.order
+      })
+
+      resolve(views)
+    })
+  }
+
+  /**
+   * Finds and returns View objects for a certain Display and of a certain screen type.
+   *
+   * @param {Number} displayId The ID of the Display
+   * @param {String} screenType An identifier for the type of screen the View is used for (e.g. IdleScreen)
+   *
+   * @return {Promise}
+   */
+  getViewsByDisplayIdAndScreenType (displayId, screenType) {
+    return new Promise((resolve) => {
+      const views = []
+      for (const view of this.views.values()) {
+        if (view.displayId === displayId && view.screenType === screenType) {
           views.push(view)
         }
       }
@@ -110,12 +158,12 @@ class ViewRepository {
    * @param {Number} order A number that defines the order of Views per screenType of a Display
    * @param {String} screenType An identifier for the type of screen the View is used for (e.g. IdleScreen)
    *
-   * @return {Promise}
+   * @return {Promise<Object>}
    */
   updateView (id, name, columns, rows, displayId, order, screenType) {
     return new Promise((resolve, reject) => {
       if (!this.views.has(id)) {
-        return reject(new Error(`No View with ID ${id} found`))
+        return reject(new NotFoundError(`No View with ID ${id} found`))
       }
 
       const view = {

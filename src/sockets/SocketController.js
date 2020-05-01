@@ -4,10 +4,12 @@ class SocketController {
   /**
    * @param {SocketServer} socketServer
    * @param {DisplayService} displayService
+   * @param {ComponentService} componentService
    */
-  constructor (socketServer, displayService) {
+  constructor (socketServer, displayService, componentService) {
     this.socketServer = socketServer
     this.displayService = displayService
+    this.componentService = componentService
     this.logger = log4js.getLogger('SocketController')
   }
 
@@ -28,6 +30,19 @@ class SocketController {
       this.logger.debug(`Display ${displayId} has been deleted`)
       // TODO deauthenticate Display
     })
+    this.displayService.on('views_updated', display => {
+      this.logger.debug(`Views for Display ${display.id} have been updated`)
+      return this.pushConfigToDisplay(display)
+    })
+    this.componentService.on('component_updated', componentId => {
+      this.logger.debug(`Component ${componentId} has been updated`)
+      this.displayService.getDisplaysContainingComponent(componentId)
+        .then(async displays => {
+          for (const display of displays) {
+            await this.pushConfigToDisplay(display)
+          }
+        })
+    })
   }
 
   onSocketConnected (clientId) {
@@ -43,17 +58,26 @@ class SocketController {
         }
 
         this.socketServer.authenticateDisplay(clientId)
-
-        return this.displayService.getViewsForDisplay(display.id)
-          .then(views => {
-            this.socketServer.pushConfigToDisplay(clientId, {
-              views: views
-            })
-          })
+        return this.pushConfigToDisplay(display)
       })
       .catch(reason => {
         const message = (reason instanceof Error) ? reason.message : reason
         this.socketServer.deauthenticateDisplay(clientId, message)
+      })
+  }
+
+  /**
+   * @param {Object} display
+   *
+   * @return {Promise}
+   */
+  pushConfigToDisplay (display) {
+    this.logger.debug(`Pushing config to Display '${display.name}'`)
+    return this.displayService.getViewsForDisplayWithComponents(display.id)
+      .then(views => {
+        this.socketServer.pushConfigToDisplay(display.clientId, {
+          views: views
+        })
       })
   }
 }

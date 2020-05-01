@@ -64,6 +64,26 @@ class DisplayRepository {
   }
 
   /**
+   * Finds and returns Display objects for a number of Display IDs.
+   *
+   * @param {Number[]} displayIds The IDs of the Displays
+   *
+   * @return {Promise<Object[]>}
+   */
+  getDisplaysById (displayIds) {
+    return new Promise((resolve) => {
+      const displays = []
+      for (const display of this.displays.values()) {
+        if (displayIds.includes(display.id)) {
+          displays.push(display)
+        }
+      }
+
+      resolve(displays)
+    })
+  }
+
+  /**
    * @param {String} clientId
    */
   getDisplayByClientId (clientId) {
