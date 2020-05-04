@@ -54,14 +54,14 @@ let vm = new Vue({
       this.views = [];
     },
     updateDataSource: function (id, data) {
-      this.content[id] = data;
+      this.$set(this.content, id, data)
     },
     setViews: function (views) {
       if (!Array.isArray(views)) {
         return
       }
 
-      this.views = views.filter(view => {
+      const validViews = views.filter(view => {
         try {
           validateView(view);
         } catch (e) {
@@ -72,6 +72,18 @@ let vm = new Vue({
         return true;
       });
 
+      // Ensure each Component has its entry in the content, so the Components can watch their content entry
+      validViews.forEach(view => {
+        let componentIds = view.components.map(component => component.instanceId)
+        componentIds.forEach(id => {
+          if (!this.content[id]) {
+            this.$set(this.content, id, undefined)
+          }
+        })
+      })
+
+      // Update the views
+      this.views = validViews
       console.log('views is now', this.views)
     },
     hideSplashScreen: function () {
@@ -152,9 +164,18 @@ function setupSocket(clientId) {
     }
   });
 
-  socket.on('update_data_source', function(update) {
-    console.log('Received data source update', update);
-    vm.updateDataSource(update.id, update.data);
+  socket.on('update_content', function(content) {
+    console.log('Received content update', content);
+    Object.getOwnPropertyNames(content).forEach(id => {
+      const instanceId = parseInt(id)
+      if (isNaN(instanceId)) {
+        console.error(`Instance ID ${id} is not numeric`)
+        return
+      }
+
+      console.log(`Setting content for component ${instanceId} to ${content}`);
+      vm.updateDataSource(instanceId, content[id]);
+    })
   });
 }
 
