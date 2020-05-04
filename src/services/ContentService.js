@@ -34,7 +34,6 @@ class ContentService extends EventEmitter {
         for (const component of components) {
           content[component.id] = await this.getContentForComponent(component)
         }
-        console.log(content)
         return content
       })
   }
