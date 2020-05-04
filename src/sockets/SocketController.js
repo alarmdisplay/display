@@ -51,6 +51,11 @@ class SocketController {
           }
         })
     })
+    this.contentService.on('component_content_updated', componentId => {
+      this.logger.debug(`Content for Component ${componentId} has been updated`)
+      this.displayService.getDisplaysContainingComponent(componentId)
+        .then(displays => Promise.all(displays.map(display => this.pushContentToDisplay(display))))
+    })
   }
 
   onSocketConnected (clientId) {
