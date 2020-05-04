@@ -24,6 +24,7 @@ class SocketController {
         this.checkAuthentication(display.clientId)
           .then(display => this.pushConfigToDisplay(display))
           .then(display => this.pushContentToDisplay(display))
+          .catch(reason => this.logger.error(reason))
       }
     })
     this.displayService.on('display_updated', display => {
@@ -31,6 +32,7 @@ class SocketController {
       this.checkAuthentication(display.clientId)
         .then(display => this.pushConfigToDisplay(display))
         .then(display => this.pushContentToDisplay(display))
+        .catch(reason => this.logger.error(reason))
     })
     this.displayService.on('display_deleted', displayId => {
       this.logger.debug(`Display ${displayId} has been deleted`)
@@ -40,14 +42,19 @@ class SocketController {
       this.logger.debug(`Views for Display ${display.id} have been updated`)
       this.pushConfigToDisplay(display)
         .then(display => this.pushContentToDisplay(display))
+        .catch(reason => this.logger.error(reason))
     })
     this.componentService.on('component_updated', componentId => {
       this.logger.debug(`Component ${componentId} has been updated`)
       this.displayService.getDisplaysContainingComponent(componentId)
         .then(async displays => {
           for (const display of displays) {
-            await this.pushConfigToDisplay(display)
-            await this.pushContentToDisplay(display)
+            try {
+              await this.pushConfigToDisplay(display)
+              await this.pushContentToDisplay(display)
+            } catch (e) {
+              this.logger.error(e)
+            }
           }
         })
     })
@@ -55,6 +62,7 @@ class SocketController {
       this.logger.debug(`Content for Component ${componentId} has been updated`)
       this.displayService.getDisplaysContainingComponent(componentId)
         .then(displays => Promise.all(displays.map(display => this.pushContentToDisplay(display))))
+        .catch(reason => this.logger.error(reason))
     })
   }
 
@@ -63,6 +71,7 @@ class SocketController {
     this.checkAuthentication(clientId)
       .then(display => this.pushConfigToDisplay(display))
       .then(display => this.pushContentToDisplay(display))
+      .catch(reason => this.logger.error(reason))
   }
 
   /**
