@@ -31,7 +31,15 @@ class ComponentRepository {
    */
   getAllComponents () {
     return new Promise(resolve => {
-      const components = Array.from(this.components.values())
+      const components = []
+      this.components.forEach(storedComponent => {
+        // Clone each component, so each recipient modifies their own copy
+        const component = {}
+        for (const prop of Object.getOwnPropertyNames(storedComponent)) {
+          component[prop] = storedComponent[prop]
+        }
+        components.push(component)
+      })
       resolve(components)
     })
   }
@@ -49,7 +57,13 @@ class ComponentRepository {
         return reject(new NotFoundError(`No Component with ID ${id} found`))
       }
 
-      resolve(this.components.get(id))
+      // Clone the component, so each recipient modifies their own copy
+      const component = {}
+      const storedComponent = this.components.get(id)
+      for (const prop of Object.getOwnPropertyNames(storedComponent)) {
+        component[prop] = storedComponent[prop]
+      }
+      resolve(component)
     })
   }
 
