@@ -20,11 +20,13 @@ class SocketController {
       if (this.socketServer.isDisplayPending(display.clientId)) {
         // Try to authenticate again.
         this.checkAuthentication(display.clientId)
+          .then(display => this.pushConfigToDisplay(display))
       }
     })
     this.displayService.on('display_updated', display => {
       this.logger.debug(`Display ${display.id} has been updated`)
       this.checkAuthentication(display.clientId)
+        .then(display => this.pushConfigToDisplay(display))
     })
     this.displayService.on('display_deleted', displayId => {
       this.logger.debug(`Display ${displayId} has been deleted`)
@@ -48,17 +50,23 @@ class SocketController {
   onSocketConnected (clientId) {
     this.logger.debug(`Client ${clientId} wants to connect`)
     this.checkAuthentication(clientId)
+      .then(display => this.pushConfigToDisplay(display))
   }
 
+  /**
+   * @param {String} clientId
+   *
+   * @return {Promise}
+   */
   checkAuthentication (clientId) {
-    this.displayService.getDisplayByClientId(clientId)
+    return this.displayService.getDisplayByClientId(clientId)
       .then(display => {
         if (!display.active) {
           throw new Error('Display not active')
         }
 
         this.socketServer.authenticateDisplay(clientId)
-        return this.pushConfigToDisplay(display)
+        return display
       })
       .catch(reason => {
         const message = (reason instanceof Error) ? reason.message : reason
