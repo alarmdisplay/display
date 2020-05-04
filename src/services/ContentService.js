@@ -2,24 +2,20 @@ const EventEmitter = require('events')
 
 class ContentService extends EventEmitter {
   /**
-   * @param {ComponentService} componentService
+   * @param {AnnouncementService} announcementService
    */
-  constructor (componentService) {
+  constructor (announcementService) {
     super()
-    this.componentService = componentService
+    this.announcementService = announcementService
   }
 
   getContentForComponent (component) {
-    return new Promise(resolve => {
-      switch (component.type) {
-        case 'AnnouncementList':
-          // Return a random number of announcements on each call
-          resolve(Array(Math.floor(Math.random() * 5)).fill({ title: 'Die Überschrift', text: 'Ein bisschen Text', issued: new Date() }))
-          return
-        default:
-          resolve()
-      }
-    })
+    switch (component.type) {
+      case 'AnnouncementList':
+        return this.announcementService.getAllAnnouncements()
+      default:
+        return Promise.resolve()
+    }
   }
 
   /**
