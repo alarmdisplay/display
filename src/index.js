@@ -60,19 +60,22 @@ connectDatabase(process.env.MONGODB_URI)
   .then(() => {
     const ComponentRepository = require('./persistence/ComponentRepository')
     const ComponentOptionRepository = require('./persistence/ComponentOptionRepository')
+    const ContentService = require('./services/ContentService')
     const ContentSlotRepository = require('./persistence/ContentSlotRepository')
     const DisplayRepository = require('./persistence/DisplayRepository')
     const ViewRepository = require('./persistence/ViewRepository')
 
     const componentService = new ComponentService(new ComponentRepository(), new ComponentOptionRepository())
     const displayService = new DisplayService(new DisplayRepository(), new ViewRepository(), new ContentSlotRepository(), componentService)
+    const contentService = new ContentService(componentService)
+
     const app = require('./app')(displayService, componentService)
     const server = require('http').createServer(app)
 
     const port = process.env.PORT || 3000
 
     const socketServer = new SocketServer()
-    const socketController = new SocketController(socketServer, displayService, componentService)
+    const socketController = new SocketController(socketServer, displayService, componentService, contentService)
     socketController.registerListeners()
     socketServer.startListening(server)
 

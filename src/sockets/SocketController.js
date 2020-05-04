@@ -5,11 +5,13 @@ class SocketController {
    * @param {SocketServer} socketServer
    * @param {DisplayService} displayService
    * @param {ComponentService} componentService
+   * @param {ContentService} contentService
    */
-  constructor (socketServer, displayService, componentService) {
+  constructor (socketServer, displayService, componentService, contentService) {
     this.socketServer = socketServer
     this.displayService = displayService
     this.componentService = componentService
+    this.contentService = contentService
     this.logger = log4js.getLogger('SocketController')
   }
 
@@ -21,12 +23,14 @@ class SocketController {
         // Try to authenticate again.
         this.checkAuthentication(display.clientId)
           .then(display => this.pushConfigToDisplay(display))
+          .then(display => this.pushContentToDisplay(display))
       }
     })
     this.displayService.on('display_updated', display => {
       this.logger.debug(`Display ${display.id} has been updated`)
       this.checkAuthentication(display.clientId)
         .then(display => this.pushConfigToDisplay(display))
+        .then(display => this.pushContentToDisplay(display))
     })
     this.displayService.on('display_deleted', displayId => {
       this.logger.debug(`Display ${displayId} has been deleted`)
@@ -34,7 +38,8 @@ class SocketController {
     })
     this.displayService.on('views_updated', display => {
       this.logger.debug(`Views for Display ${display.id} have been updated`)
-      return this.pushConfigToDisplay(display)
+      this.pushConfigToDisplay(display)
+        .then(display => this.pushContentToDisplay(display))
     })
     this.componentService.on('component_updated', componentId => {
       this.logger.debug(`Component ${componentId} has been updated`)
@@ -42,6 +47,7 @@ class SocketController {
         .then(async displays => {
           for (const display of displays) {
             await this.pushConfigToDisplay(display)
+            await this.pushContentToDisplay(display)
           }
         })
     })
@@ -51,6 +57,7 @@ class SocketController {
     this.logger.debug(`Client ${clientId} wants to connect`)
     this.checkAuthentication(clientId)
       .then(display => this.pushConfigToDisplay(display))
+      .then(display => this.pushContentToDisplay(display))
   }
 
   /**
@@ -77,7 +84,7 @@ class SocketController {
   /**
    * @param {Object} display
    *
-   * @return {Promise}
+   * @return {Promise<Object>}
    */
   pushConfigToDisplay (display) {
     this.logger.debug(`Pushing config to Display '${display.name}'`)
@@ -86,6 +93,21 @@ class SocketController {
         this.socketServer.pushConfigToDisplay(display.clientId, {
           views: views
         })
+        return display
+      })
+  }
+
+  /**
+   * @param {Object} display
+   *
+   * @return {Promise}
+   */
+  pushContentToDisplay (display) {
+    this.logger.debug(`Pushing content to Display '${display.name}'`)
+    return this.displayService.getComponentsForDisplay(display.id)
+      .then(components => this.contentService.getContentForComponents(components))
+      .then(content => {
+        this.socketServer.pushContentToDisplay(display.clientId, content)
       })
   }
 }

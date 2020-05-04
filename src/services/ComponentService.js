@@ -73,12 +73,29 @@ class ComponentService extends EventEmitter {
   /**
    * @param {Number} id
    *
-   * @return {Promise}
+   * @return {Promise<Object>}
    */
   getComponent (id) {
     return Promise.all([this.componentRepository.getComponent(id), this.componentOptionRepository.getOptionsForComponent(id)])
       .then(([component, options]) => {
         return this.enrichComponentWithOptions(component, options)
+      })
+  }
+
+  /**
+   * @param {Number[]} ids
+   *
+   * @return {Promise<Object[]>}
+   */
+  getComponents (ids) {
+    return this.componentRepository.getComponents(ids)
+      .then(async components => {
+        const enrichedComponents = []
+        for (const component of components) {
+          const options = await this.componentOptionRepository.getOptionsForComponent(component.id)
+          enrichedComponents.push(this.enrichComponentWithOptions(component, options))
+        }
+        return enrichedComponents
       })
   }
 
