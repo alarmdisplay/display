@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 // Import components
 import AnnouncementCreateForm from '@/components/content/announcements/CreateForm'
+import AnnouncementEditForm from '@/components/content/announcements/EditForm'
 import AnnouncementList from '@/components/content/announcements/List'
 import ComponentCreateForm from '@/components/ComponentCreateForm'
 import ComponentEditForm from '@/components/ComponentEditForm'
@@ -91,6 +92,10 @@ const store = new Vuex.Store({
           return newDisplay
         })
     },
+    deleteAnnouncement (context, announcementId) {
+      return axios.delete('/api/v1/announcements/' + announcementId)
+        .then(() => context.dispatch('fetchTheAnnouncements'))
+    },
     deleteComponent (context, componentId) {
       return axios.delete('/api/v1/components/' + componentId)
         .then(() => context.dispatch('fetchTheComponents'))
@@ -119,6 +124,10 @@ const store = new Vuex.Store({
       return axios.get(`/api/v1/displays/${displayId}/views`)
         .then(response => context.commit('setViews', { displayId: displayId, views: response.data }))
     },
+    updateAnnouncement (context, update) {
+      return axios.put(`/api/v1/announcements/${update.id}`, update.data)
+        .then(() => context.dispatch('fetchTheAnnouncements'))
+    },
     updateComponent (context, update) {
       return axios.put(`/api/v1/components/${update.id}`, update.data)
         .then(() => context.dispatch('fetchTheComponents'))
@@ -135,6 +144,7 @@ const routes = [
   { path: '/', component: Overview },
   { path: '/announcements', component: AnnouncementList },
   { path: '/announcements/new', component: AnnouncementCreateForm },
+  { path: '/announcements/:id', component: AnnouncementEditForm, props: true },
   { path: '/components', component: ComponentList },
   { path: '/components/new', component: ComponentCreateForm },
   { path: '/components/:id', component: ComponentEditForm, props: true },
