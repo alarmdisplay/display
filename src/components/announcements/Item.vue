@@ -1,6 +1,6 @@
 <template>
     <li>
-        <span class="title">{{ announcement.title }}</span><br>
+        <span class="title" v-if="announcement.title !== ''">{{ announcement.title }}</span>
         <span class="text">{{ announcement.text }}</span>
         <div class="date">{{ issueDate }}</div>
     </li>
@@ -37,7 +37,9 @@
     }
 
     .title {
+        display: block;
         font-size: large;
         font-weight: bold;
+        margin-bottom: 0.2em;
     }
 </style>
