@@ -2,7 +2,7 @@
     <li>
         <span class="title" v-if="announcement.title !== ''">{{ announcement.title }}</span>
         <span class="text">{{ announcement.text }}</span>
-        <div class="date">{{ issueDate }}</div>
+        <div class="date">{{ theDate }}</div>
     </li>
 </template>
 
@@ -10,8 +10,8 @@
     export default {
         name: "Item",
         computed: {
-            issueDate: function () {
-                let date = new Date(this.announcement.issued);
+            theDate: function () {
+                let date = new Date(this.announcement.updatedAt || this.announcement.createdAt);
                 if (isNaN(date.valueOf())) {
                     return ''
                 }
