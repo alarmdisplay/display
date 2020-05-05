@@ -1,5 +1,5 @@
 <template>
-    <li>
+    <li :class="getListItemClass()">
         <span class="title" v-if="announcement.title !== ''">{{ announcement.title }}</span>
         <span class="text">{{ announcement.text }}</span>
         <div class="date">{{ theDate }}</div>
@@ -18,6 +18,11 @@
                 return this.$moment(date).format("LL")
             }
         },
+        methods: {
+            getListItemClass: function () {
+                return this.announcement.important ? 'important' : ''
+            }
+        },
         props: {
             announcement: Object
         }
@@ -30,6 +35,10 @@
         border-bottom: 1px solid #999;
         list-style: none;
         padding: 1em;
+    }
+
+    li.important {
+        background-color: #c7ba53;
     }
 
     .date {
