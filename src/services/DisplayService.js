@@ -157,6 +157,18 @@ class DisplayService extends EventEmitter {
       })
   }
 
+  getComponentsForDisplay (displayId) {
+    return this.getViewsForDisplay(displayId)
+      .then(async views => {
+        const componentIds = new Set()
+        for (const view of views) {
+          const contentSlots = await this.contentSlotRepository.getContentSlotsByViewId(view.id)
+          contentSlots.forEach(contentSlot => componentIds.add(contentSlot.componentId))
+        }
+        return this.componentService.getComponents(Array.from(componentIds.values()))
+      })
+  }
+
   /**
    * Resolves the configured Content Slots to the respective components. This format is required by the Displays.
    *

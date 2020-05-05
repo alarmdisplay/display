@@ -3,8 +3,6 @@ const log4js = require('log4js')
 
 const IllegalArgumentError = require('../errors/IllegalArgumentError')
 
-const componentTypes = ['AnnouncementList', 'Clock', 'DWDWarningMap']
-
 class ComponentService extends EventEmitter {
   /**
    * @param {ComponentRepository} componentRepository
@@ -14,6 +12,10 @@ class ComponentService extends EventEmitter {
     super()
     this.componentRepository = componentRepository
     this.componentOptionRepository = componentOptionRepository
+    this.componentTypes = new Map()
+    this.componentTypes.set('AnnouncementList', { contentType: 'Announcement' })
+    this.componentTypes.set('Clock', { contentType: '' })
+    this.componentTypes.set('DWDWarningMap', { contentType: '' })
     this.logger = log4js.getLogger('ComponentService')
   }
 
@@ -73,13 +75,51 @@ class ComponentService extends EventEmitter {
   /**
    * @param {Number} id
    *
-   * @return {Promise}
+   * @return {Promise<Object>}
    */
   getComponent (id) {
     return Promise.all([this.componentRepository.getComponent(id), this.componentOptionRepository.getOptionsForComponent(id)])
       .then(([component, options]) => {
         return this.enrichComponentWithOptions(component, options)
       })
+  }
+
+  getComponentTypesForContentType (contentType) {
+    return new Promise((resolve, reject) => {
+      if (!contentType) {
+        reject(new Error('Invalid content type'))
+        return
+      }
+
+      const components = []
+      this.componentTypes.forEach((properties, identifier) => {
+        if (properties.contentType === contentType) {
+          components.push(identifier)
+        }
+      })
+      resolve(components)
+    })
+  }
+
+  /**
+   * @param {Number[]} ids
+   *
+   * @return {Promise<Object[]>}
+   */
+  getComponents (ids) {
+    return this.componentRepository.getComponents(ids)
+      .then(async components => {
+        const enrichedComponents = []
+        for (const component of components) {
+          const options = await this.componentOptionRepository.getOptionsForComponent(component.id)
+          enrichedComponents.push(this.enrichComponentWithOptions(component, options))
+        }
+        return enrichedComponents
+      })
+  }
+
+  getComponentsForComponentType (componentType) {
+    return this.componentRepository.getComponentsForComponentType(componentType)
   }
 
   setOptionsForComponent (componentId, options = {}) {
@@ -130,7 +170,7 @@ class ComponentService extends EventEmitter {
    */
   validateComponentType (type) {
     return new Promise((resolve, reject) => {
-      if (!componentTypes.includes(type)) {
+      if (!this.componentTypes.has(type)) {
         reject(new IllegalArgumentError(`Component type '${type}' is unknown`))
         return
       }

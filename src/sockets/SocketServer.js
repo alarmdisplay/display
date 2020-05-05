@@ -64,6 +64,17 @@ class SocketServer extends EventEmitter {
     this.sendMessageToDisplay(clientId, 'update_config', config)
   }
 
+  /**
+   * Pushes the content for Components to a Display.
+   *
+   * @param {String} clientId The Client ID
+   * @param {Object} content An object with Component instance IDs as property names and their respective content as
+   *                         property value.
+   */
+  pushContentToDisplay (clientId, content) {
+    this.sendMessageToDisplay(clientId, 'update_content', content)
+  }
+
   sendMessageToDisplay (identifier, eventName, message) {
     const socket = this.sockets.get(identifier)
     if (!socket) {
