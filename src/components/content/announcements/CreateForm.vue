@@ -14,6 +14,10 @@
                     <textarea id="textarea-text" class="w3-input w3-border" v-model.trim="text"></textarea>
                 </p>
                 <p>
+                    <input id="input-important" type="checkbox" class="w3-check" v-model="important">
+                    <label for="input-important">Diese Ank&uuml;ndigung als wichtig markieren</label>
+                </p>
+                <p>
                     <button class="w3-btn w3-gray" @click="maybeCancel">Abbrechen</button>
                     <button id="button-create" class="w3-btn w3-blue" v-on:click="createAnnouncement" :disabled="!createButtonEnabled">Anlegen</button>
                 </p>
@@ -61,5 +65,9 @@ export default {
 <style scoped>
     #button-create {
         float: right;
+    }
+
+    #input-important {
+        margin-right: 0.5em;
     }
 </style>
