@@ -7,6 +7,9 @@ class ContentService extends EventEmitter {
   constructor (announcementService) {
     super()
     this.announcementService = announcementService
+    this.announcementService.on('created', () => this.emit('content_changed', 'Announcement'))
+    this.announcementService.on('updated', () => this.emit('content_changed', 'Announcement'))
+    this.announcementService.on('deleted', () => this.emit('content_changed', 'Announcement'))
   }
 
   getContentForComponent (component) {

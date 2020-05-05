@@ -1,10 +1,12 @@
+const EventEmitter = require('events')
 const log4js = require('log4js')
 
-class AnnouncementService {
+class AnnouncementService extends EventEmitter {
   /**
    * @param {AnnouncementRepository} announcementRepository
    */
   constructor (announcementRepository) {
+    super()
     this.announcementRepository = announcementRepository
     this.logger = log4js.getLogger('AnnouncementService')
   }
@@ -19,7 +21,7 @@ class AnnouncementService {
   createAnnouncement (title, text, important = false) {
     return this.announcementRepository.create(title, text, important)
       .then(announcement => {
-        this.logger.debug('Announcement created', announcement)
+        this.emit('created', announcement.id)
         return announcement
       })
   }
@@ -50,6 +52,10 @@ class AnnouncementService {
    */
   updateAnnouncement (id, title, text, important) {
     return this.announcementRepository.updateOne(id, title, text, important)
+      .then(announcement => {
+        this.emit('updated', announcement.id)
+        return announcement
+      })
   }
 
   /**
@@ -59,6 +65,10 @@ class AnnouncementService {
    */
   deleteAnnouncement (id) {
     return this.announcementRepository.deleteOne(id)
+      .then(result => {
+        this.emit('deleted', id)
+        return result
+      })
   }
 }
 

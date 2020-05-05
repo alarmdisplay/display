@@ -91,6 +91,30 @@ class ComponentRepository {
   }
 
   /**
+   * @param {String} componentType
+   *
+   * @return {Promise<Object[]>}
+   */
+  getComponentsForComponentType (componentType) {
+    return new Promise((resolve) => {
+      const components = []
+
+      this.components.forEach(storedComponent => {
+        if (storedComponent.type === componentType) {
+          // Clone the component, so each recipient modifies their own copy
+          const component = {}
+          for (const prop of Object.getOwnPropertyNames(storedComponent)) {
+            component[prop] = storedComponent[prop]
+          }
+          components.push(component)
+        }
+      })
+
+      resolve(components)
+    })
+  }
+
+  /**
    * Deletes a single Component object.
    *
    * @param {Number} id

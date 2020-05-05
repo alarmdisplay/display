@@ -64,6 +64,38 @@ class SocketController {
         .then(displays => Promise.all(displays.map(display => this.pushContentToDisplay(display))))
         .catch(reason => this.logger.error(reason))
     })
+    this.contentService.on('content_changed', contentType => {
+      this.logger.debug(`Content for content type '${contentType}' changed`)
+      this.componentService.getComponentTypesForContentType(contentType)
+        .then(componentTypes => Promise.all(componentTypes.map(componentType => this.componentService.getComponentsForComponentType(componentType))))
+        .then(result => {
+          const componentIds = new Set()
+          result.forEach(components => {
+            components.forEach(component => {
+              componentIds.add(component.id)
+            })
+          })
+          const componentIdsToRefresh = Array.from(componentIds.values())
+          this.logger.debug('The content of the following Components needs to be refreshed:', componentIdsToRefresh)
+          return componentIdsToRefresh
+        })
+        .then(componentIds => Promise.all(componentIds.map(componentId => this.displayService.getDisplaysContainingComponent(componentId))))
+        .then(result => {
+          const displays = new Set()
+          result.forEach(displaysWithComponent => {
+            displaysWithComponent.forEach(display => {
+              displays.add(display)
+            })
+          })
+          return Array.from(displays.values())
+        })
+        .then(displays => {
+          this.logger.debug('The following Displays will receive a content update:', displays.map(display => display.id))
+          return displays
+        })
+        .then(displays => Promise.all(displays.map(display => this.pushContentToDisplay(display))))
+        .catch(reason => this.logger.error(reason))
+    })
   }
 
   onSocketConnected (clientId) {
