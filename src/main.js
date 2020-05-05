@@ -11,6 +11,7 @@ import { faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, fa
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 // Import components
+import AnnouncementList from '@/components/content/announcements/List'
 import ComponentCreateForm from '@/components/ComponentCreateForm'
 import ComponentEditForm from '@/components/ComponentEditForm'
 import ComponentList from '@/components/ComponentList'
@@ -33,6 +34,7 @@ Vue.config.productionTip = false
 // Set up the Vuex store
 const store = new Vuex.Store({
   state: {
+    announcements: [],
     displays: new Map(),
     views: {},
     components: []
@@ -40,6 +42,9 @@ const store = new Vuex.Store({
   mutations: {
     appendComponent (state, component) {
       state.components.push(component)
+    },
+    setAnnouncements (state, announcements) {
+      state.announcements = announcements
     },
     setComponents (state, components) {
       state.components = components
@@ -86,6 +91,10 @@ const store = new Vuex.Store({
       return axios.delete(`/api/v1/displays/${data.displayId}/views/${data.viewId}`)
         .then(() => context.dispatch('fetchTheViews', data.displayId))
     },
+    fetchTheAnnouncements (context) {
+      return axios.get('/api/v1/announcements')
+        .then(response => context.commit('setAnnouncements', response.data))
+    },
     fetchTheComponents (context) {
       return axios.get('/api/v1/components')
         .then(response => context.commit('setComponents', response.data))
@@ -112,6 +121,7 @@ const store = new Vuex.Store({
 // Set up the Vue Router
 const routes = [
   { path: '/', component: Overview },
+  { path: '/announcements', component: AnnouncementList },
   { path: '/components', component: ComponentList },
   { path: '/components/new', component: ComponentCreateForm },
   { path: '/components/:id', component: ComponentEditForm, props: true },

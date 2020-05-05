@@ -42,11 +42,13 @@ export default {
   },
   mounted () {
     this.$store.dispatch('fetchTheComponents')
-    this.$store.dispatch('fetchTheDisplays').then(() => {
-      for (const display of this.$store.state.displays) {
-        this.$store.dispatch('fetchTheViews', display.id)
-      }
-    })
+      .then(() => this.$store.dispatch('fetchTheDisplays'))
+      .then(() => {
+        for (const display of this.$store.state.displays) {
+          this.$store.dispatch('fetchTheViews', display.id)
+        }
+      })
+      .then(() => this.$store.dispatch('fetchTheAnnouncements'))
   }
 }
 </script>
