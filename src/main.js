@@ -11,6 +11,7 @@ import { faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, fa
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 // Import components
+import AnnouncementCreateForm from '@/components/content/announcements/CreateForm'
 import AnnouncementList from '@/components/content/announcements/List'
 import ComponentCreateForm from '@/components/ComponentCreateForm'
 import ComponentEditForm from '@/components/ComponentEditForm'
@@ -40,6 +41,9 @@ const store = new Vuex.Store({
     components: []
   },
   mutations: {
+    appendAnnouncement (state, announcement) {
+      state.announcements.push(announcement)
+    },
     appendComponent (state, component) {
       state.components.push(component)
     },
@@ -63,6 +67,14 @@ const store = new Vuex.Store({
     }
   },
   actions: {
+    createAnnouncement (context, announcement) {
+      return axios.post('/api/v1/announcements', announcement)
+        .then(response => {
+          const newAnnouncement = response.data
+          context.commit('appendAnnouncement', newAnnouncement)
+          return newAnnouncement
+        })
+    },
     createComponent (context, component) {
       return axios.post('/api/v1/components', component)
         .then(response => {
@@ -122,6 +134,7 @@ const store = new Vuex.Store({
 const routes = [
   { path: '/', component: Overview },
   { path: '/announcements', component: AnnouncementList },
+  { path: '/announcements/new', component: AnnouncementCreateForm },
   { path: '/components', component: ComponentList },
   { path: '/components/new', component: ComponentCreateForm },
   { path: '/components/:id', component: ComponentEditForm, props: true },
