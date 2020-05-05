@@ -124,6 +124,7 @@ class SocketController {
       .catch(reason => {
         const message = (reason instanceof Error) ? reason.message : reason
         this.socketServer.deauthenticateDisplay(clientId, message)
+        return Promise.reject(reason)
       })
   }
 
