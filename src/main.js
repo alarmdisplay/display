@@ -19,6 +19,7 @@ let vm = new Vue({
   render: function(h) {
     return h(App, {
       props: {
+        alerts: this.alerts,
         authenticated: this.authenticated,
         displayId: this.displayId,
         showSplashScreen: this.showSplashScreen,
@@ -27,6 +28,7 @@ let vm = new Vue({
     });
   },
   data: {
+    alerts: [],
     authenticated: false,
     content: {},
     displayId: null,
@@ -50,6 +52,7 @@ let vm = new Vue({
       }
     },
     resetData: function () {
+      this.alerts = [];
       this.content = {};
       this.views = [];
     },

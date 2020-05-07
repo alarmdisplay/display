@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <SplashScreen v-if="showSplashScreen === true"/>
-    <DisplayApp v-else-if="authenticated === true" v-bind:views="views"/>
+    <DisplayApp v-else-if="authenticated === true" v-bind:views="views" :alerts="alerts"/>
     <DisplaySetup v-else v-bind:display-identifier="displayId"/>
   </div>
 </template>
@@ -19,6 +19,7 @@ export default {
     SplashScreen
   },
   props: {
+    alerts: Array,
     authenticated: Boolean,
     displayId: String,
     showSplashScreen: Boolean,
