@@ -6,12 +6,14 @@ class SocketController {
    * @param {DisplayService} displayService
    * @param {ComponentService} componentService
    * @param {ContentService} contentService
+   * @param {AlertService} alertService
    */
-  constructor (socketServer, displayService, componentService, contentService) {
+  constructor (socketServer, displayService, componentService, contentService, alertService) {
     this.socketServer = socketServer
     this.displayService = displayService
     this.componentService = componentService
     this.contentService = contentService
+    this.alertService = alertService
     this.logger = log4js.getLogger('SocketController')
   }
 
@@ -95,6 +97,12 @@ class SocketController {
         })
         .then(displays => Promise.all(displays.map(display => this.pushContentToDisplay(display))))
         .catch(reason => this.logger.error(reason))
+    })
+    this.alertService.on('alert_created', alert => {
+      this.socketServer.addAlert(alert)
+    })
+    this.alertService.on('alert_removed', alertId => {
+      this.socketServer.removeAlert(alertId)
     })
   }
 
