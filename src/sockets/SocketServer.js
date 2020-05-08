@@ -76,6 +76,11 @@ class SocketServer extends EventEmitter {
   }
 
   sendMessageToDisplay (identifier, eventName, message) {
+    if (this.isDisplayPending(identifier) && ['auth_success', 'auth_error'].includes(eventName) === false) {
+      this.logger.warn(`Display ${identifier} is not yet authenticated, not sending message`)
+      return
+    }
+
     const socket = this.sockets.get(identifier)
     if (!socket) {
       this.logger.warn(`No socket for ID ${identifier}, not sending message`)
