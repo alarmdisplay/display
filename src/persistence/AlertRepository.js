@@ -28,7 +28,7 @@ class AlertRepository {
         status: status,
         category: category,
         contact: contact,
-        updatedAt: Date.now()
+        updatedAt: Math.floor(Date.now() / 1000)
       }
       this.alerts.set(newAlert.id, newAlert)
       resolve(newAlert)
@@ -116,7 +116,7 @@ class AlertRepository {
           status: status,
           category: category,
           contact: contact,
-          updatedAt: Date.now()
+          updatedAt: Math.floor(Date.now() / 1000)
         }
         this.alerts.set(id, updatedAlert)
         return updatedAlert
