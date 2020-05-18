@@ -60,6 +60,16 @@
         background-color: orange;
     }
 
+    .alert.category-Fire .badge-category {
+        background-color: red;
+    }
+
+    .alert.category-Health .badge-category {
+        background-color: white;
+        border: 0.1em solid red;
+        color: red;
+    }
+
     .badge-test {
         display: none;
         background-color: red;
