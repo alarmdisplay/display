@@ -2,7 +2,7 @@
     <div class="alert">
         <div class="info">
             <p class="title">{{ alert.title }}</p>
-            <span class="subtitle">{{ alert.subtitle }}</span>
+            <span class="keyword">{{ alert.keyword }}</span>
             <p class="address">{{ alert.location || 'Keine Ortsangabe' }}</p>
             <p class="description">{{ alert.description }}</p>
         </div>
@@ -38,7 +38,7 @@
         font-size: 4em;
     }
 
-    .subtitle {
+    .keyword {
         background-color: orange;
         border-radius: 10px;
         font-size: 2.5em;
