@@ -69,6 +69,13 @@
 
     .alert.test .badge-test {
         display: unset;
+        animation: blinking 2s cubic-bezier(.68,-0.55,.27,1.55) infinite
+    }
+
+    @keyframes blinking {
+        50% {
+            opacity: 0;
+        }
     }
 
     .address {
