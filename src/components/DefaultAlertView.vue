@@ -1,10 +1,10 @@
 <template>
     <div class="alert">
         <div class="info">
-            <p class="title">{{ alert.title }}</p>
+            <p class="title">{{ alert.title || 'Einsatz' }}</p>
             <span class="keyword">{{ alert.keyword }}</span>
             <p class="address">{{ alert.location || 'Keine Ortsangabe' }}</p>
-            <p class="description">{{ alert.description }}</p>
+            <p class="description">{{ alert.description || 'Keine Bemerkung' }}</p>
         </div>
     </div>
 </template>
