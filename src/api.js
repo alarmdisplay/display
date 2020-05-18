@@ -9,8 +9,9 @@ module.exports = class APIv1 {
    * @param {DisplayService} displayService
    * @param {ComponentService} componentService
    * @param {AnnouncementService} announcementService
+   * @param {AlertService} alertService
    */
-  constructor (displayService, componentService, announcementService) {
+  constructor (displayService, componentService, announcementService, alertService) {
     this.logger = log4js.getLogger('APIv1')
     this.router = express.Router()
     this.router.use(express.json())
@@ -22,6 +23,8 @@ module.exports = class APIv1 {
     this.router.use('/components', componentsRouter)
     const announcementRouter = require('./routes/announcements')(announcementService)
     this.router.use('/announcements', announcementRouter)
+    const alertRouter = require('./routes/alerts')(alertService)
+    this.router.use('/alerts', alertRouter)
 
     // Add our own error handler to override the built-in one
     // eslint-disable-next-line no-unused-vars

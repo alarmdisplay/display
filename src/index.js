@@ -75,7 +75,7 @@ connectDatabase(process.env.MONGODB_URI)
     const displayService = new DisplayService(new DisplayRepository(), new ViewRepository(), new ContentSlotRepository(), componentService)
     const contentService = new ContentService(announcementService)
 
-    const app = require('./app')(displayService, componentService, announcementService)
+    const app = require('./app')(displayService, componentService, announcementService, alertService)
     const server = require('http').createServer(app)
 
     const port = process.env.PORT || 3000
