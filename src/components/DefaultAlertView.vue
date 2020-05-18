@@ -3,7 +3,7 @@
         <div class="info">
             <p class="title">{{ alert.title }}</p>
             <span class="subtitle">{{ alert.subtitle }}</span>
-            <p class="address">{{ alert.location.raw || '' }}</p>
+            <p class="address">{{ alert.location || 'Keine Ortsangabe' }}</p>
             <p class="description">{{ alert.description }}</p>
         </div>
     </div>
