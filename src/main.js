@@ -45,11 +45,18 @@ let vm = new Vue({
     setTimeout(this.hideSplashScreen, 3000);
   },
   methods: {
+    addAlert: function (alert) {
+      // TODO validate alert
+      this.alerts.push(alert)
+    },
     setAuthentication: function (state) {
       this.authenticated = state;
       if (state === false) {
         this.resetData();
       }
+    },
+    removeAlert: function (alertId) {
+      this.alerts = this.alerts.filter(alert => alert.id !== alertId)
     },
     resetData: function () {
       this.alerts = [];
@@ -150,6 +157,8 @@ function setupSocket(clientId) {
     Vue.$toast.error('Reconnect failed');
   });
 
+  // Custom events
+
   socket.on('auth_error', function (error) {
     console.error('Auth error', error);
     vm.setAuthentication(false);
@@ -158,6 +167,16 @@ function setupSocket(clientId) {
   socket.on('auth_success', function (data) {
     console.log('Auth success', data);
     vm.setAuthentication(true);
+  });
+
+  socket.on('add_alert', function (alert) {
+    console.log('ALERT', alert);
+    vm.addAlert(alert)
+  });
+
+  socket.on('remove_alert', function (alertId) {
+    console.log('Removing Alert with ID', alertId);
+    vm.removeAlert(alertId)
   });
 
   socket.on('update_config', function(config) {
