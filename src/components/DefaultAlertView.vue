@@ -1,8 +1,9 @@
 <template>
-    <div class="alert">
+    <div :class="alertClass">
         <div class="info">
             <p class="title">{{ alert.title || 'Einsatz' }}</p>
-            <span class="keyword">{{ alert.keyword }}</span>
+            <span class="badge badge-test">TEST</span>
+            <span v-if="alert.keyword" class="badge badge-category">{{ alert.keyword }}</span>
             <p class="address">{{ alert.location || 'Keine Ortsangabe' }}</p>
             <p class="description">{{ alert.description || 'Keine Bemerkung' }}</p>
         </div>
@@ -12,6 +13,16 @@
 <script>
     export default {
         name: "DefaultAlertView",
+        computed: {
+            alertClass: function () {
+                let classes = ['alert']
+                classes.push(`category-${this.alert.category}`)
+                if (this.alert.status === 'Test') {
+                    classes.push('test')
+                }
+                return classes.join(' ')
+            }
+        },
         props: {
             alert: Object
         }
@@ -38,11 +49,26 @@
         font-size: 4em;
     }
 
-    .keyword {
-        background-color: orange;
+    .badge {
         border-radius: 10px;
         font-size: 2.5em;
-        padding: 0.3em;
+        padding: 0.3em 0.5em;
+        font-weight: bold;
+    }
+
+    .badge-category {
+        background-color: orange;
+    }
+
+    .badge-test {
+        display: none;
+        background-color: red;
+        color: white;
+        margin-right: 0.6em;
+    }
+
+    .alert.test .badge-test {
+        display: unset;
     }
 
     .address {
