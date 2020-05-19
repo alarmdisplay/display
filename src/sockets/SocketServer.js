@@ -40,6 +40,12 @@ class SocketServer extends EventEmitter {
     this.setDisplayNotPending(clientId)
   }
 
+  addAlert (alert) {
+    for (const clientId of this.sockets.keys()) {
+      this.sendMessageToDisplay(clientId, 'add_alert', alert)
+    }
+  }
+
   authenticateDisplay (clientId) {
     this.sendMessageToDisplay(clientId, 'auth_success', {})
     this.setDisplayNotPending(clientId)
@@ -75,7 +81,18 @@ class SocketServer extends EventEmitter {
     this.sendMessageToDisplay(clientId, 'update_content', content)
   }
 
+  removeAlert (alertId) {
+    for (const clientId of this.sockets.keys()) {
+      this.sendMessageToDisplay(clientId, 'remove_alert', alertId)
+    }
+  }
+
   sendMessageToDisplay (identifier, eventName, message) {
+    if (this.isDisplayPending(identifier) && ['auth_success', 'auth_error'].includes(eventName) === false) {
+      this.logger.warn(`Display ${identifier} is not yet authenticated, not sending message`)
+      return
+    }
+
     const socket = this.sockets.get(identifier)
     if (!socket) {
       this.logger.warn(`No socket for ID ${identifier}, not sending message`)
