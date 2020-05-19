@@ -84,10 +84,9 @@ let vm = new Vue({
 
       // Ensure each Component has its entry in the content, so the Components can watch their content entry
       validViews.forEach(view => {
-        let componentIds = view.components.map(component => component.instanceId)
-        componentIds.forEach(id => {
-          if (!this.content[id]) {
-            this.$set(this.content, id, undefined)
+        view.contentSlots.forEach(contentSlot => {
+          if (!this.content[contentSlot.id]) {
+            this.$set(this.content, contentSlot.id, undefined)
           }
         })
       })
@@ -266,25 +265,25 @@ function validateView(view) {
     throw new Error('Number of rows is not valid');
   }
 
-  if (!Object.prototype.hasOwnProperty.call(view, 'components') || !Array.isArray(view.components) || view.components.length === 0) {
-    throw new Error('No components specified');
+  if (!Object.prototype.hasOwnProperty.call(view, 'contentSlots') || !Array.isArray(view.contentSlots) || view.contentSlots.length === 0) {
+    throw new Error('No contentSlots specified');
   }
 
   const validComponents = ['AnnouncementList', 'Clock', 'DWDWarningMap'];
-  for (let component of view.components) {
-    if (!component.name || !validComponents.includes(component.name)) {
-      throw new Error('No valid component name specified');
+  for (let contentSlot of view.contentSlots) {
+    if (!contentSlot.componentType || !validComponents.includes(contentSlot.componentType)) {
+      throw new Error('No valid component type specified');
     }
 
-    if (!component.columnStart || !component.rowStart || !component.columnEnd || !component.rowEnd) {
+    if (!contentSlot.columnStart || !contentSlot.rowStart || !contentSlot.columnEnd || !contentSlot.rowEnd) {
       throw new Error('Not all bounds specified');
     }
 
-    if (component.columnStart < 1 || component.rowStart < 1 || component.columnEnd > (view.columns + 1) || component.rowEnd > (view.rows + 1)) {
+    if (contentSlot.columnStart < 1 || contentSlot.rowStart < 1 || contentSlot.columnEnd > (view.columns + 1) || contentSlot.rowEnd > (view.rows + 1)) {
       throw new Error('Bounds exceed column/row count');
     }
 
-    if (component.columnEnd <= component.columnStart || component.rowEnd <= component.rowStart) {
+    if (contentSlot.columnEnd <= contentSlot.columnStart || contentSlot.rowEnd <= contentSlot.rowStart) {
       throw new Error('Column/row end value must be greater that respective start value');
     }
   }

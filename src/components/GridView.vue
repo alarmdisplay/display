@@ -47,17 +47,17 @@
             },
             getChildComponents: function () {
                 let components = [];
-                console.log('Component configs', this.view.components);
-                for (let config of this.view.components) {
-                    if (!config || !config.name || !config.instanceId) {
+                console.log('Component configs', this.view.contentSlots);
+                for (let contentSlot of this.view.contentSlots) {
+                    if (!contentSlot || !contentSlot.componentType || !contentSlot.id) {
                         continue;
                     }
 
                     components.push({
-                        instanceId: config.instanceId,
-                        name: config.name,
-                        options: config.options || {},
-                        style: `grid-column-start: ${config.columnStart}; grid-row-start: ${config.rowStart}; grid-column-end: ${config.columnEnd}; grid-row-end: ${config.rowEnd}`
+                        instanceId: contentSlot.id,
+                        name: contentSlot.componentType,
+                        options: contentSlot.options || {},
+                        style: `grid-column-start: ${contentSlot.columnStart}; grid-row-start: ${contentSlot.rowStart}; grid-column-end: ${contentSlot.columnEnd}; grid-row-end: ${contentSlot.rowEnd}`
                     });
                 }
 
