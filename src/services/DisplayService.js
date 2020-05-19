@@ -108,25 +108,6 @@ class DisplayService extends EventEmitter {
       })
   }
 
-  getViewsForDisplayWithComponents (displayId) {
-    return Promise.all([
-      this.viewRepository.getViewsByDisplayId(displayId),
-      this.componentService.getAllComponentsAsMap()
-    ])
-      .then(async result => {
-        const views = result[0]
-        const allComponents = result[1]
-
-        const enrichedViews = []
-        for (const view of views) {
-          const contentSlots = await this.contentSlotRepository.getContentSlotsByViewId(view.id)
-          enrichedViews.push(this.enrichViewWithComponents(view, contentSlots, allComponents))
-        }
-
-        return enrichedViews
-      })
-  }
-
   /**
    * @param {Number} viewId
    * @return {Promise}
@@ -142,21 +123,6 @@ class DisplayService extends EventEmitter {
       })
   }
 
-  /**
-   * @param {Number} viewId
-   * @return {Promise}
-   */
-  getViewWithComponents (viewId) {
-    return Promise.all([
-      this.viewRepository.getViewById(viewId),
-      this.contentSlotRepository.getContentSlotsByViewId(viewId),
-      this.componentService.getAllComponentsAsMap()
-    ])
-      .then(result => {
-        return this.enrichViewWithComponents(result[0], result[1], result[2])
-      })
-  }
-
   getComponentsForDisplay (displayId) {
     return this.getViewsForDisplay(displayId)
       .then(async views => {
@@ -167,48 +133,6 @@ class DisplayService extends EventEmitter {
         }
         return this.componentService.getComponents(Array.from(componentIds.values()))
       })
-  }
-
-  /**
-   * Resolves the configured Content Slots to the respective components. This format is required by the Displays.
-   *
-   * @param {Object} view
-   * @param {Object[]} contentSlots
-   * @param {Map<Number, Object>} allComponents
-   *
-   * @return {Object}
-   */
-  enrichViewWithComponents (view, contentSlots, allComponents) {
-    const components = []
-    for (const contentSlot of contentSlots) {
-      const component = allComponents.get(contentSlot.componentId)
-
-      // Skip components that don't seem to exist
-      if (!component) {
-        continue
-      }
-
-      const newComponent = {
-        name: component.type,
-        instanceId: contentSlot.componentId,
-        columnStart: contentSlot.columnStart,
-        rowStart: contentSlot.rowStart,
-        columnEnd: contentSlot.columnEnd,
-        rowEnd: contentSlot.rowEnd,
-        options: {}
-      }
-
-      // Fill the options Object from the Map
-      for (const [key, value] of component.options.entries()) {
-        newComponent.options[key] = value
-      }
-
-      components.push(newComponent)
-    }
-
-    view.components = components
-    delete view.contentSlots
-    return view
   }
 
   /**
@@ -260,34 +184,30 @@ class DisplayService extends EventEmitter {
   updateContentSlotsForView (viewId, newContentSlots) {
     return this.contentSlotRepository.getContentSlotsByViewId(viewId)
       .then(async existingContentSlots => {
-        const existingComponents = existingContentSlots.map(contentSlot => contentSlot.componentId)
-        const newComponents = newContentSlots.map(contentSlot => contentSlot.componentId)
-        this.logger.debug('Existing components', existingComponents)
-        this.logger.debug('New components', newComponents)
-        const removedComponents = existingComponents.filter(componentId => !newComponents.includes(componentId))
-        const addedComponents = newComponents.filter(componentId => !existingComponents.includes(componentId))
+        const existingContentSlotIds = existingContentSlots.map(contentSlot => contentSlot.id)
+        this.logger.debug('Existing components', existingContentSlotIds)
+        const submittedContentSlotIds = newContentSlots.filter(contentSlot => contentSlot.id !== undefined).map(contentSlot => contentSlot.id)
+        const removedComponents = existingContentSlotIds.filter(id => !submittedContentSlotIds.includes(id))
         this.logger.debug('Removed components', removedComponents)
-        this.logger.debug('Added components', addedComponents)
 
         try {
-          for (const componentId of removedComponents) {
-            this.logger.debug(`Deleting Content Slot for View ${viewId}, Component ${componentId}`)
-            const contentSlot = await this.contentSlotRepository.getContentSlotForComponentAndView(viewId, componentId)
-            await this.contentSlotRepository.deleteContentSlot(contentSlot.id)
+          for (const contentSlotId of removedComponents) {
+            this.logger.debug(`Deleting Content Slot for View ${viewId}, Content Slot ID ${contentSlotId}`)
+            await this.contentSlotRepository.deleteContentSlot(contentSlotId)
           }
 
           for (const contentSlot of newContentSlots) {
-            if (addedComponents.includes(contentSlot.componentId)) {
+            if (contentSlot.id === undefined) {
               // Add a new Content Slot for this component
-              this.logger.debug(`Adding Content Slot for View ${viewId}, Component ${contentSlot.componentId}`)
-              await this.contentSlotRepository.createContentSlot(contentSlot.componentId, viewId, contentSlot.columnStart, contentSlot.rowStart, contentSlot.columnEnd, contentSlot.rowEnd)
+              this.logger.debug(`Adding Content Slot for View ${viewId}, Component ${contentSlot.componentType}`)
+              await this.contentSlotRepository.createContentSlot(contentSlot.componentType, viewId, contentSlot.columnStart, contentSlot.rowStart, contentSlot.columnEnd, contentSlot.rowEnd)
               continue
             }
 
             // Update an existing Content Slot
-            this.logger.debug(`Updating Content Slot for View ${viewId}, Component ${contentSlot.componentId}`)
-            const existingContentSlot = await this.contentSlotRepository.getContentSlotForComponentAndView(viewId, contentSlot.componentId)
-            await this.contentSlotRepository.updateContentSlot(existingContentSlot.id, contentSlot.componentId, viewId, contentSlot.columnStart, contentSlot.rowStart, contentSlot.columnEnd, contentSlot.rowEnd)
+            this.logger.debug(`Updating Content Slot for View ${viewId}, Content Slot ID ${contentSlot.id}`)
+            const existingContentSlot = await this.contentSlotRepository.getContentSlot(contentSlot.id)
+            await this.contentSlotRepository.updateContentSlot(existingContentSlot.id, contentSlot.componentType, viewId, contentSlot.columnStart, contentSlot.rowStart, contentSlot.columnEnd, contentSlot.rowEnd)
           }
         } catch (e) {
           return Promise.reject(e)

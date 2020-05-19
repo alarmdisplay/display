@@ -143,7 +143,7 @@ class SocketController {
    */
   pushConfigToDisplay (display) {
     this.logger.debug(`Pushing config to Display '${display.name}'`)
-    return this.displayService.getViewsForDisplayWithComponents(display.id)
+    return this.displayService.getViewsForDisplay(display.id)
       .then(views => {
         this.socketServer.pushConfigToDisplay(display.clientId, {
           views: views
