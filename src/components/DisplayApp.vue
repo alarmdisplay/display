@@ -1,13 +1,18 @@
 <template>
-    <IdleScreen v-bind:child-views="getViewsForScreenType('IdleScreen')"/>
+    <div class="display-app">
+        <AlertScreen v-if="alerts.length > 0" :alerts="alerts"/>
+        <IdleScreen v-else v-bind:child-views="getViewsForScreenType('IdleScreen')"/>
+    </div>
 </template>
 
 <script>
+    import AlertScreen from "@/components/AlertScreen";
     import IdleScreen from "@/components/IdleScreen";
 
     export default {
         name: "DisplayApp",
         components: {
+            AlertScreen,
             IdleScreen
         },
         methods: {
@@ -41,11 +46,15 @@
             }
         },
         props: {
+            alerts: Array,
             views: Array
         }
     }
 </script>
 
 <style scoped>
-
+    .display-app {
+        height: 100%;
+        width: 100%;
+    }
 </style>
