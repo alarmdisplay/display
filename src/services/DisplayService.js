@@ -196,14 +196,11 @@ class DisplayService extends EventEmitter {
     return this.contentSlotRepository.getContentSlotsByViewId(viewId)
       .then(async existingContentSlots => {
         const existingContentSlotIds = existingContentSlots.map(contentSlot => contentSlot.id)
-        this.logger.debug('Existing components', existingContentSlotIds)
         const submittedContentSlotIds = newContentSlots.filter(contentSlot => contentSlot.id !== undefined).map(contentSlot => contentSlot.id)
         const removedComponents = existingContentSlotIds.filter(id => !submittedContentSlotIds.includes(id))
-        this.logger.debug('Removed components', removedComponents)
 
         try {
           for (const contentSlotId of removedComponents) {
-            this.logger.debug(`Deleting Content Slot for View ${viewId}, Content Slot ID ${contentSlotId}`)
             await this.contentSlotOptionRepository.deleteOptionsForContentSlot(contentSlotId)
             await this.contentSlotRepository.deleteContentSlot(contentSlotId)
           }
@@ -211,14 +208,12 @@ class DisplayService extends EventEmitter {
           for (const contentSlot of newContentSlots) {
             if (contentSlot.id === undefined) {
               // Add a new Content Slot for this component
-              this.logger.debug(`Adding Content Slot for View ${viewId}, Component ${contentSlot.componentType}`)
               const newContentSlot = await this.contentSlotRepository.createContentSlot(contentSlot.componentType, viewId, contentSlot.columnStart, contentSlot.rowStart, contentSlot.columnEnd, contentSlot.rowEnd)
               this.setOptionsForContentSlot(newContentSlot.id, contentSlot.options || {})
               continue
             }
 
             // Update an existing Content Slot
-            this.logger.debug(`Updating Content Slot for View ${viewId}, Content Slot ID ${contentSlot.id}`)
             const existingContentSlot = await this.contentSlotRepository.getContentSlot(contentSlot.id)
             await this.contentSlotRepository.updateContentSlot(existingContentSlot.id, contentSlot.componentType, viewId, contentSlot.columnStart, contentSlot.rowStart, contentSlot.columnEnd, contentSlot.rowEnd)
             this.setOptionsForContentSlot(existingContentSlot.id, contentSlot.options || {})
@@ -232,7 +227,6 @@ class DisplayService extends EventEmitter {
   }
 
   setOptionsForContentSlot (contentSlotId, options = {}) {
-    this.logger.debug(`Setting options for Content Slot ${contentSlotId}`, options)
     return this.contentSlotOptionRepository.getOptionsForContentSlot(contentSlotId)
       .then(async existingOptions => {
         // Remove existing options not present in the new options object
@@ -252,10 +246,6 @@ class DisplayService extends EventEmitter {
         }
       })
       .then(() => this.contentSlotOptionRepository.getOptionsForContentSlot(contentSlotId))
-      .then(options => {
-        this.logger.debug(options)
-        return options
-      })
   }
 }
 
