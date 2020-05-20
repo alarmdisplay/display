@@ -88,6 +88,8 @@ module.exports = function (displayService) {
    *         type: number
    *       rowEnd:
    *         type: number
+   *       options:
+   *         type: object
    */
 
   /**
