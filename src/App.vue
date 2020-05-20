@@ -41,8 +41,7 @@ export default {
     }
   },
   mounted () {
-    this.$store.dispatch('fetchTheComponents')
-      .then(() => this.$store.dispatch('fetchTheDisplays'))
+    this.$store.dispatch('fetchTheDisplays')
       .then(() => {
         for (const display of this.$store.state.displays) {
           this.$store.dispatch('fetchTheViews', display.id)
