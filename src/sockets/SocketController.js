@@ -159,8 +159,15 @@ class SocketController {
    */
   pushContentToDisplay (display) {
     this.logger.debug(`Pushing content to Display '${display.name}'`)
-    return this.displayService.getComponentsForDisplay(display.id)
-      .then(components => this.contentService.getContentForComponents(components))
+    return this.displayService.getViewsForDisplay(display.id)
+      .then(views => {
+        const contentSlots = new Set()
+        for (const view of views) {
+          view.contentSlots.forEach(contentSlot => contentSlots.add(contentSlot))
+        }
+        return contentSlots
+      })
+      .then(contentSlots => this.contentService.getContentForContentSlots(contentSlots))
       .then(content => {
         this.socketServer.pushContentToDisplay(display.clientId, content)
       })

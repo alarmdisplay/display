@@ -12,8 +12,8 @@ class ContentService extends EventEmitter {
     this.announcementService.on('deleted', () => this.emit('content_changed', 'Announcement'))
   }
 
-  getContentForComponent (component) {
-    switch (component.type) {
+  getContentForContentSlot (contentSlot) {
+    switch (contentSlot.componentType) {
       case 'AnnouncementList':
         return this.announcementService.getAllAnnouncements()
       default:
@@ -22,16 +22,16 @@ class ContentService extends EventEmitter {
   }
 
   /**
-   * @param {Object[]} components
+   * @param {Object[]} contentSlots
    *
    * @return {Promise<Object>}
    */
-  getContentForComponents (components) {
+  getContentForContentSlots (contentSlots) {
     return Promise.resolve()
       .then(async () => {
         const content = {}
-        for (const component of components) {
-          content[component.id] = await this.getContentForComponent(component)
+        for (const contentSlot of contentSlots) {
+          content[contentSlot.id] = await this.getContentForContentSlot(contentSlot)
         }
         return content
       })
