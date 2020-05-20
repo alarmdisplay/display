@@ -12,8 +12,8 @@ describe(baseUrl, () => {
   let request
 
   beforeAll(() => {
-    displayService = new DisplayService(undefined, undefined)
-    const theApp = app(displayService)
+    displayService = new DisplayService(undefined, undefined, undefined, undefined)
+    const theApp = app(displayService, undefined, undefined, undefined)
     request = supertest(theApp)
   })
 
@@ -23,6 +23,7 @@ describe(baseUrl, () => {
     DisplayService.mock.instances[0].getDisplayById.mockClear()
     DisplayService.mock.instances[0].updateDisplay.mockClear()
     DisplayService.mock.instances[0].deleteDisplay.mockClear()
+    DisplayService.mock.instances[0].getViewsForDisplay.mockClear()
   })
 
   describe('GET /', () => {
@@ -106,6 +107,7 @@ describe(baseUrl, () => {
         .expect(() => {
           expect(DisplayService.mock.instances[0].getDisplayById.mock.calls).toHaveLength(1)
           expect(DisplayService.mock.instances[0].getDisplayById.mock.calls[0]).toEqual([165])
+          expect(Number.isInteger(DisplayService.mock.instances[0].getDisplayById.mock.calls[0][0])).toBeTruthy()
         })
     })
 
@@ -208,6 +210,35 @@ describe(baseUrl, () => {
         .expect('Content-Type', /json/)
         .expect(500)
         .expect({ error: { message: 'Error during DELETE /{id}' } })
+    })
+  })
+
+  describe('GET /{id}/views', () => {
+    it('should correctly call DisplayService.getDisplayById()', () => {
+      return request.get(`${baseUrl}/272/views`)
+        .expect(() => {
+          expect(DisplayService.mock.instances[0].getDisplayById.mock.calls).toHaveLength(1)
+          expect(DisplayService.mock.instances[0].getDisplayById.mock.calls[0]).toEqual([272])
+        })
+    })
+
+    it('should correctly call DisplayService.getViewsForDisplay()', () => {
+      DisplayService.mock.instances[0].getDisplayById.mockResolvedValueOnce({ id: 312 })
+      return request.get(`${baseUrl}/272/views`)
+        .expect(() => {
+          expect(DisplayService.mock.instances[0].getViewsForDisplay.mock.calls).toHaveLength(1)
+          expect(DisplayService.mock.instances[0].getViewsForDisplay.mock.calls[0]).toEqual([312])
+        })
+    })
+
+    it('should return a list of Views', () => {
+      const views = []
+      DisplayService.mock.instances[0].getDisplayById.mockResolvedValueOnce({ id: 1268 })
+      DisplayService.mock.instances[0].getViewsForDisplay.mockResolvedValueOnce(views)
+      return request.get(`${baseUrl}/1268/views`)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .expect(views)
     })
   })
 })
