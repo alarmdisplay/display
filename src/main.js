@@ -14,9 +14,6 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import AnnouncementCreateForm from '@/components/content/announcements/CreateForm'
 import AnnouncementEditForm from '@/components/content/announcements/EditForm'
 import AnnouncementList from '@/components/content/announcements/List'
-import ComponentCreateForm from '@/components/ComponentCreateForm'
-import ComponentEditForm from '@/components/ComponentEditForm'
-import ComponentList from '@/components/ComponentList'
 import DisplayCreateForm from '@/components/DisplayCreateForm'
 import DisplayEditForm from '@/components/DisplayEditForm'
 import DisplayList from '@/components/DisplayList'
@@ -38,21 +35,14 @@ const store = new Vuex.Store({
   state: {
     announcements: [],
     displays: new Map(),
-    views: {},
-    components: []
+    views: {}
   },
   mutations: {
     appendAnnouncement (state, announcement) {
       state.announcements.push(announcement)
     },
-    appendComponent (state, component) {
-      state.components.push(component)
-    },
     setAnnouncements (state, announcements) {
       state.announcements = announcements
-    },
-    setComponents (state, components) {
-      state.components = components
     },
     setDisplay (state, display) {
       state.displays.set(display.id, display)
@@ -76,14 +66,6 @@ const store = new Vuex.Store({
           return newAnnouncement
         })
     },
-    createComponent (context, component) {
-      return axios.post('/api/v1/components', component)
-        .then(response => {
-          const newComponent = response.data
-          context.commit('appendComponent', newComponent)
-          return newComponent
-        })
-    },
     createDisplay (context, display) {
       return axios.post('/api/v1/displays', display)
         .then(response => {
@@ -95,10 +77,6 @@ const store = new Vuex.Store({
     deleteAnnouncement (context, announcementId) {
       return axios.delete('/api/v1/announcements/' + announcementId)
         .then(() => context.dispatch('fetchTheAnnouncements'))
-    },
-    deleteComponent (context, componentId) {
-      return axios.delete('/api/v1/components/' + componentId)
-        .then(() => context.dispatch('fetchTheComponents'))
     },
     deleteDisplay (context, displayId) {
       return axios.delete('/api/v1/displays/' + displayId)
@@ -112,10 +90,6 @@ const store = new Vuex.Store({
       return axios.get('/api/v1/announcements')
         .then(response => context.commit('setAnnouncements', response.data))
     },
-    fetchTheComponents (context) {
-      return axios.get('/api/v1/components')
-        .then(response => context.commit('setComponents', response.data))
-    },
     fetchTheDisplays (context) {
       return axios.get('/api/v1/displays')
         .then(response => context.commit('setDisplays', response.data))
@@ -127,10 +101,6 @@ const store = new Vuex.Store({
     updateAnnouncement (context, update) {
       return axios.put(`/api/v1/announcements/${update.id}`, update.data)
         .then(() => context.dispatch('fetchTheAnnouncements'))
-    },
-    updateComponent (context, update) {
-      return axios.put(`/api/v1/components/${update.id}`, update.data)
-        .then(() => context.dispatch('fetchTheComponents'))
     },
     updateView (context, update) {
       return axios.put(`/api/v1/displays/${update.displayId}/views/${update.viewId}`, update.data)
@@ -145,9 +115,6 @@ const routes = [
   { path: '/announcements', component: AnnouncementList },
   { path: '/announcements/new', component: AnnouncementCreateForm },
   { path: '/announcements/:id', component: AnnouncementEditForm, props: true },
-  { path: '/components', component: ComponentList },
-  { path: '/components/new', component: ComponentCreateForm },
-  { path: '/components/:id', component: ComponentEditForm, props: true },
   { path: '/displays', component: DisplayList },
   { path: '/displays/new', component: DisplayCreateForm },
   { path: '/displays/:id', component: DisplayEditForm, props: true },
