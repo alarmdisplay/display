@@ -7,14 +7,12 @@ class DisplayService extends EventEmitter {
    * @param {DisplayRepository} displayRepository
    * @param {ViewRepository} viewRepository
    * @param {ContentSlotRepository} contentSlotRepository
-   * @param {ComponentService} componentService
    */
-  constructor (displayRepository, viewRepository, contentSlotRepository, componentService) {
+  constructor (displayRepository, viewRepository, contentSlotRepository) {
     super()
     this.displayRepository = displayRepository
     this.viewRepository = viewRepository
     this.contentSlotRepository = contentSlotRepository
-    this.componentService = componentService
     this.logger = log4js.getLogger('DisplayService')
   }
 
@@ -36,6 +34,12 @@ class DisplayService extends EventEmitter {
 
   getDisplayByClientId (clientId) {
     return this.displayRepository.getDisplayByClientId(clientId)
+  }
+
+  getDisplaysForViews (viewIds) {
+    return this.viewRepository.getViewsById(viewIds)
+      .then(views => views.map(view => view.displayId))
+      .then(displayIds => this.displayRepository.getDisplaysById(displayIds))
   }
 
   /**
@@ -133,6 +137,15 @@ class DisplayService extends EventEmitter {
         }
         return this.componentService.getComponents(Array.from(componentIds.values()))
       })
+  }
+
+  /**
+   * @param {String} componentType
+   *
+   * @return {Promise<Object[]>}
+   */
+  getContentSlotsForComponentType (componentType) {
+    return this.contentSlotRepository.getContentSlotsByComponentType(componentType)
   }
 
   /**

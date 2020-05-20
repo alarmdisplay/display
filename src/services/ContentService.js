@@ -7,6 +7,12 @@ class ContentService extends EventEmitter {
   constructor (announcementService) {
     super()
     this.announcementService = announcementService
+
+    this.componentTypes = new Map()
+    this.componentTypes.set('AnnouncementList', { contentType: 'Announcement' })
+    this.componentTypes.set('Clock', { contentType: '' })
+    this.componentTypes.set('DWDWarningMap', { contentType: '' })
+
     this.announcementService.on('created', () => this.emit('content_changed', 'Announcement'))
     this.announcementService.on('updated', () => this.emit('content_changed', 'Announcement'))
     this.announcementService.on('deleted', () => this.emit('content_changed', 'Announcement'))
@@ -35,6 +41,23 @@ class ContentService extends EventEmitter {
         }
         return content
       })
+  }
+
+  getComponentTypesForContentType (contentType) {
+    return new Promise((resolve, reject) => {
+      if (!contentType) {
+        reject(new Error('Invalid content type'))
+        return
+      }
+
+      const components = []
+      this.componentTypes.forEach((properties, identifier) => {
+        if (properties.contentType === contentType) {
+          components.push(identifier)
+        }
+      })
+      resolve(components)
+    })
   }
 }
 

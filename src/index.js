@@ -7,7 +7,6 @@ const debugEnabled = process.env.DEBUG === '1'
 logger.level = debugEnabled ? 'debug' : 'info'
 
 const DisplayService = require('./services/DisplayService')
-const ComponentService = require('./services/ComponentService')
 const SocketController = require('./sockets/SocketController')
 const SocketServer = require('./sockets/SocketServer')
 
@@ -62,8 +61,6 @@ connectDatabase(process.env.MONGODB_URI)
     const AlertService = require('./services/AlertService')
     const AnnouncementRepository = require('./persistence/AnnouncementRepository')
     const AnnouncementService = require('./services/AnnouncementService')
-    const ComponentRepository = require('./persistence/ComponentRepository')
-    const ComponentOptionRepository = require('./persistence/ComponentOptionRepository')
     const ContentService = require('./services/ContentService')
     const ContentSlotRepository = require('./persistence/ContentSlotRepository')
     const DisplayRepository = require('./persistence/DisplayRepository')
@@ -71,8 +68,7 @@ connectDatabase(process.env.MONGODB_URI)
 
     const alertService = new AlertService(new AlertRepository())
     const announcementService = new AnnouncementService(new AnnouncementRepository())
-    const componentService = new ComponentService(new ComponentRepository(), new ComponentOptionRepository())
-    const displayService = new DisplayService(new DisplayRepository(), new ViewRepository(), new ContentSlotRepository(), componentService)
+    const displayService = new DisplayService(new DisplayRepository(), new ViewRepository(), new ContentSlotRepository())
     const contentService = new ContentService(announcementService)
 
     const app = require('./app')(displayService, announcementService, alertService)
@@ -81,7 +77,7 @@ connectDatabase(process.env.MONGODB_URI)
     const port = process.env.PORT || 3000
 
     const socketServer = new SocketServer()
-    const socketController = new SocketController(socketServer, displayService, componentService, contentService, alertService)
+    const socketController = new SocketController(socketServer, displayService, contentService, alertService)
     socketController.registerListeners()
     socketServer.startListening(server)
 

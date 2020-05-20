@@ -76,6 +76,26 @@ class ContentSlotRepository {
   }
 
   /**
+   * Finds and returns Content Slot objects that contain a certain type of Component.
+   *
+   * @param {String} componentType The type of the Component that should be displayed in this Content Slot
+   *
+   * @return {Promise<Object[]>}
+   */
+  getContentSlotsByComponentType (componentType) {
+    return new Promise((resolve) => {
+      const contentSlots = []
+      for (const contentSlot of this.contentSlots.values()) {
+        if (contentSlot.componentType === componentType) {
+          contentSlots.push(contentSlot)
+        }
+      }
+
+      resolve(contentSlots)
+    })
+  }
+
+  /**
    * Deletes a Content Slot object.
    *
    * @param {Number} id The ID of the Content Slot
