@@ -7,11 +7,10 @@ const NotFoundError = require('./errors/NotFoundError')
 module.exports = class APIv1 {
   /**
    * @param {DisplayService} displayService
-   * @param {ComponentService} componentService
    * @param {AnnouncementService} announcementService
    * @param {AlertService} alertService
    */
-  constructor (displayService, componentService, announcementService, alertService) {
+  constructor (displayService, announcementService, alertService) {
     this.logger = log4js.getLogger('APIv1')
     this.router = express.Router()
     this.router.use(express.json())
@@ -19,8 +18,6 @@ module.exports = class APIv1 {
     // Register the routes and their handlers
     const displayRoutes = require('./routes/displays')(displayService)
     this.router.use('/displays', displayRoutes)
-    const componentsRouter = require('./routes/components')(componentService)
-    this.router.use('/components', componentsRouter)
     const announcementRouter = require('./routes/announcements')(announcementService)
     this.router.use('/announcements', announcementRouter)
     const alertRouter = require('./routes/alerts')(alertService)
