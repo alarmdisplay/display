@@ -22,15 +22,18 @@ class AlertService extends EventEmitter {
    * @return {Promise<Object>}
    */
   createAlert (title, keyword, description, time, location, status, category, contact) {
+    const alertTime = time || Math.floor(Date.now() / 1000)
+    const minutesActive = status === 'Test' ? 1 : 60
     return this.alertRepository.create(
       title || 'Einsatz',
       keyword || '',
       description || '',
-      time || Math.floor(Date.now() / 1000),
+      alertTime,
       location || '',
       status || 'Actual',
       category || 'Other',
-      contact || ''
+      contact || '',
+      alertTime + 60 * minutesActive
     )
       .then(alert => {
         this.emit('alert_created', alert)

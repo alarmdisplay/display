@@ -15,8 +15,9 @@ class AlertRepository {
    * @param {String} status
    * @param {String} category
    * @param {String} contact
+   * @param {Number} expires
    */
-  create (title, keyword, description, time, location, status, category, contact) {
+  create (title, keyword, description, time, location, status, category, contact, expires) {
     return new Promise(resolve => {
       const newAlert = {
         id: this.instanceCounter++,
@@ -28,6 +29,7 @@ class AlertRepository {
         status: status,
         category: category,
         contact: contact,
+        expires: expires,
         updatedAt: Math.floor(Date.now() / 1000)
       }
       this.alerts.set(newAlert.id, newAlert)
@@ -100,10 +102,11 @@ class AlertRepository {
    * @param {String} status
    * @param {String} category
    * @param {String} contact
+   * @param {Number} expires
    *
    * @return {Promise<Object>}
    */
-  updateOne (id, title, keyword, description, time, location, status, category, contact) {
+  updateOne (id, title, keyword, description, time, location, status, category, contact, expires) {
     return this.getOne(id)
       .then(alert => {
         const updatedAlert = {
@@ -116,6 +119,7 @@ class AlertRepository {
           status: status,
           category: category,
           contact: contact,
+          expires: expires,
           updatedAt: Math.floor(Date.now() / 1000)
         }
         this.alerts.set(id, updatedAlert)
