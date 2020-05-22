@@ -6,6 +6,15 @@ import VueMoment from 'vue-moment';
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/index.css';
 
+// Import Font Awesome
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faBullhorn, faClock, faStopwatch } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+// Configure Font Awesome
+library.add(faBullhorn, faClock, faStopwatch)
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
 require('moment/locale/de');
 
 Vue.use(VueMoment, { moment });
@@ -32,6 +41,7 @@ let vm = new Vue({
     authenticated: false,
     content: {},
     displayId: null,
+    seconds: Math.floor(Date.now() / 1000),
     showSplashScreen: true,
     views: []
   },
@@ -43,6 +53,7 @@ let vm = new Vue({
   mounted: function () {
     setupSocket(this.displayId);
     setTimeout(this.hideSplashScreen, 3000);
+    setInterval(this.updateSeconds, 1000);
   },
   methods: {
     addAlert: function (alert) {
@@ -65,6 +76,9 @@ let vm = new Vue({
     },
     updateDataSource: function (id, data) {
       this.$set(this.content, id, data)
+    },
+    updateSeconds: function () {
+      this.seconds = Math.floor(Date.now() / 1000)
     },
     setViews: function (views) {
       if (!Array.isArray(views)) {
