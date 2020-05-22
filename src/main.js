@@ -80,6 +80,9 @@ let vm = new Vue({
     updateSeconds: function () {
       this.seconds = Math.floor(Date.now() / 1000)
     },
+    setAlerts: function (alerts) {
+      this.alerts = alerts
+    },
     setViews: function (views) {
       if (!Array.isArray(views)) {
         return
@@ -186,6 +189,10 @@ function setupSocket(clientId) {
     console.log('ALERT', alert);
     vm.addAlert(alert)
   });
+
+  socket.on('all_alerts', function (alerts) {
+    vm.setAlerts(alerts)
+  })
 
   socket.on('remove_alert', function (alertId) {
     console.log('Removing Alert with ID', alertId);
