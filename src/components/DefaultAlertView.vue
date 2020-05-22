@@ -1,5 +1,8 @@
 <template>
     <div :class="alertClass">
+        <div class="clock-container">
+            <Clock instance-id="0" :options="{showDate: false}"/>
+        </div>
         <div class="info">
             <p class="title">{{ alert.title || 'Einsatz' }}</p>
             <span class="badge badge-test">TEST</span>
@@ -11,8 +14,13 @@
 </template>
 
 <script>
+    import Clock from "@/components/Clock";
+
     export default {
         name: "DefaultAlertView",
+        components: {
+            Clock
+        },
         computed: {
             alertClass: function () {
                 let classes = ['alert']
@@ -41,12 +49,23 @@
         grid-template-rows: 90%;
     }
 
+    .clock-container {
+        position: absolute;
+        right: 3vw;
+        top: 2vh;
+    }
+
+    .clock-container .clock {
+        color: unset;
+    }
+
     .info {
         padding: 0 2em;
     }
 
     .title {
         font-size: 4em;
+        padding-right: 4.5em;
     }
 
     .badge {
