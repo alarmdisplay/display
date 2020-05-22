@@ -10,14 +10,18 @@ class AnnouncementRepository {
    * @param {String} title
    * @param {String} text
    * @param {Boolean} important
+   * @param {Number} validFrom
+   * @param {Number} validTo
    */
-  create (title, text, important = false) {
+  create (title, text, important, validFrom, validTo) {
     return new Promise(resolve => {
       const newAnnouncement = {
         id: this.instanceCounter++,
         title: title || '',
         text: text || '',
         important: important,
+        validFrom: validFrom,
+        validTo: validTo,
         createdAt: Date.now(),
         updatedAt: Date.now()
       }
@@ -86,10 +90,12 @@ class AnnouncementRepository {
    * @param {String} title
    * @param {String} text
    * @param {Boolean} important
+   * @param {Number} validFrom
+   * @param {Number} validTo
    *
    * @return {Promise<Object>}
    */
-  updateOne (id, title, text, important = false) {
+  updateOne (id, title, text, important, validFrom, validTo) {
     return this.getOne(id)
       .then(announcement => {
         const updatedAnnouncement = {
@@ -97,6 +103,8 @@ class AnnouncementRepository {
           title: title,
           text: text,
           important: important,
+          validFrom: validFrom,
+          validTo: validTo,
           createdAt: announcement.createdAt,
           updatedAt: Date.now()
         }

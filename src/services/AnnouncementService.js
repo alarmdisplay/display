@@ -15,11 +15,13 @@ class AnnouncementService extends EventEmitter {
    * @param {String} title
    * @param {String} text
    * @param {Boolean} important
+   * @param {Number} validFrom
+   * @param {Number} validTo
    *
    * @return {Promise<Object>}
    */
-  createAnnouncement (title, text, important = false) {
-    return this.announcementRepository.create(title, text, important)
+  createAnnouncement (title, text, important = false, validFrom = null, validTo = null) {
+    return this.announcementRepository.create(title || '', text || '', important, validFrom, validTo)
       .then(announcement => {
         this.emit('created', announcement.id)
         return announcement
@@ -47,11 +49,13 @@ class AnnouncementService extends EventEmitter {
    * @param {String} title
    * @param {String} text
    * @param {Boolean} important
+   * @param {Number} validFrom
+   * @param {Number} validTo
    *
    * @return {Promise<Object>}
    */
-  updateAnnouncement (id, title, text, important) {
-    return this.announcementRepository.updateOne(id, title, text, important)
+  updateAnnouncement (id, title, text, important = false, validFrom = null, validTo = null) {
+    return this.announcementRepository.updateOne(id, title || '', text || '', important, validFrom, validTo)
       .then(announcement => {
         this.emit('updated', announcement.id)
         return announcement

@@ -15,7 +15,8 @@ module.exports = function (announcementService) {
    *     - text
    *     properties:
    *       id:
-   *         type: number
+   *         type: integer
+   *         format: int32
    *         readOnly: true
    *       title:
    *         type: string
@@ -23,11 +24,19 @@ module.exports = function (announcementService) {
    *         type: string
    *       important:
    *         type: boolean
+   *       validFrom:
+   *         type: integer
+   *         format: int32
+   *       validTo:
+   *         type: integer
+   *         format: int32
    *       createdAt:
-   *         type: datetime
+   *         type: integer
+   *         format: int32
    *         readOnly: true
    *       updatedAt:
-   *         type: datetime
+   *         type: integer
+   *         format: int32
    *         readOnly: true
    */
 
@@ -81,7 +90,7 @@ module.exports = function (announcementService) {
    *       - Announcements
    */
   router.post('/', (req, res, next) => {
-    announcementService.createAnnouncement(req.body.title || '', req.body.text || '', req.body.important)
+    announcementService.createAnnouncement(req.body.title, req.body.text, req.body.important, req.body.validFrom, req.body.validTo)
       .then(announcement => {
         const baseUrl = req.originalUrl.replace(/\/$/, '')
         const newLocation = `${baseUrl}/${announcement.id}`
@@ -148,7 +157,7 @@ module.exports = function (announcementService) {
    */
   router.put('/:id', (req, res, next) => {
     announcementService.getAnnouncement(parseInt(req.params.id))
-      .then(announcement => announcementService.updateAnnouncement(announcement.id, req.body.title || '', req.body.text || '', req.body.important || false))
+      .then(announcement => announcementService.updateAnnouncement(announcement.id, req.body.title, req.body.text, req.body.important, req.body.validFrom, req.body.validTo))
       .then(updatedAnnouncement => res.json(updatedAnnouncement))
       .catch(error => next(error))
   })
