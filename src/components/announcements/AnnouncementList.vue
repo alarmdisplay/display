@@ -22,7 +22,11 @@
                     return []
                 }
 
-                return content
+                // Return all announcements that are currently valid or do not have validity information
+                return content.filter(announcement => {
+                    return (!announcement.validFrom || announcement.validFrom <= this.$root.$data.seconds) &&
+                        (!announcement.validTo || announcement.validTo >= this.$root.$data.seconds)
+                })
             }
         },
         data() {
