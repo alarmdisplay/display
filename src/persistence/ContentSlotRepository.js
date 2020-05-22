@@ -1,5 +1,3 @@
-const NotFoundError = require('../errors/NotFoundError')
-
 class ContentSlotRepository {
   constructor () {
     this.contentSlots = new Map()
@@ -7,7 +5,7 @@ class ContentSlotRepository {
   }
 
   /**
-   * @param {Number} componentId
+   * @param {String} componentType
    * @param {Number} viewId
    * @param {Number} columnStart
    * @param {Number} rowStart
@@ -16,11 +14,11 @@ class ContentSlotRepository {
    *
    * @return {Promise}
    */
-  createContentSlot (componentId, viewId, columnStart, rowStart, columnEnd, rowEnd) {
+  createContentSlot (componentType, viewId, columnStart, rowStart, columnEnd, rowEnd) {
     return new Promise(resolve => {
       const newContentSlot = {
         id: this.instanceCounter++,
-        componentId: componentId,
+        componentType: componentType,
         viewId: viewId,
         columnStart: columnStart,
         rowStart: rowStart,
@@ -58,26 +56,6 @@ class ContentSlotRepository {
   }
 
   /**
-   * Finds and returns Content Slot objects that contain a certain Component.
-   *
-   * @param {Number} componentId The ID of the Component
-   *
-   * @return {Promise<Object[]>}
-   */
-  getContentSlotsByComponentId (componentId) {
-    return new Promise((resolve) => {
-      const contentSlots = []
-      for (const contentSlot of this.contentSlots.values()) {
-        if (contentSlot.componentId === componentId) {
-          contentSlots.push(contentSlot)
-        }
-      }
-
-      resolve(contentSlots)
-    })
-  }
-
-  /**
    * Finds and returns Content Slot objects that belong to a certain View.
    *
    * @param {Number} viewId The ID of the View
@@ -97,16 +75,23 @@ class ContentSlotRepository {
     })
   }
 
-  getContentSlotForComponentAndView (viewId, componentId) {
-    return new Promise((resolve, reject) => {
+  /**
+   * Finds and returns Content Slot objects that contain a certain type of Component.
+   *
+   * @param {String} componentType The type of the Component that should be displayed in this Content Slot
+   *
+   * @return {Promise<Object[]>}
+   */
+  getContentSlotsByComponentType (componentType) {
+    return new Promise((resolve) => {
+      const contentSlots = []
       for (const contentSlot of this.contentSlots.values()) {
-        if (contentSlot.viewId === viewId && contentSlot.componentId === componentId) {
-          resolve(contentSlot)
-          return
+        if (contentSlot.componentType === componentType) {
+          contentSlots.push(contentSlot)
         }
       }
 
-      reject(new NotFoundError(`There is no Content Slot for Component ${componentId} and View ${viewId}`))
+      resolve(contentSlots)
     })
   }
 
@@ -130,7 +115,7 @@ class ContentSlotRepository {
 
   /**
    * @param {Number} id
-   * @param {Number} componentId
+   * @param {String} componentType
    * @param {Number} viewId
    * @param {Number} columnStart
    * @param {Number} rowStart
@@ -139,7 +124,7 @@ class ContentSlotRepository {
    *
    * @return {Promise}
    */
-  updateContentSlot (id, componentId, viewId, columnStart, rowStart, columnEnd, rowEnd) {
+  updateContentSlot (id, componentType, viewId, columnStart, rowStart, columnEnd, rowEnd) {
     return new Promise((resolve, reject) => {
       if (!this.contentSlots.has(id)) {
         return reject(new Error(`No Content Slot with ID ${id} found`))
@@ -147,7 +132,7 @@ class ContentSlotRepository {
 
       const contentSlot = {
         id: id,
-        componentId: componentId,
+        componentType: componentType,
         viewId: viewId,
         columnStart: columnStart,
         rowStart: rowStart,

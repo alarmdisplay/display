@@ -6,11 +6,10 @@ const swaggerJSDoc = require('swagger-jsdoc')
 
 /**
  * @param {DisplayService} displayService
- * @param {ComponentService} componentService
  * @param {AnnouncementService} announcementService
  * @param {AlertService} alertService
  */
-module.exports = function (displayService, componentService, announcementService, alertService) {
+module.exports = function (displayService, announcementService, alertService) {
   const logger = log4js.getLogger()
   const app = express()
 
@@ -26,7 +25,7 @@ module.exports = function (displayService, componentService, announcementService
 
   const APIv1 = require('./api')
 
-  app.use('/api/v1', cors(), new APIv1(displayService, componentService, announcementService, alertService).router)
+  app.use('/api/v1', cors(), new APIv1(displayService, announcementService, alertService).router)
 
   // Collect the Swagger spec from the routes files and serve the JSON
   const swaggerSpec = swaggerJSDoc({

@@ -65,14 +65,18 @@ module.exports = function (displayService) {
    *   ContentSlot:
    *     type: object
    *     required:
-   *       - componentId
+   *       - componentType
    *       - columnStart
    *       - rowStart
    *       - columnEnd
    *       - rowEnd
    *     properties:
-   *       componentId:
-   *         type: number
+   *       componentType:
+   *         type: string
+   *         enum:
+   *         - AnnouncementList
+   *         - Clock
+   *         - DWDWarningMap
    *       viewId:
    *         type: number
    *         readOnly: true
@@ -84,6 +88,8 @@ module.exports = function (displayService) {
    *         type: number
    *       rowEnd:
    *         type: number
+   *       options:
+   *         type: object
    */
 
   /**

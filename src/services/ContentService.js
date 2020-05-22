@@ -7,13 +7,19 @@ class ContentService extends EventEmitter {
   constructor (announcementService) {
     super()
     this.announcementService = announcementService
+
+    this.componentTypes = new Map()
+    this.componentTypes.set('AnnouncementList', { contentType: 'Announcement' })
+    this.componentTypes.set('Clock', { contentType: '' })
+    this.componentTypes.set('DWDWarningMap', { contentType: '' })
+
     this.announcementService.on('created', () => this.emit('content_changed', 'Announcement'))
     this.announcementService.on('updated', () => this.emit('content_changed', 'Announcement'))
     this.announcementService.on('deleted', () => this.emit('content_changed', 'Announcement'))
   }
 
-  getContentForComponent (component) {
-    switch (component.type) {
+  getContentForContentSlot (contentSlot) {
+    switch (contentSlot.componentType) {
       case 'AnnouncementList':
         return this.announcementService.getAllAnnouncements()
       default:
@@ -22,19 +28,36 @@ class ContentService extends EventEmitter {
   }
 
   /**
-   * @param {Object[]} components
+   * @param {Object[]} contentSlots
    *
    * @return {Promise<Object>}
    */
-  getContentForComponents (components) {
+  getContentForContentSlots (contentSlots) {
     return Promise.resolve()
       .then(async () => {
         const content = {}
-        for (const component of components) {
-          content[component.id] = await this.getContentForComponent(component)
+        for (const contentSlot of contentSlots) {
+          content[contentSlot.id] = await this.getContentForContentSlot(contentSlot)
         }
         return content
       })
+  }
+
+  getComponentTypesForContentType (contentType) {
+    return new Promise((resolve, reject) => {
+      if (!contentType) {
+        reject(new Error('Invalid content type'))
+        return
+      }
+
+      const components = []
+      this.componentTypes.forEach((properties, identifier) => {
+        if (properties.contentType === contentType) {
+          components.push(identifier)
+        }
+      })
+      resolve(components)
+    })
   }
 }
 

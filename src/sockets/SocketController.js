@@ -4,14 +4,12 @@ class SocketController {
   /**
    * @param {SocketServer} socketServer
    * @param {DisplayService} displayService
-   * @param {ComponentService} componentService
    * @param {ContentService} contentService
    * @param {AlertService} alertService
    */
-  constructor (socketServer, displayService, componentService, contentService, alertService) {
+  constructor (socketServer, displayService, contentService, alertService) {
     this.socketServer = socketServer
     this.displayService = displayService
-    this.componentService = componentService
     this.contentService = contentService
     this.alertService = alertService
     this.logger = log4js.getLogger('SocketController')
@@ -46,51 +44,22 @@ class SocketController {
         .then(display => this.pushContentToDisplay(display))
         .catch(reason => this.logger.error(reason))
     })
-    this.componentService.on('component_updated', componentId => {
-      this.logger.debug(`Component ${componentId} has been updated`)
-      this.displayService.getDisplaysContainingComponent(componentId)
-        .then(async displays => {
-          for (const display of displays) {
-            try {
-              await this.pushConfigToDisplay(display)
-              await this.pushContentToDisplay(display)
-            } catch (e) {
-              this.logger.error(e)
-            }
-          }
-        })
-    })
-    this.contentService.on('component_content_updated', componentId => {
-      this.logger.debug(`Content for Component ${componentId} has been updated`)
-      this.displayService.getDisplaysContainingComponent(componentId)
-        .then(displays => Promise.all(displays.map(display => this.pushContentToDisplay(display))))
-        .catch(reason => this.logger.error(reason))
-    })
     this.contentService.on('content_changed', contentType => {
       this.logger.debug(`Content for content type '${contentType}' changed`)
-      this.componentService.getComponentTypesForContentType(contentType)
-        .then(componentTypes => Promise.all(componentTypes.map(componentType => this.componentService.getComponentsForComponentType(componentType))))
+      this.contentService.getComponentTypesForContentType(contentType)
+        .then(componentTypes => Promise.all(componentTypes.map(componentType => this.displayService.getContentSlotsForComponentType(componentType))))
         .then(result => {
-          const componentIds = new Set()
-          result.forEach(components => {
-            components.forEach(component => {
-              componentIds.add(component.id)
+          const viewIds = new Set()
+          result.forEach(contentSlots => {
+            contentSlots.forEach(contentSlot => {
+              viewIds.add(contentSlot.viewId)
             })
           })
-          const componentIdsToRefresh = Array.from(componentIds.values())
-          this.logger.debug('The content of the following Components needs to be refreshed:', componentIdsToRefresh)
-          return componentIdsToRefresh
+          const viewIdsToRefresh = Array.from(viewIds.values())
+          this.logger.debug('The content of the following Views needs to be refreshed:', viewIdsToRefresh)
+          return viewIdsToRefresh
         })
-        .then(componentIds => Promise.all(componentIds.map(componentId => this.displayService.getDisplaysContainingComponent(componentId))))
-        .then(result => {
-          const displays = new Set()
-          result.forEach(displaysWithComponent => {
-            displaysWithComponent.forEach(display => {
-              displays.add(display)
-            })
-          })
-          return Array.from(displays.values())
-        })
+        .then(viewIds => this.displayService.getDisplaysForViews(viewIds))
         .then(displays => {
           this.logger.debug('The following Displays will receive a content update:', displays.map(display => display.id))
           return displays
@@ -143,7 +112,7 @@ class SocketController {
    */
   pushConfigToDisplay (display) {
     this.logger.debug(`Pushing config to Display '${display.name}'`)
-    return this.displayService.getViewsForDisplayWithComponents(display.id)
+    return this.displayService.getViewsForDisplay(display.id)
       .then(views => {
         this.socketServer.pushConfigToDisplay(display.clientId, {
           views: views
@@ -159,8 +128,15 @@ class SocketController {
    */
   pushContentToDisplay (display) {
     this.logger.debug(`Pushing content to Display '${display.name}'`)
-    return this.displayService.getComponentsForDisplay(display.id)
-      .then(components => this.contentService.getContentForComponents(components))
+    return this.displayService.getViewsForDisplay(display.id)
+      .then(views => {
+        const contentSlots = new Set()
+        for (const view of views) {
+          view.contentSlots.forEach(contentSlot => contentSlots.add(contentSlot))
+        }
+        return Array.from(contentSlots.values())
+      })
+      .then(contentSlots => this.contentService.getContentForContentSlots(contentSlots))
       .then(content => {
         this.socketServer.pushContentToDisplay(display.clientId, content)
       })
