@@ -49,7 +49,7 @@
             }
             return strValue
         }
-        
+
         if (seconds < 3600) {
             return `${twoDigits(Math.trunc(seconds / 60))}:${twoDigits(seconds % 60)}`
         } else {
