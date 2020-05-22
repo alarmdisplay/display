@@ -6,6 +6,15 @@ import VueMoment from 'vue-moment';
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/index.css';
 
+// Import Font Awesome
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faBullhorn, faClock, faStopwatch } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+// Configure Font Awesome
+library.add(faBullhorn, faClock, faStopwatch)
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
 require('moment/locale/de');
 
 Vue.use(VueMoment, { moment });
