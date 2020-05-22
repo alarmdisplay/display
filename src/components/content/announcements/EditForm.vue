@@ -31,6 +31,18 @@
                     </p>
                     <div class="w3-row">
                         <div class="w3-third w3-padding">
+                            <input id="input-restrict-validfrom" type="checkbox" class="w3-check" v-model="restrictValidFrom">
+                            <label for="input-restrict-validfrom">Diese Ank&uuml;ndigung anzeigen ab:</label>
+                            <DateTimePicker v-model="validFromDate" :format-options="datePickerOptions.timeFormat" :display-options="datePickerOptions.display"/>
+                        </div>
+                        <div class="w3-third w3-padding">
+                            <input id="input-restrict-validto" type="checkbox" class="w3-check" v-model="restrictValidTo">
+                            <label for="input-restrict-validto">Diese Ank&uuml;ndigung anzeigen bis:</label>
+                            <DateTimePicker v-model="validToDate" :format-options="datePickerOptions.timeFormat" :display-options="datePickerOptions.display"/>
+                        </div>
+                    </div>
+                    <div class="w3-row">
+                        <div class="w3-third w3-padding">
                             <button class="w3-btn w3-block w3-gray" @click="maybeCancel">Abbrechen</button>
                         </div>
                         <div class="w3-third w3-padding">
@@ -48,15 +60,38 @@
 
 <script>
 import axios from 'axios'
+import DateTimePicker from 'simple-vue2-datetimepicker'
 
 export default {
   name: 'AnnouncementEditForm',
+  components: {
+    DateTimePicker
+  },
   data: function () {
     return {
       announcementData: null,
       error: null,
       loading: false,
-      saveButtonEnabled: false
+      saveButtonEnabled: false,
+      restrictValidFrom: false,
+      restrictValidTo: false,
+      validFromDate: new Date(),
+      validToDate: new Date(),
+      datePickerOptions: {
+        timeFormat: {
+          locale: 'de-DE',
+          weekday: 'short',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          hour12: false
+        },
+        display: {
+          maxWidth: 200
+        }
+      }
     }
   },
   created: function () {
@@ -79,7 +114,17 @@ export default {
           this.announcementData = {
             title: response.data.title || '',
             text: response.data.text || '',
-            important: response.data.important || false
+            important: response.data.important || false,
+            validFrom: response.data.validFrom,
+            validTo: response.data.validTo
+          }
+          if (this.announcementData.validFrom) {
+            this.validFromDate = new Date(this.announcementData.validFrom * 1000)
+            this.restrictValidFrom = true
+          }
+          if (this.announcementData.validTo) {
+            this.validToDate = new Date(this.announcementData.validTo * 1000)
+            this.restrictValidTo = true
           }
           this.saveButtonEnabled = true
         })
@@ -99,6 +144,8 @@ export default {
     },
     saveChanges: function () {
       this.saveButtonEnabled = false
+      this.announcementData.validFrom = this.restrictValidFrom ? Math.floor(this.validFromDate.valueOf() / 1000) : undefined
+      this.announcementData.validTo = this.restrictValidTo ? Math.floor(this.validToDate.valueOf() / 1000) : undefined
       this.$store.dispatch('updateAnnouncement', { id: this.id, data: this.announcementData })
         .then(() => {
           this.$router.replace('/announcements')
