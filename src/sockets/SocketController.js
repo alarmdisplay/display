@@ -23,6 +23,7 @@ class SocketController {
         // Try to authenticate again.
         this.checkAuthentication(display.clientId)
           .then(display => this.pushConfigToDisplay(display))
+          .then(display => this.pushAlertsToDisplay(display))
           .then(display => this.pushContentToDisplay(display))
           .catch(reason => this.logger.error(reason))
       }
@@ -31,6 +32,7 @@ class SocketController {
       this.logger.debug(`Display ${display.id} has been updated`)
       this.checkAuthentication(display.clientId)
         .then(display => this.pushConfigToDisplay(display))
+        .then(display => this.pushAlertsToDisplay(display))
         .then(display => this.pushContentToDisplay(display))
         .catch(reason => this.logger.error(reason))
     })
@@ -79,6 +81,7 @@ class SocketController {
     this.logger.debug(`Client ${clientId} wants to connect`)
     this.checkAuthentication(clientId)
       .then(display => this.pushConfigToDisplay(display))
+      .then(display => this.pushAlertsToDisplay(display))
       .then(display => this.pushContentToDisplay(display))
       .catch(reason => this.logger.error(reason))
   }
@@ -102,6 +105,15 @@ class SocketController {
         const message = (reason instanceof Error) ? reason.message : reason
         this.socketServer.deauthenticateDisplay(clientId, message)
         return Promise.reject(reason)
+      })
+  }
+
+  pushAlertsToDisplay (display) {
+    this.logger.debug(`Pushing alerts to Display '${display.name}'`)
+    return this.alertService.getAllAlerts()
+      .then(alerts => {
+        this.socketServer.pushAlertsToDisplay(display.clientId, alerts)
+        return display
       })
   }
 

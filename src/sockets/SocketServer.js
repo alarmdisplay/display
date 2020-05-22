@@ -66,6 +66,10 @@ class SocketServer extends EventEmitter {
     return this.pendingDisplayIds.has(displayId)
   }
 
+  pushAlertsToDisplay (clientId, alerts) {
+    this.sendMessageToDisplay(clientId, 'all_alerts', alerts)
+  }
+
   pushConfigToDisplay (clientId, config) {
     this.sendMessageToDisplay(clientId, 'update_config', config)
   }
