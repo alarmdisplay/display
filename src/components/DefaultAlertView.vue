@@ -7,6 +7,7 @@
             <p class="title">{{ alert.title || 'Einsatz' }}</p>
             <span class="badge badge-test">TEST</span>
             <span v-if="alert.keyword" class="badge badge-category">{{ alert.keyword }}</span>
+            <span class="badge badge-elapsed-time"><font-awesome-icon icon="stopwatch"/> {{ elapsedTime }}</span>
             <p class="address">{{ alert.location || 'Keine Ortsangabe' }}</p>
             <p class="description">{{ alert.description || 'Keine Bemerkung' }}</p>
         </div>
@@ -29,10 +30,31 @@
                     classes.push('test')
                 }
                 return classes.join(' ')
+            },
+            elapsedTime: function () {
+                let elapsedSeconds = this.$root.$data.seconds - this.alert.time;
+                return textForSeconds(elapsedSeconds);
             }
         },
         props: {
             alert: Object
+        }
+    }
+
+    function textForSeconds(seconds) {
+        function twoDigits(value) {
+            let strValue = String(value);
+            if (strValue.length === 1) {
+                strValue = `0${value}`
+            }
+            return strValue
+        }
+        
+        if (seconds < 3600) {
+            return `${twoDigits(Math.trunc(seconds / 60))}:${twoDigits(seconds % 60)}`
+        } else {
+            let secondsOfHour = seconds % 3600;
+            return `${twoDigits(Math.trunc(seconds / 3600))}:${twoDigits(Math.trunc(secondsOfHour / 60))}:${twoDigits(secondsOfHour % 60)}`
         }
     }
 </script>
@@ -73,6 +95,7 @@
         font-size: 2.5em;
         padding: 0.3em 0.5em;
         font-weight: bold;
+        margin-right: 0.6em;
     }
 
     .badge-category {
@@ -93,7 +116,11 @@
         display: none;
         background-color: red;
         color: white;
-        margin-right: 0.6em;
+    }
+
+    .badge-elapsed-time {
+        background-color: #2c3e50;
+        color: white;
     }
 
     .alert.test .badge-test {
