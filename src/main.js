@@ -41,6 +41,7 @@ let vm = new Vue({
     authenticated: false,
     content: {},
     displayId: null,
+    seconds: Math.floor(Date.now() / 1000),
     showSplashScreen: true,
     views: []
   },
@@ -52,6 +53,7 @@ let vm = new Vue({
   mounted: function () {
     setupSocket(this.displayId);
     setTimeout(this.hideSplashScreen, 3000);
+    setInterval(this.updateSeconds, 1000);
   },
   methods: {
     addAlert: function (alert) {
@@ -74,6 +76,9 @@ let vm = new Vue({
     },
     updateDataSource: function (id, data) {
       this.$set(this.content, id, data)
+    },
+    updateSeconds: function () {
+      this.seconds = Math.floor(Date.now() / 1000)
     },
     setViews: function (views) {
       if (!Array.isArray(views)) {
