@@ -33,22 +33,22 @@
                     <h3>Komponenten</h3>
                     <ul class="w3-ul">
                         <li v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" class="w3-bar">
-                            <h4>Component #{{contentSlot.componentId}}</h4>
-                            <label :for="`input-col-start-${contentSlot.componentId}`">Startspalte:</label>
-                            <input :id="`input-col-start-${contentSlot.componentId}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.columnStart">
-                            <label :for="`input-row-start-${contentSlot.componentId}`">Startzeile:</label>
-                            <input :id="`input-row-start-${contentSlot.componentId}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.rowStart">
-                            <label :for="`input-col-end-${contentSlot.componentId}`">Endspalte:</label>
-                            <input :id="`input-col-end-${contentSlot.componentId}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.columnEnd">
-                            <label :for="`input-row-end-${contentSlot.componentId}`">Endzeile:</label>
-                            <input :id="`input-row-end-${contentSlot.componentId}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.rowEnd">
-                            <button @click="removeContentSlotForComponent(contentSlot.componentId)" class="w3-btn w3-red">Komponente entfernen</button>
+                            <h4><font-awesome-icon :icon="getIcon(contentSlot.componentType)"/> {{ getComponentName(contentSlot.componentType) }}</h4>
+                            <label :for="`input-col-start-${contentSlot.id}`">Startspalte:</label>
+                            <input :id="`input-col-start-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.columnStart">
+                            <label :for="`input-row-start-${contentSlot.id}`">Startzeile:</label>
+                            <input :id="`input-row-start-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.rowStart">
+                            <label :for="`input-col-end-${contentSlot.id}`">Endspalte:</label>
+                            <input :id="`input-col-end-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.columnEnd">
+                            <label :for="`input-row-end-${contentSlot.id}`">Endzeile:</label>
+                            <input :id="`input-row-end-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.rowEnd">
+                            <button @click="removeContentSlot(contentSlot)" class="w3-btn w3-red">Komponente entfernen</button>
                         </li>
                     </ul>
                     <label for="select-component-to-add">Verf&uuml;gbare Komponenten: </label>
                     <select id="select-component-to-add">
                         <option value="">Komponente wählen</option>
-                        <option v-for="component in usableComponents" :key="component.id" :value="component.id">{{ component.name }}</option>
+                        <option v-for="componentType in availableComponentTypes" :key="`add-${componentType}`" :value="componentType">{{ getComponentName(componentType) }}</option>
                     </select>
                     <button @click="addContentSlot" class="w3-btn w3-gray w3-margin-left">Hinzuf&uuml;gen</button>
 
@@ -74,17 +74,9 @@ import axios from 'axios'
 
 export default {
   name: 'ViewEditForm',
-  computed: {
-    usedComponentIds: function () {
-      const contentSlots = this.viewData.contentSlots || []
-      return contentSlots.map(contentSlot => contentSlot.componentId)
-    },
-    usableComponents: function () {
-      return this.$store.state.components.filter(component => !this.usedComponentIds.includes(component.id))
-    }
-  },
   data: function () {
     return {
+      availableComponentTypes: ['AnnouncementList', 'DWDWarningMap', 'Clock'],
       viewData: null,
       error: null,
       loading: false,
@@ -97,13 +89,12 @@ export default {
   methods: {
     addContentSlot: function () {
       const select = document.getElementById('select-component-to-add')
-      const componentId = parseInt(select.value)
-      if (Number.isNaN(componentId)) {
+      if (!this.availableComponentTypes.includes(select.value)) {
         return
       }
 
       this.viewData.contentSlots.push({
-        componentId: componentId,
+        componentType: select.value,
         columnStart: 1,
         rowStart: 1,
         columnEnd: 2,
@@ -136,12 +127,36 @@ export default {
           this.loading = false
         })
     },
+    getComponentName: function (componentType) {
+      switch (componentType) {
+        case 'AnnouncementList':
+          return 'Ankündigungen'
+        case 'Clock':
+          return 'Uhr'
+        case 'DWDWarningMap':
+          return 'DWD-Warnkarte'
+        default:
+          return this.componentObject.type
+      }
+    },
+    getIcon: function (componentType) {
+      switch (componentType) {
+        case 'AnnouncementList':
+          return 'bullhorn'
+        case 'Clock':
+          return 'clock'
+        case 'DWDWarningMap':
+          return 'cloud-showers-heavy'
+        default:
+          return 'cube'
+      }
+    },
     maybeCancel: function () {
       // TODO check if data is dirty
       this.$router.back()
     },
-    removeContentSlotForComponent: function (id) {
-      this.viewData.contentSlots = this.viewData.contentSlots.filter(contentSlot => contentSlot.componentId !== id)
+    removeContentSlot: function (contentSlotToRemove) {
+      this.viewData.contentSlots = this.viewData.contentSlots.filter(contentSlot => contentSlot !== contentSlotToRemove)
     },
     saveChanges: function () {
       this.saveButtonEnabled = false
@@ -166,10 +181,6 @@ export default {
 </script>
 
 <style scoped>
-#input-client-id {
-    width: unset;
-}
-
 #button-save {
     float: right;
 }
