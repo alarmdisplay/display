@@ -6,6 +6,7 @@
         <div class="w3-bar-item">
             <span class="title w3-large">{{ announcement.title || '(Kein Titel)' }}</span><br>
             <span>{{ getTextPreview() }}</span>
+            <p v-if="announcement.validFrom || announcement.validTo">{{ getValidityInfo() }}</p>
         </div>
         <router-link :to="`/announcements/${announcement.id}`" tag="button" class="w3-bar-item w3-button w3-border w3-border-blue w3-hover-blue w3-round-medium w3-right">
             <font-awesome-icon icon="pencil-alt"/> Bearbeiten
@@ -36,6 +37,16 @@ export default {
       }
 
       return text.substr(0, maxLength).concat(' ...')
+    },
+    getValidityInfo: function () {
+      let string = 'Gültig'
+      if (this.announcement.validFrom) {
+        string += ' ab ' + this.$moment(this.announcement.validFrom * 1000).format('LLL') + ' Uhr'
+      }
+      if (this.announcement.validTo) {
+        string += ' bis ' + this.$moment(this.announcement.validTo * 1000).format('LLL') + ' Uhr'
+      }
+      return string
     }
   }
 }

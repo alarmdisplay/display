@@ -4,6 +4,8 @@ import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 
 import axios from 'axios'
+import moment from 'moment'
+import VueMoment from 'vue-moment'
 
 // Import Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -25,8 +27,11 @@ import ViewList from '@/components/ViewList'
 library.add(faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faHome, faPencilAlt, faSpinner, faTimes)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
+require('moment/locale/de')
+
 Vue.use(Vuex)
 Vue.use(VueRouter)
+Vue.use(VueMoment, { moment })
 
 Vue.config.productionTip = false
 
