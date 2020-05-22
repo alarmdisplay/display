@@ -38,6 +38,7 @@
         justify-content: center;
         align-items: center;
         text-align: center;
+        overflow: hidden;
     }
 
     .time {
