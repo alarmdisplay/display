@@ -1,6 +1,6 @@
 <template>
     <div class="display-app">
-        <AlertScreen v-if="alerts.length > 0" :alerts="alerts"/>
+        <AlertScreen v-if="activeAlerts.length > 0" :alerts="activeAlerts"/>
         <IdleScreen v-else v-bind:child-views="getViewsForScreenType('IdleScreen')"/>
     </div>
 </template>
@@ -14,6 +14,11 @@
         components: {
             AlertScreen,
             IdleScreen
+        },
+        computed: {
+            activeAlerts: function () {
+                return this.alerts.filter(alert => alert.expires > this.$root.$data.seconds)
+            }
         },
         methods: {
             getViewsForScreenType: function (screenType) {
