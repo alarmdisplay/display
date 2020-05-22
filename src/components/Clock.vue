@@ -1,17 +1,31 @@
 <template>
     <div class="clock">
-        <div class="time">{{ time }}</div>
-        <div class="date">{{ date }}</div>
+        <div v-if="showTime" class="time">{{ time }}</div>
+        <div v-if="showDate" class="date">{{ date }}</div>
     </div>
 </template>
 
 <script>
     export default {
         name: 'Clock',
+        computed: {
+            dateFormat: function () {
+                return Object.prototype.hasOwnProperty.call(this.options, 'dateFormat') ? this.options.dateFormat : 'LL'
+            },
+            showDate: function () {
+                return Object.prototype.hasOwnProperty.call(this.options, 'showDate') ? this.options.showDate : true
+            },
+            showTime: function () {
+                return Object.prototype.hasOwnProperty.call(this.options, 'showTime') ? this.options.showTime : true
+            },
+            timeFormat: function () {
+                return Object.prototype.hasOwnProperty.call(this.options, 'timeFormat') ? this.options.timeFormat : 'LT'
+            }
+        },
         data() {
             return {
-                time: this.$moment(Date.now()).format("LT"),
-                date: this.$moment(Date.now()).format("LL")
+                time: '',
+                date: ''
             }
         },
         mounted: function() {
@@ -19,8 +33,8 @@
         },
         methods: {
             updateTime() {
-                this.time = this.$moment(Date.now()).format("LT");
-                this.date = this.$moment(Date.now()).format("LL");
+                this.time = this.$moment(Date.now()).format(this.timeFormat);
+                this.date = this.$moment(Date.now()).format(this.dateFormat);
             }
         },
         props: {
