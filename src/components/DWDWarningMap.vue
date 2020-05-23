@@ -97,7 +97,7 @@
         },
         data: function () {
             return {
-                cacheBustingQuery: ''
+                cacheBustingQuery: Date.now()
             }
         },
         mounted: function() {
