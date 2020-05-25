@@ -20,7 +20,6 @@
     "url": "https://github.com/alarmdisplay/display-backend/issues"
   },
   "devDependencies": {
-    "@shelf/jest-mongodb": "^1.1.5",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.20.1",
@@ -37,7 +36,6 @@
     "express": "^4.17.1",
     "log4js": "^6.1.2",
     "mariadb": "^2.4.0",
-    "mongoose": "^5.9.5",
     "socket.io": "^2.3.0",
     "swagger-jsdoc": "^3.7.0"
   }

@@ -1,11 +1,11 @@
 require('dotenv').config()
 const log4js = require('log4js')
-const mongoose = require('mongoose')
 
 const logger = log4js.getLogger()
 const debugEnabled = process.env.DEBUG === '1'
 logger.level = debugEnabled ? 'debug' : 'info'
 
+const Database = require('./persistence/Database')
 const DisplayService = require('./services/DisplayService')
 const SocketController = require('./sockets/SocketController')
 const SocketServer = require('./sockets/SocketServer')
@@ -16,7 +16,7 @@ const SocketServer = require('./sockets/SocketServer')
 function checkEnvironment () {
   const missingEnvs = []
 
-  for (const env of ['MONGODB_URI']) {
+  for (const env of ['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME', 'DB_PREFIX']) {
     if (!Object.prototype.hasOwnProperty.call(process.env, env)) {
       missingEnvs.push(env)
     }
@@ -36,37 +36,24 @@ process.setUncaughtExceptionCaptureCallback(err => {
 checkEnvironment()
 
 /**
- * Sets up the connection to MongoDB.
+ * Sets up the connection to the database.
  *
- * @param mongoDbUri
  * @return {Promise}
  * @throws Error If the connection to the database fails
  */
-function connectDatabase (mongoDbUri) {
-  logger.debug('Connecting to database...')
-  return mongoose.connect(mongoDbUri, {
-    useFindAndModify: false,
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }).then(() => {
-    logger.info('Connected to database')
-  }).catch((reason) => {
-    throw new Error(`Could not connect to database: ${reason}`)
-  })
+function connectDatabase () {
+  const database = new Database(process.env.DB_HOST, process.env.DB_USER, process.env.DB_PASSWORD, process.env.DB_NAME, process.env.DB_PREFIX)
+  return database.start()
+    .catch(reason => {
+      if (reason.errno && reason.errno === 1045) {
+        throw new Error(`Could not connect to the database: ${reason.message}`)
+      } else {
+        throw reason
+      }
+    })
 }
 
-const Database = require('./persistence/Database')
-const database = new Database(process.env.DB_HOST, process.env.DB_USER, process.env.DB_PASSWORD, process.env.DB_NAME, process.env.DB_PREFIX)
-database.start()
-  .catch(reason => {
-    if (reason.errno && reason.errno === 1045) {
-      logger.error('Could not connect to the database:', reason.message)
-    } else {
-      logger.error(reason)
-    }
-  })
-
-connectDatabase(process.env.MONGODB_URI)
+connectDatabase()
   .then(() => {
     const AlertRepository = require('./persistence/repositories/AlertRepository')
     const AlertService = require('./services/AlertService')
