@@ -1,7 +1,7 @@
-const DisplayRepository = require('../../src/persistence/DisplayRepository')
+const DisplayRepository = require('../../src/persistence/repositories/DisplayRepository')
 const DisplayService = require('../../src/services/DisplayService')
 
-jest.mock('../../src/persistence/DisplayRepository')
+jest.mock('../../src/persistence/repositories/DisplayRepository')
 
 describe('DisplayService', () => {
   let displayRepository

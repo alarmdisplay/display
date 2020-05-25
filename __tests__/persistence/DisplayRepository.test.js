@@ -1,4 +1,4 @@
-const DisplayRepository = require('../../src/persistence/DisplayRepository')
+const DisplayRepository = require('../../src/persistence/repositories/DisplayRepository')
 const NotFoundError = require('../../src/errors/NotFoundError')
 
 describe('The DisplayRepository', () => {

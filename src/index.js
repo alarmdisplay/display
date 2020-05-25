@@ -57,15 +57,15 @@ function connectDatabase (mongoDbUri) {
 
 connectDatabase(process.env.MONGODB_URI)
   .then(() => {
-    const AlertRepository = require('./persistence/AlertRepository')
+    const AlertRepository = require('./persistence/repositories/AlertRepository')
     const AlertService = require('./services/AlertService')
-    const AnnouncementRepository = require('./persistence/AnnouncementRepository')
+    const AnnouncementRepository = require('./persistence/repositories/AnnouncementRepository')
     const AnnouncementService = require('./services/AnnouncementService')
-    const ContentSlotOptionRepository = require('./persistence/ContentSlotOptionRepository')
+    const ContentSlotOptionRepository = require('./persistence/repositories/ContentSlotOptionRepository')
     const ContentService = require('./services/ContentService')
-    const ContentSlotRepository = require('./persistence/ContentSlotRepository')
-    const DisplayRepository = require('./persistence/DisplayRepository')
-    const ViewRepository = require('./persistence/ViewRepository')
+    const ContentSlotRepository = require('./persistence/repositories/ContentSlotRepository')
+    const DisplayRepository = require('./persistence/repositories/DisplayRepository')
+    const ViewRepository = require('./persistence/repositories/ViewRepository')
 
     const alertService = new AlertService(new AlertRepository())
     const announcementService = new AnnouncementService(new AnnouncementRepository())
