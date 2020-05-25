@@ -55,6 +55,17 @@ function connectDatabase (mongoDbUri) {
   })
 }
 
+const Database = require('./persistence/Database')
+const database = new Database(process.env.DB_HOST, process.env.DB_USER, process.env.DB_PASSWORD, process.env.DB_NAME, process.env.DB_PREFIX)
+database.start()
+  .catch(reason => {
+    if (reason.errno && reason.errno === 1045) {
+      logger.error('Could not connect to the database:', reason.message)
+    } else {
+      logger.error(reason)
+    }
+  })
+
 connectDatabase(process.env.MONGODB_URI)
   .then(() => {
     const AlertRepository = require('./persistence/repositories/AlertRepository')
