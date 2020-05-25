@@ -40,19 +40,27 @@ class Database {
 
   initialize (connection) {
     this.logger.info('Initializing database...')
-    return Promise.resolve()
-      .then(() => {
-        const tableName = `${this.prefix}options`
-        this.logger.info(`Creating table ${tableName} ...`)
-        return connection.query('CREATE TABLE `' + tableName + '` ( `id` int(10) unsigned NOT NULL AUTO_INCREMENT, `name` varchar(100) NOT NULL, `value` text NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `name` (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4')
+    const tableDefinitions = {
+      announcements: '( `id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `title` VARCHAR(200) NOT NULL , `body` TEXT NOT NULL , `important` BOOLEAN NOT NULL DEFAULT FALSE , `valid_from` TIMESTAMP NULL , `valid_to` TIMESTAMP NULL , `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB',
+      options: '( `id` int(10) unsigned NOT NULL AUTO_INCREMENT, `name` varchar(100) NOT NULL, `value` text NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `name` (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'
+    }
+
+    // Before tables are created, check if there would be a conflict with existing tables
+    const tableNames = Object.keys(tableDefinitions).map(tableName => `${this.prefix}${tableName}`)
+    return connection.query(`SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = '${this.database}' AND TABLE_NAME IN ('${tableNames.join("','")}')`)
+      .then(result => {
+        if (result.length > 0) {
+          const existingTableNames = result.map(row => row.TABLE_NAME)
+          throw new Error(`Tables that should be created, already exist (${existingTableNames.join(', ')}). Remove them if no longer needed or choose a different prefix or database.`)
+        }
       })
-      .then(() => {
-        const tableName = `${this.prefix}announcements`
-        this.logger.info(`Creating table ${tableName} ...`)
-        return connection.query('CREATE TABLE `' + tableName + '` ( `id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `title` VARCHAR(200) NOT NULL , `body` TEXT NOT NULL , `important` BOOLEAN NOT NULL DEFAULT FALSE , `valid_from` TIMESTAMP NULL , `valid_to` TIMESTAMP NULL , `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;')
-      })
-      .catch(reason => {
-        throw new Error(`Error during initialization: ${reason.message}`)
+      .then(async () => {
+        // No conflicts expected, create the tables
+        for (const [name, definition] of Object.entries(tableDefinitions)) {
+          const tableName = `${this.prefix}${name}`
+          this.logger.info(`Creating table ${tableName} ...`)
+          await connection.query('CREATE TABLE `' + tableName + '` ' + definition)
+        }
       })
   }
 }
