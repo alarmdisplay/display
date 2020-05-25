@@ -72,8 +72,8 @@ class Database {
 
     // The table names and the respective definition to create that table
     const tableDefinitions = {
-      announcements: '( `id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `title` VARCHAR(200) NOT NULL , `body` TEXT NOT NULL , `important` BOOLEAN NOT NULL DEFAULT FALSE , `valid_from` TIMESTAMP NULL , `valid_to` TIMESTAMP NULL , `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB',
-      options: '( `id` int(10) unsigned NOT NULL AUTO_INCREMENT, `name` varchar(100) NOT NULL, `value` text NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `name` (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'
+      announcements: '( `id` int(10) unsigned NOT NULL AUTO_INCREMENT, `title` varchar(200) NOT NULL, `body` text NOT NULL, `important` tinyint(1) NOT NULL DEFAULT 0, `valid_from` timestamp NULL DEFAULT NULL, `valid_to` timestamp NULL DEFAULT NULL, `created` timestamp NOT NULL DEFAULT current_timestamp(), `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(), PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4',
+      options: '(`id` int(10) unsigned NOT NULL AUTO_INCREMENT, `name` varchar(100) NOT NULL, `value` text NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `name` (`name`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4'
     }
 
     // Before tables are created, check if there would be a conflict with existing tables
