@@ -21,25 +21,56 @@ class Database {
     this.logger.info('Connecting...')
     return mariadb.createConnection({ host: this.host, user: this.username, password: this.password, database: this.database })
       .then(connection => this.checkStructure(connection))
+      .then(dbVersion => { this.logger.info('Database version:', dbVersion) })
   }
 
+  /**
+   * Checks if the expected database structure is found and triggers an initialization if not
+   *
+   * @param connection
+   *
+   * @return {Promise}
+   */
   checkStructure (connection) {
-    return connection.query(`SELECT value FROM ${this.prefix}options WHERE name = 'db_version'`)
-      .then(result => {
-        // TODO the table exists and maybe also the DB version
-        this.logger.debug(result)
-      }, reason => {
+    return this.getDatabaseVersion(connection)
+      .catch(reason => {
         if (reason.errno === 1146) {
           this.logger.warn('Options table does not exist, trying to initialize database')
           return this.initialize(connection)
+            .then(() => this.getDatabaseVersion(connection))
         }
 
         throw reason
       })
   }
 
+  /**
+   * @param connection
+   *
+   * @return {Promise<Number>}
+   */
+  getDatabaseVersion (connection) {
+    return connection.query(`SELECT value FROM ${this.prefix}options WHERE name = 'db_version'`)
+      .then(result => {
+        if (result.length === 0) {
+          throw new Error('Could not determine database version')
+        }
+
+        return parseInt(result[0].value)
+      })
+  }
+
+  /**
+   * Creates all the requires database tables
+   *
+   * @param connection
+   *
+   * @return {Promise}
+   */
   initialize (connection) {
     this.logger.info('Initializing database...')
+
+    // The table names and the respective definition to create that table
     const tableDefinitions = {
       announcements: '( `id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `title` VARCHAR(200) NOT NULL , `body` TEXT NOT NULL , `important` BOOLEAN NOT NULL DEFAULT FALSE , `valid_from` TIMESTAMP NULL , `valid_to` TIMESTAMP NULL , `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB',
       options: '( `id` int(10) unsigned NOT NULL AUTO_INCREMENT, `name` varchar(100) NOT NULL, `value` text NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `name` (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'
@@ -61,6 +92,10 @@ class Database {
           this.logger.info(`Creating table ${tableName} ...`)
           await connection.query('CREATE TABLE `' + tableName + '` ' + definition)
         }
+      })
+      .then(() => {
+        // If all went well, we can fill the database with essential data
+        return connection.query(`INSERT INTO ${this.prefix}options (name, value) VALUES (?, ?)`, ['db_version', 1])
       })
   }
 }
