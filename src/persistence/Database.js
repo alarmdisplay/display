@@ -40,8 +40,20 @@ class Database {
 
   initialize (connection) {
     this.logger.info('Initializing database...')
-    // TODO
     return Promise.resolve()
+      .then(() => {
+        const tableName = `${this.prefix}options`
+        this.logger.info(`Creating table ${tableName} ...`)
+        return connection.query('CREATE TABLE `' + tableName + '` ( `id` int(10) unsigned NOT NULL AUTO_INCREMENT, `name` varchar(100) NOT NULL, `value` text NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `name` (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4')
+      })
+      .then(() => {
+        const tableName = `${this.prefix}announcements`
+        this.logger.info(`Creating table ${tableName} ...`)
+        return connection.query('CREATE TABLE `' + tableName + '` ( `id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `title` VARCHAR(200) NOT NULL , `body` TEXT NOT NULL , `important` BOOLEAN NOT NULL DEFAULT FALSE , `valid_from` TIMESTAMP NULL , `valid_to` TIMESTAMP NULL , `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;')
+      })
+      .catch(reason => {
+        throw new Error(`Error during initialization: ${reason.message}`)
+      })
   }
 }
 
