@@ -1,6 +1,7 @@
 const express = require('express')
 const log4js = require('log4js')
 
+const DuplicateEntryError = require('./errors/DuplicateEntryError')
 const IllegalArgumentError = require('./errors/IllegalArgumentError')
 const NotFoundError = require('./errors/NotFoundError')
 
@@ -31,6 +32,8 @@ module.exports = class APIv1 {
         statusCode = 400
       } else if (err instanceof NotFoundError) {
         statusCode = 404
+      } else if (err instanceof DuplicateEntryError) {
+        statusCode = 409
       }
 
       if (statusCode === 500) {
