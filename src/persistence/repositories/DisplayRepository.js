@@ -34,7 +34,9 @@ class DisplayRepository {
 
       throw new Error(e.code)
     } finally {
-      if (conn) conn.release()
+      if (conn) {
+        conn.release()
+      }
     }
   }
 
@@ -50,7 +52,9 @@ class DisplayRepository {
       const result = await conn.query(`DELETE FROM ${this.tableName} WHERE id = ? LIMIT 1`, displayId)
       return (result.affectedRows === 1 ? displayId : null)
     } finally {
-      if (conn) conn.release()
+      if (conn) {
+        conn.release()
+      }
     }
   }
 
@@ -72,7 +76,9 @@ class DisplayRepository {
       const rows = await conn.query('SELECT * FROM ' + this.tableName)
       return rows.map(this.transformDisplay)
     } finally {
-      if (conn) conn.release()
+      if (conn) {
+        conn.release()
+      }
     }
   }
 
@@ -93,7 +99,9 @@ class DisplayRepository {
       }
       return this.transformDisplay(rows[0])
     } finally {
-      if (conn) conn.release()
+      if (conn) {
+        conn.release()
+      }
     }
   }
 
@@ -111,7 +119,9 @@ class DisplayRepository {
       const rows = await conn.query('SELECT * FROM ' + this.tableName + ' WHERE id IN ?', [displayIds])
       return rows.map(this.transformDisplay)
     } finally {
-      if (conn) conn.release()
+      if (conn) {
+        conn.release()
+      }
     }
   }
 
@@ -127,7 +137,9 @@ class DisplayRepository {
       const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE client_id = ? LIMIT 1`, clientId)
       return rows.length === 1 ? this.transformDisplay(rows[0]) : null
     } finally {
-      if (conn) conn.release()
+      if (conn) {
+        conn.release()
+      }
     }
   }
 
@@ -154,7 +166,9 @@ class DisplayRepository {
       )
       return result.affectedRows === 1 ? displayId : null
     } finally {
-      if (conn) conn.release()
+      if (conn) {
+        conn.release()
+      }
     }
   }
 }
