@@ -1,5 +1,4 @@
 const DuplicateEntryError = require('../../errors/DuplicateEntryError')
-const NotFoundError = require('../../errors/NotFoundError')
 
 class DisplayRepository {
   /**
@@ -9,7 +8,6 @@ class DisplayRepository {
   constructor (connectionPool, prefix) {
     this.connectionPool = connectionPool
     this.tableName = `${prefix}displays`
-    this.displays = new Map()
   }
 
   /**
@@ -106,33 +104,31 @@ class DisplayRepository {
    *
    * @return {Promise<Object[]>}
    */
-  getDisplaysById (displayIds) {
-    return new Promise((resolve) => {
-      const displays = []
-      for (const display of this.displays.values()) {
-        if (displayIds.includes(display.id)) {
-          displays.push(display)
-        }
-      }
-
-      resolve(displays)
-    })
+  async getDisplaysById (displayIds) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const rows = await conn.query('SELECT * FROM ' + this.tableName + ' WHERE id IN ?', [displayIds])
+      return rows.map(this.transformDisplay)
+    } finally {
+      if (conn) conn.release()
+    }
   }
 
   /**
    * @param {String} clientId
+   *
+   * @return {Promise<Object>|Promise<null>}
    */
-  getDisplayByClientId (clientId) {
-    return new Promise((resolve, reject) => {
-      const displays = Array.from(this.displays.values())
-      const displayWithClientId = displays.filter(display => display.clientId === clientId)
-
-      if (displayWithClientId.length !== 1) {
-        return reject(new NotFoundError(`Could not find Display with client ID ${clientId}`))
-      }
-
-      resolve(displayWithClientId[0])
-    })
+  async getDisplayByClientId (clientId) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE client_id = ? LIMIT 1`, clientId)
+      return rows.length === 1 ? this.transformDisplay(rows[0]) : null
+    } finally {
+      if (conn) conn.release()
+    }
   }
 
   /**

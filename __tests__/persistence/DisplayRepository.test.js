@@ -79,6 +79,32 @@ describe('DisplayRepository', () => {
     })
   })
 
+  describe('.getDisplayByClientId()', () => {
+    it('should execute a SELECT statement', async () => {
+      connection.query.mockResolvedValueOnce([])
+      await displayRepository.getDisplayByClientId('ABC123')
+      expect(connection.query).toHaveBeenCalledTimes(1)
+      expect(connection.query).toHaveBeenCalledWith('SELECT * FROM test_displays WHERE client_id = ? LIMIT 1', 'ABC123')
+      expect(connection.release).toHaveBeenCalledTimes(1)
+    })
+
+    it('should return a Display object if found', async () => {
+      const result = [{ id: 412, name: 'ASDF', active: 1, client_id: 'DEF873', description: 'xyz', location: 'qwert' }]
+      result.meta = {}
+      connection.query.mockResolvedValueOnce(result)
+      const display = await displayRepository.getDisplayByClientId('DEF873')
+      expect(display).toEqual({ id: 412, name: 'ASDF', active: true, clientId: 'DEF873', description: 'xyz', location: 'qwert' })
+    })
+
+    it('should return null if no such Display exists', async () => {
+      const result = []
+      result.meta = {}
+      connection.query.mockResolvedValueOnce(result)
+      const display = await displayRepository.getDisplayByClientId('AKHD126')
+      expect(display).toBeNull()
+    })
+  })
+
   describe('.getDisplayById()', () => {
     it('should get a Display by its ID', async () => {
       const result = [{ id: 15, name: 'A name', active: 0, client_id: '29fn8', description: 'Hello', location: '... it\'s me' }]
@@ -105,6 +131,39 @@ describe('DisplayRepository', () => {
       expect(connection.query).toHaveBeenCalledWith('SELECT * FROM test_displays WHERE id = ? LIMIT 1', 555)
       expect(connection.release).toHaveBeenCalledTimes(1)
       expect(display).toBeNull()
+    })
+  })
+
+  describe('.getDisplaysById()', () => {
+    it('should execute a SELECT statement', async () => {
+      connection.query.mockResolvedValueOnce([])
+      await displayRepository.getDisplaysById([67, 2, 123])
+      expect(connection.query).toHaveBeenCalledTimes(1)
+      expect(connection.query).toHaveBeenCalledWith('SELECT * FROM test_displays WHERE id IN ?', [[67, 2, 123]])
+      expect(connection.release).toHaveBeenCalledTimes(1)
+    })
+
+    it('should return an Array of Displays', async () => {
+      const result = [
+        { id: 4, name: 'A', active: 1, client_id: 'A1B2', description: 'R', location: 'X' },
+        { id: 62, name: 'C', active: 0, client_id: 'E5F6', description: 'T', location: 'Z' }
+      ]
+      result.meta = {}
+      connection.query.mockResolvedValueOnce(result)
+      const displays = await displayRepository.getDisplaysById([4, 33, 62, 98])
+      expect(displays).toBeInstanceOf(Array)
+      expect(displays).toHaveLength(2)
+      expect(displays[0]).toEqual({ id: 4, name: 'A', active: true, clientId: 'A1B2', description: 'R', location: 'X' })
+      expect(displays[1]).toEqual({ id: 62, name: 'C', active: false, clientId: 'E5F6', description: 'T', location: 'Z' })
+    })
+
+    it('should return an empty Array if no Display matches', async () => {
+      const result = []
+      result.meta = {}
+      connection.query.mockResolvedValueOnce(result)
+      const displays = await displayRepository.getDisplaysById([4, 33, 62, 98])
+      expect(displays).toBeInstanceOf(Array)
+      expect(displays).toHaveLength(0)
     })
   })
 
