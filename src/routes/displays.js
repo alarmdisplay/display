@@ -179,17 +179,17 @@ module.exports = function (displayService) {
    *     tags:
    *       - Displays
    */
-  router.get('/:id', (req, res, next) => {
-    displayService.getDisplayById(parseInt(req.params.id))
-      .then(display => {
-        res.json(display)
-      }, reason => {
-        if (reason instanceof NotFoundError) {
-          return res.sendStatus(404)
-        }
-
-        return next(reason)
-      })
+  router.get('/:id', async (req, res, next) => {
+    try {
+      const display = await displayService.getDisplayById(parseInt(req.params.id))
+      if (!display) {
+        next(new NotFoundError(`No Display with ID ${req.params.id} found`))
+        return
+      }
+      res.json(display)
+    } catch (e) {
+      next(e)
+    }
   })
 
   /**
@@ -218,21 +218,17 @@ module.exports = function (displayService) {
    *     tags:
    *       - Displays
    */
-  router.put('/:id', (req, res, next) => {
-    displayService.getDisplayById(parseInt(req.params.id))
-      .then(() => {
-        // Display exists
-        return displayService.updateDisplay(parseInt(req.params.id), req.body.name, req.body.active, req.body.clientId, req.body.description, req.body.location)
-          .then(updatedDisplay => res.json(updatedDisplay))
-      }, (reason) => {
-        if (reason instanceof NotFoundError) {
-          // Display does not exist
-          return res.sendStatus(404)
-        }
-
-        throw reason
-      })
-      .catch(reason => next(reason))
+  router.put('/:id', async (req, res, next) => {
+    try {
+      const updatedDisplay = await displayService.updateDisplay(parseInt(req.params.id), req.body.name, req.body.active, req.body.clientId, req.body.description, req.body.location)
+      if (!updatedDisplay) {
+        next(new NotFoundError(`No Display with ID ${req.params.id} found`))
+        return
+      }
+      res.json(updatedDisplay)
+    } catch (e) {
+      next(e)
+    }
   })
 
   /**

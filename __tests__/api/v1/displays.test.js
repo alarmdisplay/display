@@ -121,7 +121,7 @@ describe(baseUrl, () => {
     })
 
     it('should return 404 if the Display does not exist', () => {
-      DisplayService.mock.instances[0].getDisplayById.mockRejectedValueOnce(new NotFoundError())
+      DisplayService.mock.instances[0].getDisplayById.mockRejectedValueOnce(null)
       return request.get(`${baseUrl}/14`)
         .expect(404)
     })
@@ -136,16 +136,7 @@ describe(baseUrl, () => {
   })
 
   describe('PUT /{id}', () => {
-    it('should correctly call DisplayService.getDisplayById()', () => {
-      return request.put(`${baseUrl}/6233`)
-        .expect(() => {
-          expect(DisplayService.mock.instances[0].getDisplayById.mock.calls).toHaveLength(1)
-          expect(DisplayService.mock.instances[0].getDisplayById.mock.calls[0]).toEqual([6233])
-        })
-    })
-
     it('should correctly call DisplayService.updateDisplay()', () => {
-      DisplayService.mock.instances[0].getDisplayById.mockResolvedValueOnce()
       return request.put(`${baseUrl}/56`)
         .send({
           id: 56,
@@ -163,7 +154,6 @@ describe(baseUrl, () => {
 
     it('should return the updated Display', () => {
       const display = { id: 253, name: 'Hello', active: true, clientId: 'JLA73G', description: 'None', location: 'Also none' }
-      DisplayService.mock.instances[0].getDisplayById.mockResolvedValueOnce()
       DisplayService.mock.instances[0].updateDisplay.mockResolvedValueOnce(display)
       return request.put(`${baseUrl}/253`)
         .send({})
@@ -173,20 +163,12 @@ describe(baseUrl, () => {
     })
 
     it('should return 404 when Display does not exist', () => {
-      DisplayService.mock.instances[0].getDisplayById.mockRejectedValueOnce(new NotFoundError())
+      DisplayService.mock.instances[0].updateDisplay.mockRejectedValueOnce(null)
       return request.put(`${baseUrl}/12`)
         .expect(404)
     })
 
-    it('should return 500 on internal error in DisplayService.getDisplayById()', () => {
-      DisplayService.mock.instances[0].getDisplayById.mockRejectedValueOnce(new Error('Error during PUT /{id}'))
-      return request.put(`${baseUrl}/5`)
-        .expect(500)
-        .expect({ error: { message: 'Error during PUT /{id}' } })
-    })
-
     it('should return 500 on internal error in DisplayService.updateDisplay()', () => {
-      DisplayService.mock.instances[0].getDisplayById.mockResolvedValueOnce()
       DisplayService.mock.instances[0].updateDisplay.mockRejectedValueOnce(new Error('Error during PUT /{id}'))
       return request.put(`${baseUrl}/5`)
         .expect('Content-Type', /json/)
