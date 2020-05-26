@@ -94,7 +94,7 @@ class SocketController {
   checkAuthentication (clientId) {
     return this.displayService.getDisplayByClientId(clientId)
       .then(display => {
-        if (!display.active) {
+        if (!display || !display.active) {
           throw new Error('Display not active')
         }
 
