@@ -13,7 +13,7 @@ describe(baseUrl, () => {
 
   beforeAll(() => {
     displayService = new DisplayService(undefined, undefined, undefined, undefined)
-    const theApp = app(displayService, undefined, undefined, undefined)
+    const theApp = app(displayService, undefined, undefined)
     request = supertest(theApp)
   })
 
