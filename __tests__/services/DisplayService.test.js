@@ -36,4 +36,39 @@ describe('DisplayService', () => {
       expect(display).toEqual(mockResponse)
     })
   })
+
+  describe('Deleting a Display', () => {
+    it('should call DisplayRepository.createDisplay() correctly', async () => {
+      await displayService.deleteDisplay(12498)
+      expect(DisplayRepository.mock.instances[0].deleteDisplay.mock.calls).toHaveLength(1)
+      expect(DisplayRepository.mock.instances[0].deleteDisplay.mock.calls[0]).toEqual([12498])
+    })
+
+    it('should return the ID when the Display did exist', async () => {
+      DisplayRepository.mock.instances[0].deleteDisplay.mockResolvedValueOnce(245)
+      const returnValue = await displayService.deleteDisplay(245)
+      expect(returnValue).toBe(245)
+    })
+
+    it('should return null when the Display did not exist', async () => {
+      DisplayRepository.mock.instances[0].deleteDisplay.mockResolvedValueOnce(null)
+      const returnValue = await displayService.deleteDisplay(247)
+      expect(returnValue).toBeNull()
+    })
+
+    it('should emit display_deleted when the Display did exist', async () => {
+      displayService.emit = jest.fn()
+      DisplayRepository.mock.instances[0].deleteDisplay.mockResolvedValueOnce(2468)
+      await displayService.deleteDisplay(2468)
+      expect(displayService.emit).toHaveBeenCalledTimes(1)
+      expect(displayService.emit).toHaveBeenCalledWith('display_deleted', 2468)
+    })
+
+    it('should not emit display_deleted when the Display did not exist', async () => {
+      displayService.emit = jest.fn()
+      DisplayRepository.mock.instances[0].deleteDisplay.mockResolvedValueOnce(null)
+      await displayService.deleteDisplay(958)
+      expect(displayService.emit).toHaveBeenCalledTimes(0)
+    })
+  })
 })
