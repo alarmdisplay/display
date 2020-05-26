@@ -5,6 +5,9 @@ const logger = log4js.getLogger()
 const debugEnabled = process.env.DEBUG === '1'
 logger.level = debugEnabled ? 'debug' : 'info'
 
+const AlertService = require('./services/AlertService')
+const AnnouncementService = require('./services/AnnouncementService')
+const ContentService = require('./services/ContentService')
 const Database = require('./persistence/Database')
 const DisplayService = require('./services/DisplayService')
 const SocketController = require('./sockets/SocketController')
@@ -38,36 +41,27 @@ checkEnvironment()
 /**
  * Sets up the connection to the database.
  *
- * @return {Promise}
+ * @return {Promise<{contentSlotRepository: ContentSlotRepository, contentSlotOptionRepository: ContentSlotOptionRepository, announcementRepository: AnnouncementRepository, displayRepository: DisplayRepository, viewRepository: ViewRepository, alertRepository: AlertRepository}>}
  * @throws Error If the connection to the database fails
  */
-function connectDatabase () {
-  const database = new Database(process.env.DB_HOST, process.env.DB_USER, process.env.DB_PASSWORD, process.env.DB_NAME, process.env.DB_PREFIX)
-  return database.start()
-    .catch(reason => {
-      if (reason.errno && reason.errno === 1045) {
-        throw new Error(`Could not connect to the database: ${reason.message}`)
-      } else {
-        throw reason
-      }
-    })
+async function connectDatabase () {
+  try {
+    const database = new Database(process.env.DB_HOST, process.env.DB_USER, process.env.DB_PASSWORD, process.env.DB_NAME, process.env.DB_PREFIX)
+    return await database.start()
+  } catch (e) {
+    if (e.errno && e.errno === 1045) {
+      throw new Error(`Could not connect to the database: ${e.message}`)
+    } else {
+      throw e
+    }
+  }
 }
 
 connectDatabase()
-  .then(() => {
-    const AlertRepository = require('./persistence/repositories/AlertRepository')
-    const AlertService = require('./services/AlertService')
-    const AnnouncementRepository = require('./persistence/repositories/AnnouncementRepository')
-    const AnnouncementService = require('./services/AnnouncementService')
-    const ContentSlotOptionRepository = require('./persistence/repositories/ContentSlotOptionRepository')
-    const ContentService = require('./services/ContentService')
-    const ContentSlotRepository = require('./persistence/repositories/ContentSlotRepository')
-    const DisplayRepository = require('./persistence/repositories/DisplayRepository')
-    const ViewRepository = require('./persistence/repositories/ViewRepository')
-
-    const alertService = new AlertService(new AlertRepository())
-    const announcementService = new AnnouncementService(new AnnouncementRepository())
-    const displayService = new DisplayService(new DisplayRepository(), new ViewRepository(), new ContentSlotRepository(), new ContentSlotOptionRepository())
+  .then(({ alertRepository, announcementRepository, contentSlotOptionRepository, contentSlotRepository, displayRepository, viewRepository }) => {
+    const alertService = new AlertService(alertRepository)
+    const announcementService = new AnnouncementService(announcementRepository)
+    const displayService = new DisplayService(displayRepository, viewRepository, contentSlotRepository, contentSlotOptionRepository)
     const contentService = new ContentService(announcementService)
 
     const app = require('./app')(displayService, announcementService, alertService)

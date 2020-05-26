@@ -1,6 +1,13 @@
 const log4js = require('log4js')
 const mariadb = require('mariadb')
 
+const AlertRepository = require('./repositories/AlertRepository')
+const AnnouncementRepository = require('./repositories/AnnouncementRepository')
+const ContentSlotOptionRepository = require('./repositories/ContentSlotOptionRepository')
+const ContentSlotRepository = require('./repositories/ContentSlotRepository')
+const DisplayRepository = require('./repositories/DisplayRepository')
+const ViewRepository = require('./repositories/ViewRepository')
+
 class Database {
   constructor (host, username, password, database, prefix) {
     this.host = host
@@ -15,13 +22,26 @@ class Database {
   /**
    * Connects to the database and makes sure it is ready to be used.
    *
-   * @return {Promise}
+   * @return {Promise<{contentSlotRepository: ContentSlotRepository, contentSlotOptionRepository: ContentSlotOptionRepository, announcementRepository: AnnouncementRepository, displayRepository: DisplayRepository, viewRepository: ViewRepository, alertRepository: AlertRepository}>}
    */
-  start () {
+  async start () {
     this.logger.info('Connecting...')
-    return mariadb.createConnection({ host: this.host, user: this.username, password: this.password, database: this.database })
-      .then(connection => this.checkStructure(connection))
-      .then(dbVersion => { this.logger.info('Database version:', dbVersion) })
+
+    // Create a single connection for the startup checks, so we avoid race conditions
+    const connection = await mariadb.createConnection({ host: this.host, user: this.username, password: this.password, database: this.database })
+    const dbVersion = await this.checkStructure(connection)
+    this.logger.info('Database version:', dbVersion)
+    // This is the place where we can later check for needed database migrations
+    await connection.end()
+
+    return {
+      alertRepository: new AlertRepository(),
+      announcementRepository: new AnnouncementRepository(),
+      displayRepository: new DisplayRepository(),
+      contentSlotRepository: new ContentSlotRepository(),
+      contentSlotOptionRepository: new ContentSlotOptionRepository(),
+      viewRepository: new ViewRepository()
+    }
   }
 
   /**
@@ -29,7 +49,7 @@ class Database {
    *
    * @param connection
    *
-   * @return {Promise}
+   * @return {Promise<Number>}
    */
   checkStructure (connection) {
     return this.getDatabaseVersion(connection)
