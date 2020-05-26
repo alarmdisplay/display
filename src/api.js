@@ -39,7 +39,7 @@ module.exports = class APIv1 {
       if (statusCode === 500) {
         this.logger.error(err)
       }
-      res.status(statusCode).json({ error: { message: err.message } })
+      res.status(statusCode).json({ error: { message: err.message || '' } })
     })
   }
 }
