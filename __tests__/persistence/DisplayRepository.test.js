@@ -1,5 +1,5 @@
 const DisplayRepository = require('../../src/persistence/repositories/DisplayRepository')
-const NotFoundError = require('../../src/errors/NotFoundError')
+const DuplicateEntryError = require('../../src/errors/DuplicateEntryError')
 
 describe('DisplayRepository', () => {
   let connection, connectionPool
@@ -33,6 +33,22 @@ describe('DisplayRepository', () => {
       )
       expect(connection.release).toHaveBeenCalledTimes(1)
       expect(displayId).toBe(83)
+    })
+
+    it('should throw a DuplicateEntryError when a unique index is violated', async () => {
+      const error = new Error()
+      error.errno = 1062
+      error.code = 'error code'
+      connection.query.mockRejectedValueOnce(error)
+      await expect(displayRepository.createDisplay('', true, 'ABC', '', '')).rejects.toThrowError(new DuplicateEntryError('error code'))
+    })
+
+    it('should throw a standard Error for other errors', async () => {
+      const error = new Error()
+      error.errno = 42
+      error.code = 'some code'
+      connection.query.mockRejectedValueOnce(error)
+      await expect(displayRepository.createDisplay('', true, 'ABC', '', '')).rejects.toThrowError(new Error('some code'))
     })
   })
 
