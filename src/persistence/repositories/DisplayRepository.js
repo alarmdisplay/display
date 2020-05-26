@@ -1,9 +1,15 @@
+const DuplicateEntryError = require('../../errors/DuplicateEntryError')
 const NotFoundError = require('../../errors/NotFoundError')
 
 class DisplayRepository {
-  constructor () {
+  /**
+   * @param connectionPool
+   * @param {String} prefix The prefix used for the database tables
+   */
+  constructor (connectionPool, prefix) {
+    this.connectionPool = connectionPool
+    this.tableName = `${prefix}displays`
     this.displays = new Map()
-    this.idCounter = 1
   }
 
   /**
@@ -14,36 +20,62 @@ class DisplayRepository {
    * @param {String} clientId
    * @param {String} description
    * @param {String} location
-   * @return {Promise}
+   *
+   * @return {Promise<Number>}
    */
-  createDisplay (name, active, clientId, description, location) {
-    return new Promise((resolve) => {
-      const display = {
-        id: this.idCounter++,
-        name: name,
-        active: active,
-        clientId: clientId,
-        description: description,
-        location: location
+  async createDisplay (name, active, clientId, description, location) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const result = await conn.query(`INSERT INTO ${this.tableName} (name, active, client_id, description, location) VALUES (?,?,?,?,?)`, [name, active, clientId, description, location])
+      return result.insertId
+    } catch (e) {
+      if (e.errno === 1062) {
+        throw new DuplicateEntryError(e.code)
       }
 
-      this.displays.set(display.id, display)
-      resolve(display)
-    })
+      throw new Error(e.code)
+    } finally {
+      if (conn) conn.release()
+    }
   }
 
-  deleteDisplay (displayId) {
-    return new Promise((resolve) => {
-      const elementExisted = this.displays.delete(displayId)
-      resolve(elementExisted ? displayId : undefined)
-    })
+  /**
+   * @param {Number} displayId The ID of the Display to delete
+   *
+   * @return {Promise<Number>|Promise<null>} Returns the ID if the Display existed before deletion, null otherwise
+   */
+  async deleteDisplay (displayId) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const result = await conn.query(`DELETE FROM ${this.tableName} WHERE id = ? LIMIT 1`, displayId)
+      return (result.affectedRows === 1 ? displayId : null)
+    } finally {
+      if (conn) conn.release()
+    }
   }
 
-  getAllDisplays () {
-    return new Promise(resolve => {
-      const displays = Array.from(this.displays.values())
-      resolve(displays)
-    })
+  transformDisplay (row) {
+    return {
+      id: row.id,
+      name: row.name,
+      active: row.active === 1,
+      clientId: row.client_id || '',
+      description: row.description,
+      location: row.location
+    }
+  }
+
+  async getAllDisplays () {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const rows = await conn.query('SELECT * FROM ' + this.tableName)
+      return rows.map(this.transformDisplay)
+    } finally {
+      if (conn) conn.release()
+    }
   }
 
   /**
@@ -53,14 +85,18 @@ class DisplayRepository {
    *
    * @return {Promise}
    */
-  getDisplayById (displayId) {
-    return new Promise((resolve, reject) => {
-      if (!this.displays.has(displayId)) {
-        return reject(new NotFoundError(`No Display with ID ${displayId} found`))
+  async getDisplayById (displayId) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE id = ? LIMIT 1`, displayId)
+      if (rows.length === 0) {
+        return null
       }
-
-      resolve(this.displays.get(displayId))
-    })
+      return this.transformDisplay(rows[0])
+    } finally {
+      if (conn) conn.release()
+    }
   }
 
   /**
@@ -108,25 +144,22 @@ class DisplayRepository {
    * @param {String} clientId
    * @param {String} description
    * @param {String} location
-   * @return {Promise}
+   *
+   * @return {Promise<Number>|Promise<null>}
    */
-  updateDisplay (displayId, name, active, clientId, description, location) {
-    return new Promise((resolve, reject) => {
-      if (!this.displays.has(displayId)) {
-        return reject(new Error(`No Display with ID ${displayId} found`))
-      }
-
-      const display = {
-        id: displayId,
-        name: name,
-        active: active,
-        clientId: clientId,
-        description: description,
-        location: location
-      }
-      this.displays.set(displayId, display)
-      resolve(display)
-    })
+  async updateDisplay (displayId, name, active, clientId, description, location) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const activeValue = active === true ? 1 : 0
+      const result = await conn.query(
+        `UPDATE ${this.tableName} SET name = ?, active = ?, client_id = ?, description = ?, location = ? WHERE id = ?`,
+        [name, activeValue, clientId, description, location, displayId]
+      )
+      return result.affectedRows === 1 ? displayId : null
+    } finally {
+      if (conn) conn.release()
+    }
   }
 }
 

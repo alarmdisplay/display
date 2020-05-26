@@ -34,10 +34,13 @@ class Database {
     // This is the place where we can later check for needed database migrations
     await connection.end()
 
+    // Create a connection pool that the repositories can get connections from
+    const pool = await mariadb.createPool({ host: this.host, user: this.username, password: this.password, database: this.database, connectionLimit: 5 })
+
     return {
       alertRepository: new AlertRepository(),
       announcementRepository: new AnnouncementRepository(),
-      displayRepository: new DisplayRepository(),
+      displayRepository: new DisplayRepository(pool, this.prefix),
       contentSlotRepository: new ContentSlotRepository(),
       contentSlotOptionRepository: new ContentSlotOptionRepository(),
       viewRepository: new ViewRepository()

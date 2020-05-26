@@ -1,6 +1,5 @@
-const log4js = require('log4js')
-
 const EventEmitter = require('events')
+const log4js = require('log4js')
 
 class DisplayService extends EventEmitter {
   /**
@@ -18,23 +17,22 @@ class DisplayService extends EventEmitter {
     this.logger = log4js.getLogger('DisplayService')
   }
 
-  createDisplay (name, active, clientId, description = '', location = '') {
-    return this.displayRepository.createDisplay(name, active, clientId, description, location)
-      .then(newDisplay => {
-        this.emit('display_created', newDisplay)
-        return newDisplay
-      })
+  async createDisplay (name, active, clientId, description = '', location = '') {
+    const id = await this.displayRepository.createDisplay(name, active, clientId, description, location)
+    const newDisplay = await this.getDisplayById(id)
+    this.emit('display_created', newDisplay)
+    return newDisplay
   }
 
-  getAllDisplays () {
+  async getAllDisplays () {
     return this.displayRepository.getAllDisplays()
   }
 
-  getDisplayById (displayId) {
+  async getDisplayById (displayId) {
     return this.displayRepository.getDisplayById(displayId)
   }
 
-  getDisplayByClientId (clientId) {
+  async getDisplayByClientId (clientId) {
     return this.displayRepository.getDisplayByClientId(clientId)
   }
 
@@ -44,23 +42,24 @@ class DisplayService extends EventEmitter {
       .then(displayIds => this.displayRepository.getDisplaysById(displayIds))
   }
 
-  deleteDisplay (displayId) {
-    return this.displayRepository.deleteDisplay(displayId)
-      .then(displayId => {
-        if (displayId) {
-          this.emit('display_deleted', displayId)
-        }
+  async deleteDisplay (displayId) {
+    const result = await this.displayRepository.deleteDisplay(displayId)
+    if (result) {
+      this.emit('display_deleted', result)
+    }
 
-        return displayId
-      })
+    return result
   }
 
-  updateDisplay (displayId, name, active, clientId, description, location) {
-    return this.displayRepository.updateDisplay(displayId, name, active, clientId, description, location)
-      .then(updatedDisplay => {
-        this.emit('display_updated', updatedDisplay)
-        return updatedDisplay
-      })
+  async updateDisplay (displayId, name, active, clientId, description, location) {
+    const id = await this.displayRepository.updateDisplay(displayId, name, active, clientId, description, location)
+    if (!id) {
+      return this.getDisplayById(displayId)
+    }
+
+    const updatedDisplay = await this.getDisplayById(id)
+    this.emit('display_updated', updatedDisplay)
+    return updatedDisplay
   }
 
   /**

@@ -8,7 +8,7 @@ describe('DisplayService', () => {
   let displayService
 
   beforeAll(() => {
-    displayRepository = new DisplayRepository()
+    displayRepository = new DisplayRepository(undefined, '')
   })
 
   beforeEach(() => {
@@ -17,17 +17,23 @@ describe('DisplayService', () => {
   })
 
   describe('Creating a Display', () => {
-    it('should correctly call DisplayRepository.createDisplay()', () => {
-      const mockResponse = { id: 1231, name: 'A name', active: true, clientId: 'AB823KF2', description: 'Describing...', location: 'Some location' }
-      DisplayRepository.mock.instances[0].createDisplay.mockResolvedValueOnce(mockResponse)
-      return displayService.createDisplay('A name', true, 'AB823KF2', 'Describing...', 'Some location')
-        .then(display => {
-          expect(display).toEqual(mockResponse)
-        })
-        .then(() => {
-          expect(DisplayRepository.mock.instances[0].createDisplay.mock.calls).toHaveLength(1)
-          expect(DisplayRepository.mock.instances[0].createDisplay.mock.calls[0]).toEqual(['A name', true, 'AB823KF2', 'Describing...', 'Some location'])
-        })
+    it('should correctly call DisplayRepository.createDisplay() and return the newly created Display', async () => {
+      DisplayRepository.mock.instances[0].createDisplay.mockResolvedValueOnce(1231)
+      const mockResponse = {
+        id: 1231,
+        name: 'A name',
+        active: true,
+        clientId: 'AB823KF2',
+        description: 'Describing...',
+        location: 'Some location'
+      }
+      DisplayRepository.mock.instances[0].getDisplayById.mockResolvedValueOnce(mockResponse)
+      const display = await displayService.createDisplay('A name', true, 'AB823KF2', 'Describing...', 'Some location')
+      expect(DisplayRepository.mock.instances[0].createDisplay.mock.calls).toHaveLength(1)
+      expect(DisplayRepository.mock.instances[0].createDisplay.mock.calls[0]).toEqual(['A name', true, 'AB823KF2', 'Describing...', 'Some location'])
+      expect(DisplayRepository.mock.instances[0].getDisplayById.mock.calls).toHaveLength(1)
+      expect(DisplayRepository.mock.instances[0].getDisplayById.mock.calls[0]).toEqual([1231])
+      expect(display).toEqual(mockResponse)
     })
   })
 })
