@@ -33,10 +33,10 @@
                         {
                             columns: 3,
                             rows: 3,
-                            components: [
+                            contentSlots: [
                                 {
-                                    name: 'Clock',
-                                    instanceId: -1,
+                                    componentType: 'Clock',
+                                    id: -1,
                                     columnStart: 2,
                                     rowStart: 2,
                                     columnEnd: 3,
