@@ -33,7 +33,6 @@ module.exports = function (displayService) {
    *   View:
    *     type: object
    *     required:
-   *     - name
    *     - columns
    *     - rows
    *     - screenType
@@ -41,8 +40,6 @@ module.exports = function (displayService) {
    *       id:
    *         type: number
    *         readOnly: true
-   *       name:
-   *         type: string
    *       columns:
    *         type: number
    *         minimum: 1
@@ -322,13 +319,7 @@ module.exports = function (displayService) {
     displayService.getDisplayById(parseInt(req.params.id))
       .then(display => {
         // Display exists
-        return displayService.createView(
-          req.body.name,
-          req.body.columns,
-          req.body.rows,
-          display.id,
-          req.body.screenType
-        )
+        return displayService.createView(display.id, req.body.screenType, req.body.columns, req.body.rows)
           .then(view => {
             const baseUrl = req.originalUrl.replace(/\/$/, '')
             const newLocation = `${baseUrl}/${display.id}/views/${view.id}`
@@ -418,7 +409,7 @@ module.exports = function (displayService) {
               throw new NotFoundError(`The Display ${display.id} does not have a View with ID ${view.id}`)
             }
 
-            return displayService.updateView(view.id, req.body.name, req.body.columns, req.body.rows, req.body.contentSlots)
+            return displayService.updateView(view.id, req.body.columns, req.body.rows, req.body.contentSlots)
           })
       })
       .then(updatedView => res.json(updatedView))

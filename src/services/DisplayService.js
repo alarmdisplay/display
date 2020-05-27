@@ -65,18 +65,17 @@ class DisplayService extends EventEmitter {
   /**
    * Creates a new View for a Display and appends it as the last View for that screen type.
    *
-   * @param {String} name
-   * @param {Number} columns
-   * @param {Number} rows
    * @param {Number} displayId
    * @param {String} screenType
+   * @param {Number} columns
+   * @param {Number} rows
    *
    * @return {Promise}
    */
-  createView (name, columns, rows, displayId, screenType) {
+  createView (displayId, screenType, columns, rows) {
     return this.viewRepository.getViewsByDisplayIdAndScreenType(displayId, screenType)
       .then(views => {
-        return this.viewRepository.createView(name, columns, rows, displayId, views.length + 1, screenType)
+        return this.viewRepository.create(displayId, views.length + 1, screenType, columns, rows)
       })
   }
 
@@ -165,16 +164,15 @@ class DisplayService extends EventEmitter {
 
   /**
    * @param {Number} id
-   * @param {String} name
    * @param {Number} columns
    * @param {Number} rows
    * @param {Object[]} contentSlots
    *
    * @return {Promise<Object>}
    */
-  updateView (id, name, columns, rows, contentSlots) {
+  updateView (id, columns, rows, contentSlots) {
     return this.viewRepository.getViewById(id)
-      .then(view => this.viewRepository.updateView(view.id, name, columns, rows, view.displayId, view.order, view.screenType))
+      .then(view => this.viewRepository.update(view.id, view.displayId, view.order, view.screenType, columns, rows))
       .then(updatedView => this.updateContentSlotsForView(updatedView.id, contentSlots))
       .then(() => {
         return this.getView(id)

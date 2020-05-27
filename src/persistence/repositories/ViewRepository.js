@@ -9,20 +9,18 @@ class ViewRepository {
   /**
    * Stores a new View object.
    *
-   * @param {String} name A human-readable name for this View
-   * @param {Number} columns The number of columns the View's layout should have
-   * @param {Number} rows The number of rows the View's layout should have
    * @param {Number} displayId The ID of the Display that uses this View
    * @param {Number} order A number that defines the order of Views per screenType of a Display
    * @param {String} screenType An identifier for the type of screen the View is used for (e.g. IdleScreen)
+   * @param {Number} columns The number of columns the View's layout should have
+   * @param {Number} rows The number of rows the View's layout should have
    *
    * @return {Promise}
    */
-  createView (name, columns, rows, displayId, order, screenType) {
+  create (displayId, order, screenType, columns, rows) {
     return new Promise((resolve) => {
       const view = {
         id: this.instanceCounter++,
-        name: name,
         columns: columns,
         rows: rows,
         displayId: displayId,
@@ -151,16 +149,15 @@ class ViewRepository {
    * Updates an existing View object.
    *
    * @param {Number} id A unique ID
-   * @param {String} name A human-readable name for this View
-   * @param {Number} columns The number of columns the View's layout should have
-   * @param {Number} rows The number of rows the View's layout should have
    * @param {Number} displayId The ID of the Display that uses this View
    * @param {Number} order A number that defines the order of Views per screenType of a Display
    * @param {String} screenType An identifier for the type of screen the View is used for (e.g. IdleScreen)
+   * @param {Number} columns The number of columns the View's layout should have
+   * @param {Number} rows The number of rows the View's layout should have
    *
    * @return {Promise<Object>}
    */
-  updateView (id, name, columns, rows, displayId, order, screenType) {
+  update (id, displayId, order, screenType, columns, rows) {
     return new Promise((resolve, reject) => {
       if (!this.views.has(id)) {
         return reject(new NotFoundError(`No View with ID ${id} found`))
@@ -168,7 +165,6 @@ class ViewRepository {
 
       const view = {
         id: id,
-        name: name,
         columns: columns,
         rows: rows,
         displayId: displayId,
