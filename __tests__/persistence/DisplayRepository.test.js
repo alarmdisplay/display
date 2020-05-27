@@ -50,6 +50,13 @@ describe('DisplayRepository', () => {
       connection.query.mockRejectedValueOnce(error)
       await expect(displayRepository.createDisplay('', true, 'ABC', '', '')).rejects.toThrowError(new Error('some code'))
     })
+
+    it('should not release the connection if it could not be acquired', async () => {
+      connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
+      await expect(displayRepository.createDisplay('', true, '', '', '')).rejects.toThrowError()
+      expect(connection.query).toHaveBeenCalledTimes(0)
+      expect(connection.release).toHaveBeenCalledTimes(0)
+    })
   })
 
   describe('.deleteDisplay()', () => {
@@ -72,6 +79,13 @@ describe('DisplayRepository', () => {
       const displayId = await displayRepository.deleteDisplay(123)
       expect(displayId).toBeNull()
     })
+
+    it('should not release the connection if it could not be acquired', async () => {
+      connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
+      await expect(displayRepository.deleteDisplay(1)).rejects.toThrowError()
+      expect(connection.query).toHaveBeenCalledTimes(0)
+      expect(connection.release).toHaveBeenCalledTimes(0)
+    })
   })
 
   describe('.getAllDisplays()', () => {
@@ -79,7 +93,7 @@ describe('DisplayRepository', () => {
       const result = [
         { id: 4, name: 'A', active: 1, client_id: 'A1B2', description: 'R', location: 'X' },
         { id: 25, name: 'B', active: 0, client_id: 'C3D4', description: 'S', location: 'Y' },
-        { id: 62, name: 'C', active: 0, client_id: 'E5F6', description: 'T', location: 'Z' }
+        { id: 62, name: 'C', active: 0, client_id: null, description: 'T', location: 'Z' }
       ]
       result.meta = {}
       connection.query.mockResolvedValueOnce(result)
@@ -91,7 +105,14 @@ describe('DisplayRepository', () => {
       expect(displays).toHaveLength(3)
       expect(displays[0]).toEqual({ id: 4, name: 'A', active: true, clientId: 'A1B2', description: 'R', location: 'X' })
       expect(displays[1]).toEqual({ id: 25, name: 'B', active: false, clientId: 'C3D4', description: 'S', location: 'Y' })
-      expect(displays[2]).toEqual({ id: 62, name: 'C', active: false, clientId: 'E5F6', description: 'T', location: 'Z' })
+      expect(displays[2]).toEqual({ id: 62, name: 'C', active: false, clientId: '', description: 'T', location: 'Z' })
+    })
+
+    it('should not release the connection if it could not be acquired', async () => {
+      connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
+      await expect(displayRepository.getAllDisplays()).rejects.toThrowError()
+      expect(connection.query).toHaveBeenCalledTimes(0)
+      expect(connection.release).toHaveBeenCalledTimes(0)
     })
   })
 
@@ -118,6 +139,13 @@ describe('DisplayRepository', () => {
       connection.query.mockResolvedValueOnce(result)
       const display = await displayRepository.getDisplayByClientId('AKHD126')
       expect(display).toBeNull()
+    })
+
+    it('should not release the connection if it could not be acquired', async () => {
+      connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
+      await expect(displayRepository.getDisplayByClientId('ABC')).rejects.toThrowError()
+      expect(connection.query).toHaveBeenCalledTimes(0)
+      expect(connection.release).toHaveBeenCalledTimes(0)
     })
   })
 
@@ -147,6 +175,13 @@ describe('DisplayRepository', () => {
       expect(connection.query).toHaveBeenCalledWith('SELECT * FROM test_displays WHERE id = ? LIMIT 1', 555)
       expect(connection.release).toHaveBeenCalledTimes(1)
       expect(display).toBeNull()
+    })
+
+    it('should not release the connection if it could not be acquired', async () => {
+      connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
+      await expect(displayRepository.getDisplayById(123)).rejects.toThrowError()
+      expect(connection.query).toHaveBeenCalledTimes(0)
+      expect(connection.release).toHaveBeenCalledTimes(0)
     })
   })
 
@@ -181,6 +216,13 @@ describe('DisplayRepository', () => {
       expect(displays).toBeInstanceOf(Array)
       expect(displays).toHaveLength(0)
     })
+
+    it('should not release the connection if it could not be acquired', async () => {
+      connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
+      await expect(displayRepository.getDisplaysById([1, 2])).rejects.toThrowError()
+      expect(connection.query).toHaveBeenCalledTimes(0)
+      expect(connection.release).toHaveBeenCalledTimes(0)
+    })
   })
 
   describe('.updateDisplay()', () => {
@@ -206,6 +248,13 @@ describe('DisplayRepository', () => {
       )
       expect(connection.release).toHaveBeenCalledTimes(1)
       expect(displayId).toBeNull()
+    })
+
+    it('should not release the connection if it could not be acquired', async () => {
+      connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
+      await expect(displayRepository.updateDisplay(5, '', true, '', '', '')).rejects.toThrowError()
+      expect(connection.query).toHaveBeenCalledTimes(0)
+      expect(connection.release).toHaveBeenCalledTimes(0)
     })
   })
 })
