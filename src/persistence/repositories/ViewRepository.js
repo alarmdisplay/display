@@ -1,12 +1,13 @@
 const DuplicateEntryError = require('../../errors/DuplicateEntryError')
+const Repository = require('./Repository')
 
-class ViewRepository {
+class ViewRepository extends Repository {
   /**
    * @param connectionPool
    * @param {String} prefix The prefix used for the database tables
    */
   constructor (connectionPool, prefix) {
-    this.connectionPool = connectionPool
+    super(connectionPool)
     this.tableName = `${prefix}views`
   }
 
@@ -58,7 +59,7 @@ class ViewRepository {
       if (rows.length === 0) {
         return null
       }
-      return this.transformView(rows[0])
+      return this.rowToObject(rows[0])
     } finally {
       if (conn) {
         conn.release()
@@ -78,7 +79,7 @@ class ViewRepository {
     try {
       conn = await this.connectionPool.getConnection()
       const rows = await conn.query('SELECT * FROM ' + this.tableName + ' WHERE id IN ?', [viewIds])
-      return rows.map(this.transformView)
+      return rows.map(this.rowToObject)
     } finally {
       if (conn) {
         conn.release()
@@ -98,7 +99,7 @@ class ViewRepository {
     try {
       conn = await this.connectionPool.getConnection()
       const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE display_id = ? ORDER BY view_order`, displayId)
-      return rows.map(this.transformView)
+      return rows.map(this.rowToObject)
     } finally {
       if (conn) {
         conn.release()
@@ -119,27 +120,7 @@ class ViewRepository {
     try {
       conn = await this.connectionPool.getConnection()
       const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE display_id = ? AND screen_type = ? ORDER BY view_order`, [displayId, screenType])
-      return rows.map(this.transformView)
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
-  }
-
-  /**
-   * Deletes a View object.
-   *
-   * @param {Number} id The ID of the View
-   *
-   * @return {Promise<Number>|Promise<null>} Returns the ID if the View existed before deletion, null otherwise
-   */
-  async deleteOne (id) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const result = await conn.query(`DELETE FROM ${this.tableName} WHERE id = ? LIMIT 1`, id)
-      return (result.affectedRows === 1 ? id : null)
+      return rows.map(this.rowToObject)
     } finally {
       if (conn) {
         conn.release()
@@ -175,7 +156,7 @@ class ViewRepository {
     }
   }
 
-  transformView (row) {
+  rowToObject (row) {
     return {
       id: row.id,
       displayId: row.display_id,

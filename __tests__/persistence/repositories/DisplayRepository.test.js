@@ -59,10 +59,10 @@ describe('DisplayRepository', () => {
     })
   })
 
-  describe('.deleteDisplay()', () => {
+  describe('.deleteOne()', () => {
     it('should execute a DELETE statement', async () => {
       connection.query.mockResolvedValueOnce({ affectedRows: 1 })
-      await displayRepository.deleteDisplay(52)
+      await displayRepository.deleteOne(52)
       expect(connection.query).toHaveBeenCalledTimes(1)
       expect(connection.query).toHaveBeenCalledWith('DELETE FROM test_displays WHERE id = ? LIMIT 1', 52)
       expect(connection.release).toHaveBeenCalledTimes(1)
@@ -70,25 +70,25 @@ describe('DisplayRepository', () => {
 
     it('should return the ID if deletion was successful', async () => {
       connection.query.mockResolvedValueOnce({ affectedRows: 1 })
-      const displayId = await displayRepository.deleteDisplay(52)
+      const displayId = await displayRepository.deleteOne(52)
       expect(displayId).toBe(52)
     })
 
     it('should return null if nothing was deleted', async () => {
       connection.query.mockResolvedValueOnce({ affectedRows: 0 })
-      const displayId = await displayRepository.deleteDisplay(123)
+      const displayId = await displayRepository.deleteOne(123)
       expect(displayId).toBeNull()
     })
 
     it('should not release the connection if it could not be acquired', async () => {
       connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
-      await expect(displayRepository.deleteDisplay(1)).rejects.toThrowError()
+      await expect(displayRepository.deleteOne(1)).rejects.toThrowError()
       expect(connection.query).toHaveBeenCalledTimes(0)
       expect(connection.release).toHaveBeenCalledTimes(0)
     })
   })
 
-  describe('.getAllDisplays()', () => {
+  describe('.getAll()', () => {
     it('should get all Displays', async () => {
       const result = [
         { id: 4, name: 'A', active: 1, client_id: 'A1B2', description: 'R', location: 'X' },
@@ -97,7 +97,7 @@ describe('DisplayRepository', () => {
       ]
       result.meta = {}
       connection.query.mockResolvedValueOnce(result)
-      const displays = await displayRepository.getAllDisplays()
+      const displays = await displayRepository.getAll()
       expect(connection.query).toHaveBeenCalledTimes(1)
       expect(connection.query).toHaveBeenCalledWith('SELECT * FROM test_displays')
       expect(connection.release).toHaveBeenCalledTimes(1)
@@ -110,7 +110,7 @@ describe('DisplayRepository', () => {
 
     it('should not release the connection if it could not be acquired', async () => {
       connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
-      await expect(displayRepository.getAllDisplays()).rejects.toThrowError()
+      await expect(displayRepository.getAll()).rejects.toThrowError()
       expect(connection.query).toHaveBeenCalledTimes(0)
       expect(connection.release).toHaveBeenCalledTimes(0)
     })

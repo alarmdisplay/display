@@ -25,7 +25,7 @@ class DisplayService extends EventEmitter {
   }
 
   async getAllDisplays () {
-    return this.displayRepository.getAllDisplays()
+    return this.displayRepository.getAll()
   }
 
   async getDisplayById (displayId) {
@@ -43,7 +43,7 @@ class DisplayService extends EventEmitter {
   }
 
   async deleteDisplay (displayId) {
-    const result = await this.displayRepository.deleteDisplay(displayId)
+    const result = await this.displayRepository.deleteOne(displayId)
     if (result) {
       this.emit('display_deleted', result)
     }

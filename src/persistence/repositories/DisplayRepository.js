@@ -1,12 +1,13 @@
 const DuplicateEntryError = require('../../errors/DuplicateEntryError')
+const Repository = require('./Repository')
 
-class DisplayRepository {
+class DisplayRepository extends Repository {
   /**
    * @param connectionPool
    * @param {String} prefix The prefix used for the database tables
    */
   constructor (connectionPool, prefix) {
-    this.connectionPool = connectionPool
+    super(connectionPool)
     this.tableName = `${prefix}displays`
   }
 
@@ -40,25 +41,7 @@ class DisplayRepository {
     }
   }
 
-  /**
-   * @param {Number} displayId The ID of the Display to delete
-   *
-   * @return {Promise<Number>|Promise<null>} Returns the ID if the Display existed before deletion, null otherwise
-   */
-  async deleteDisplay (displayId) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const result = await conn.query(`DELETE FROM ${this.tableName} WHERE id = ? LIMIT 1`, displayId)
-      return (result.affectedRows === 1 ? displayId : null)
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
-  }
-
-  transformDisplay (row) {
+  rowToObject (row) {
     return {
       id: row.id,
       name: row.name,
@@ -66,19 +49,6 @@ class DisplayRepository {
       clientId: row.client_id || '',
       description: row.description,
       location: row.location
-    }
-  }
-
-  async getAllDisplays () {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const rows = await conn.query('SELECT * FROM ' + this.tableName)
-      return rows.map(this.transformDisplay)
-    } finally {
-      if (conn) {
-        conn.release()
-      }
     }
   }
 
@@ -97,7 +67,7 @@ class DisplayRepository {
       if (rows.length === 0) {
         return null
       }
-      return this.transformDisplay(rows[0])
+      return this.rowToObject(rows[0])
     } finally {
       if (conn) {
         conn.release()
@@ -117,7 +87,7 @@ class DisplayRepository {
     try {
       conn = await this.connectionPool.getConnection()
       const rows = await conn.query('SELECT * FROM ' + this.tableName + ' WHERE id IN ?', [displayIds])
-      return rows.map(this.transformDisplay)
+      return rows.map(this.rowToObject)
     } finally {
       if (conn) {
         conn.release()
@@ -135,7 +105,7 @@ class DisplayRepository {
     try {
       conn = await this.connectionPool.getConnection()
       const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE client_id = ? LIMIT 1`, clientId)
-      return rows.length === 1 ? this.transformDisplay(rows[0]) : null
+      return rows.length === 1 ? this.rowToObject(rows[0]) : null
     } finally {
       if (conn) {
         conn.release()
