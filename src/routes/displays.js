@@ -319,7 +319,7 @@ module.exports = function (displayService) {
     displayService.getDisplayById(parseInt(req.params.id))
       .then(display => {
         // Display exists
-        return displayService.createView(display.id, req.body.screenType, req.body.columns, req.body.rows)
+        return displayService.createView(parseInt(display.id), req.body.screenType, parseInt(req.body.columns), parseInt(req.body.rows))
           .then(view => {
             const baseUrl = req.originalUrl.replace(/\/$/, '')
             const newLocation = `${baseUrl}/${display.id}/views/${view.id}`

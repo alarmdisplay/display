@@ -1,9 +1,13 @@
-const NotFoundError = require('../../errors/NotFoundError')
+const DuplicateEntryError = require('../../errors/DuplicateEntryError')
 
 class ViewRepository {
-  constructor () {
-    this.views = new Map()
-    this.instanceCounter = 1
+  /**
+   * @param connectionPool
+   * @param {String} prefix The prefix used for the database tables
+   */
+  constructor (connectionPool, prefix) {
+    this.connectionPool = connectionPool
+    this.tableName = `${prefix}views`
   }
 
   /**
@@ -17,26 +21,26 @@ class ViewRepository {
    *
    * @return {Promise}
    */
-  create (displayId, order, screenType, columns, rows) {
-    return new Promise((resolve) => {
-      const view = {
-        id: this.instanceCounter++,
-        columns: columns,
-        rows: rows,
-        displayId: displayId,
-        order: order,
-        screenType: screenType
+  async create (displayId, order, screenType, columns, rows) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const result = await conn.query(
+        `INSERT INTO ${this.tableName} (\`display_id\`, \`view_order\`, \`screen_type\`, \`columns\`, \`rows\`) VALUES (?,?,?,?,?)`,
+        [displayId, order, screenType, columns, rows]
+      )
+      return result.insertId
+    } catch (e) {
+      if (e.errno === 1062) {
+        throw new DuplicateEntryError(e.code)
       }
-      this.views.set(view.id, view)
-      resolve(view)
-    })
-  }
 
-  getAllViews () {
-    return new Promise(resolve => {
-      const views = Array.from(this.views.values())
-      resolve(views)
-    })
+      throw new Error(e.code)
+    } finally {
+      if (conn) {
+        conn.release()
+      }
+    }
   }
 
   /**
@@ -44,16 +48,22 @@ class ViewRepository {
    *
    * @param {Number} id The ID of the View
    *
-   * @return {Promise}
+   * @return {Promise<Object>|Promise<null>}
    */
-  getViewById (id) {
-    return new Promise((resolve, reject) => {
-      if (!this.views.has(id)) {
-        return reject(new NotFoundError(`No View with ID ${id} found`))
+  async getViewById (id) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE id = ? LIMIT 1`, id)
+      if (rows.length === 0) {
+        return null
       }
-
-      resolve(this.views.get(id))
-    })
+      return this.transformView(rows[0])
+    } finally {
+      if (conn) {
+        conn.release()
+      }
+    }
   }
 
   /**
@@ -63,17 +73,17 @@ class ViewRepository {
    *
    * @return {Promise<Object[]>}
    */
-  getViewsById (viewIds) {
-    return new Promise((resolve) => {
-      const views = []
-      for (const view of this.views.values()) {
-        if (viewIds.includes(view.id)) {
-          views.push(view)
-        }
+  async getViewsById (viewIds) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const rows = await conn.query('SELECT * FROM ' + this.tableName + ' WHERE id IN ?', [viewIds])
+      return rows.map(this.transformView)
+    } finally {
+      if (conn) {
+        conn.release()
       }
-
-      resolve(views)
-    })
+    }
   }
 
   /**
@@ -81,24 +91,19 @@ class ViewRepository {
    *
    * @param {Number} displayId The ID of the Display
    *
-   * @return {Promise}
+   * @return {Promise<Object[]>}
    */
-  getViewsByDisplayId (displayId) {
-    return new Promise((resolve) => {
-      const views = []
-      for (const view of this.views.values()) {
-        if (view.displayId === displayId) {
-          views.push(view)
-        }
+  async getViewsByDisplayId (displayId) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE display_id = ? ORDER BY view_order`, displayId)
+      return rows.map(this.transformView)
+    } finally {
+      if (conn) {
+        conn.release()
       }
-
-      // Sort the views by order property
-      views.sort((a, b) => {
-        return a.order - b.order
-      })
-
-      resolve(views)
-    })
+    }
   }
 
   /**
@@ -109,22 +114,17 @@ class ViewRepository {
    *
    * @return {Promise}
    */
-  getViewsByDisplayIdAndScreenType (displayId, screenType) {
-    return new Promise((resolve) => {
-      const views = []
-      for (const view of this.views.values()) {
-        if (view.displayId === displayId && view.screenType === screenType) {
-          views.push(view)
-        }
+  async getViewsByDisplayIdAndScreenType (displayId, screenType) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE display_id = ? AND screen_type = ? ORDER BY view_order`, [displayId, screenType])
+      return rows.map(this.transformView)
+    } finally {
+      if (conn) {
+        conn.release()
       }
-
-      // Sort the views by order property
-      views.sort((a, b) => {
-        return a.order - b.order
-      })
-
-      resolve(views)
-    })
+    }
   }
 
   /**
@@ -134,15 +134,17 @@ class ViewRepository {
    *
    * @return {Promise}
    */
-  deleteView (id) {
-    return new Promise(resolve => {
-      const itemDidExist = this.views.delete(id)
-      if (itemDidExist) {
-        resolve(id)
-      } else {
-        resolve(undefined)
+  async deleteOne (id) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const result = await conn.query(`DELETE FROM ${this.tableName} WHERE id = ? LIMIT 1`, id)
+      return (result.affectedRows === 1 ? id : null)
+    } finally {
+      if (conn) {
+        conn.release()
       }
-    })
+    }
   }
 
   /**
@@ -157,23 +159,31 @@ class ViewRepository {
    *
    * @return {Promise<Object>}
    */
-  update (id, displayId, order, screenType, columns, rows) {
-    return new Promise((resolve, reject) => {
-      if (!this.views.has(id)) {
-        return reject(new NotFoundError(`No View with ID ${id} found`))
+  async update (id, displayId, order, screenType, columns, rows) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const result = await conn.query(
+        `UPDATE ${this.tableName} SET \`display_id\` = ?, \`view_order\` = ?, \`screen_type\` = ?, \`columns\` = ?, \`rows\` = ? WHERE \`id\` = ?`,
+        [displayId, order, screenType, columns, rows, id]
+      )
+      return result.affectedRows === 1 ? id : null
+    } finally {
+      if (conn) {
+        conn.release()
       }
+    }
+  }
 
-      const view = {
-        id: id,
-        columns: columns,
-        rows: rows,
-        displayId: displayId,
-        order: order,
-        screenType: screenType
-      }
-      this.views.set(id, view)
-      resolve(view)
-    })
+  transformView (row) {
+    return {
+      id: row.id,
+      displayId: row.display_id,
+      order: row.view_order,
+      screenType: row.screen_type,
+      columns: row.columns,
+      rows: row.rows
+    }
   }
 }
 

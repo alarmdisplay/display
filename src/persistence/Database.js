@@ -43,7 +43,7 @@ class Database {
       displayRepository: new DisplayRepository(pool, this.prefix),
       contentSlotRepository: new ContentSlotRepository(),
       contentSlotOptionRepository: new ContentSlotOptionRepository(),
-      viewRepository: new ViewRepository()
+      viewRepository: new ViewRepository(pool, this.prefix)
     }
   }
 
