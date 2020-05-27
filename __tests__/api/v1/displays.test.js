@@ -206,7 +206,7 @@ describe(baseUrl, () => {
 
     it('should correctly call DisplayService.getViewsForDisplay()', () => {
       DisplayService.mock.instances[0].getDisplayById.mockResolvedValueOnce({ id: 312 })
-      return request.get(`${baseUrl}/272/views`)
+      return request.get(`${baseUrl}/312/views`)
         .expect(() => {
           expect(DisplayService.mock.instances[0].getViewsForDisplay.mock.calls).toHaveLength(1)
           expect(DisplayService.mock.instances[0].getViewsForDisplay.mock.calls[0]).toEqual([312])
