@@ -19,7 +19,7 @@ class ViewRepository {
    * @param {Number} columns The number of columns the View's layout should have
    * @param {Number} rows The number of rows the View's layout should have
    *
-   * @return {Promise}
+   * @return {Promise<Number>}
    */
   async create (displayId, order, screenType, columns, rows) {
     let conn
@@ -132,7 +132,7 @@ class ViewRepository {
    *
    * @param {Number} id The ID of the View
    *
-   * @return {Promise}
+   * @return {Promise<Number>|Promise<null>} Returns the ID if the View existed before deletion, null otherwise
    */
   async deleteOne (id) {
     let conn
@@ -157,7 +157,7 @@ class ViewRepository {
    * @param {Number} columns The number of columns the View's layout should have
    * @param {Number} rows The number of rows the View's layout should have
    *
-   * @return {Promise<Object>}
+   * @return {Promise<Number>|Promise<null>}
    */
   async update (id, displayId, order, screenType, columns, rows) {
     let conn

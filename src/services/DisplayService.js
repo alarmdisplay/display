@@ -70,13 +70,12 @@ class DisplayService extends EventEmitter {
    * @param {Number} columns
    * @param {Number} rows
    *
-   * @return {Promise}
+   * @return {Promise<Object>}
    */
-  createView (displayId, screenType, columns, rows) {
-    return this.viewRepository.getViewsByDisplayIdAndScreenType(displayId, screenType)
-      .then(views => {
-        return this.viewRepository.create(displayId, views.length + 1, screenType, columns, rows)
-      })
+  async createView (displayId, screenType, columns, rows) {
+    const existingViews = await this.viewRepository.getViewsByDisplayIdAndScreenType(displayId, screenType)
+    const viewId = await this.viewRepository.create(displayId, existingViews.length + 1, screenType, columns, rows)
+    return this.viewRepository.getViewById(viewId)
   }
 
   /**
@@ -86,17 +85,15 @@ class DisplayService extends EventEmitter {
    *
    * @return {Promise<Object[]>}
    */
-  getViewsForDisplay (displayId) {
-    return this.viewRepository.getViewsByDisplayId(displayId)
-      .then(async views => {
-        const enrichedViews = []
-        for (const view of views) {
-          view.contentSlots = await this.getContentSlotsForView(view.id)
-          enrichedViews.push(view)
-        }
+  async getViewsForDisplay (displayId) {
+    const views = await this.viewRepository.getViewsByDisplayId(displayId)
+    const enrichedViews = []
+    for (const view of views) {
+      view.contentSlots = await this.getContentSlotsForView(view.id)
+      enrichedViews.push(view)
+    }
 
-        return enrichedViews
-      })
+    return enrichedViews
   }
 
   getContentSlotsForView (viewId) {
@@ -122,17 +119,16 @@ class DisplayService extends EventEmitter {
 
   /**
    * @param {Number} viewId
-   * @return {Promise}
+   *
+   * @return {Promise<Object>|Promise<null>}
    */
-  getView (viewId) {
-    return Promise.all([
-      this.viewRepository.getViewById(viewId),
-      this.getContentSlotsForView(viewId)
-    ])
-      .then(([view, contentSlots]) => {
-        view.contentSlots = contentSlots
-        return view
-      })
+  async getView (viewId) {
+    const view = await this.viewRepository.getViewById(viewId)
+    if (!view) {
+      return null
+    }
+    view.contentSlots = await this.getContentSlotsForView(viewId)
+    return view
   }
 
   /**
@@ -149,17 +145,20 @@ class DisplayService extends EventEmitter {
    *
    * @return {Promise}
    */
-  deleteView (viewId) {
-    return this.getView(viewId)
-      .then(view => this.getDisplayById(view.displayId))
-      .then(display => {
-        return this.viewRepository.deleteOne(viewId)
-          .then(() => this.emit('views_updated', display))
-          .catch(error => {
-            // We don't really handle this error as it only affects the internal event, but not the update function
-            this.logger.error(error)
-          })
-      })
+  async deleteView (viewId) {
+    const view = await this.getView(viewId)
+    if (!view) {
+      return
+    }
+
+    await this.viewRepository.deleteOne(viewId)
+    try {
+      const display = await this.getDisplayById(view.displayId)
+      this.emit('views_updated', display)
+    } catch (e) {
+      // We don't really handle this error as it only affects the internal event, but not the delete function
+      this.logger.error(e)
+    }
   }
 
   /**
@@ -170,23 +169,25 @@ class DisplayService extends EventEmitter {
    *
    * @return {Promise<Object>}
    */
-  updateView (id, columns, rows, contentSlots) {
-    return this.viewRepository.getViewById(id)
-      .then(view => this.viewRepository.update(view.id, view.displayId, view.order, view.screenType, columns, rows))
-      .then(updatedView => this.updateContentSlotsForView(updatedView.id, contentSlots))
-      .then(() => {
-        return this.getView(id)
-          .then(updatedView => {
-            this.getDisplayById(updatedView.displayId)
-              .then(display => this.emit('views_updated', display))
-              .catch(error => {
-                // We don't really handle this error as it only affects the internal event, but not the update function
-                this.logger.error(error)
-              })
+  async updateView (id, columns, rows, contentSlots) {
+    const view = await this.viewRepository.getViewById(id)
+    if (!view) {
+      throw new Error(`Trying to update a View that does not exist, View ID ${id}`)
+    }
 
-            return updatedView
-          })
-      })
+    await this.viewRepository.update(id, view.displayId, view.order, view.screenType, columns, rows)
+    await this.updateContentSlotsForView(id, contentSlots)
+    const updatedView = await this.getView(id)
+
+    try {
+      const display = await this.getDisplayById(updatedView.displayId)
+      this.emit('views_updated', display)
+    } catch (e) {
+      // We don't really handle this error as it only affects the internal event, but not the update function
+      this.logger.error(e)
+    }
+
+    return updatedView
   }
 
   updateContentSlotsForView (viewId, newContentSlots) {
