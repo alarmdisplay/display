@@ -1,4 +1,4 @@
-const ViewRepository = require('../../src/persistence/repositories/ViewRepository')
+const ViewRepository = require('../../../src/persistence/repositories/ViewRepository')
 
 describe('The ViewRepository', () => {
   it('should store a new object', () => {
