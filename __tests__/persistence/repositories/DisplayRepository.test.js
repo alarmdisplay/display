@@ -1,5 +1,5 @@
-const DisplayRepository = require('../../src/persistence/repositories/DisplayRepository')
-const DuplicateEntryError = require('../../src/errors/DuplicateEntryError')
+const DisplayRepository = require('../../../src/persistence/repositories/DisplayRepository')
+const DuplicateEntryError = require('../../../src/errors/DuplicateEntryError')
 
 describe('DisplayRepository', () => {
   let connection, connectionPool
