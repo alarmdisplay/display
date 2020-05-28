@@ -48,28 +48,6 @@ class ContentSlotRepository extends Repository {
   }
 
   /**
-   * @param {Number} id
-   *
-   * @return {Promise<Object>|Promise<null>}
-   */
-  async getContentSlot (id) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE id = ? LIMIT 1`, id)
-      if (rows.length === 0) {
-        return null
-      }
-      const optionRows = await conn.query(`SELECT * FROM ${this.optionsTableName} WHERE contentslot_id = ?`, id)
-      return this.rowToObjectWithOptions(rows[0], optionRows)
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
-  }
-
-  /**
    * Finds and returns Content Slot objects that belong to a certain View.
    *
    * @param {Number} viewId The ID of the View
@@ -82,13 +60,16 @@ class ContentSlotRepository extends Repository {
       conn = await this.connectionPool.getConnection()
       const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE view_id = ?`, viewId)
 
+      if (rows.length === 0) {
+        return []
+      }
+
       // Get options for all found content slots
       const contentSlotIds = rows.map(row => row.id)
-      const optionRows = await conn.query(`SELECT * FROM ${this.optionsTableName} WHERE contentslot_id IN ?`, [contentSlotIds])
+      const options = await this.getOptionsForContentSlots(conn, contentSlotIds)
       return rows.map(row => {
         // Combine each content slot row with the option rows belonging to that content slot
-        const options = optionRows.filter(option => option.contentslot_id === row.id)
-        return this.rowToObjectWithOptions(row, options)
+        return this.rowToObjectWithOptions(row, options.get(row.id))
       })
     } finally {
       if (conn) {
@@ -134,6 +115,28 @@ class ContentSlotRepository extends Repository {
 
   /**
    * @param conn An open connection to the database
+   * @param ids
+   *
+   * @return {Promise<Map<Number,Map<String,String>>>} A Map of Maps, keyed by component ID, then by option name
+   */
+  async getOptionsForContentSlots (conn, ids) {
+    const rows = await conn.query(`SELECT * FROM ${this.optionsTableName} WHERE contentslot_id IN ?`, [ids])
+
+    // Initialize the Map with a Map for each content slot
+    const options = new Map()
+    ids.forEach(id => {
+      options.set(id, new Map())
+    })
+
+    // Fill the Maps
+    rows.forEach(({ contentslot_id: id, name, value }) => {
+      options.get(id).set(name, value)
+    })
+    return options
+  }
+
+  /**
+   * @param conn An open connection to the database
    * @param {Number} id The ID of the content slot
    * @param {Object} options
    *
@@ -162,10 +165,6 @@ class ContentSlotRepository extends Repository {
         continue
       }
 
-      /* await conn.query(
-        `INSERT INTO ${this.optionsTableName} (\`contentslot_id\`, \`name\`, \`value\`) VALUES (?,?,?)`,
-        Object.entries(options)
-      ) */
       await conn.query(
         `INSERT INTO ${this.optionsTableName} (\`contentslot_id\`, \`name\`, \`value\`) VALUES (?,?,?)`,
         [id, key, value]
@@ -196,14 +195,14 @@ class ContentSlotRepository extends Repository {
 
   /**
    * @param {Object} row
-   * @param {Object[]} options
+   * @param {Map<String,String>} options
    *
    * @return {{componentType: String, columnEnd: Number, viewId: Number, columnStart: Number, rowStart: Number, rowEnd: Number, id: Number, options: Object}}
    */
   rowToObjectWithOptions (row, options) {
     const object = this.rowToObject(row)
-    options.forEach(option => {
-      object.options[option.name] = option.value
+    options.forEach((value, key) => {
+      object.options[key] = value
     })
     return object
   }
