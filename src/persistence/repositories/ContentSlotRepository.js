@@ -1,7 +1,14 @@
-class ContentSlotRepository {
-  constructor () {
-    this.contentSlots = new Map()
-    this.instanceCounter = 1
+const DuplicateEntryError = require('../../errors/DuplicateEntryError')
+const Repository = require('./Repository')
+
+class ContentSlotRepository extends Repository {
+  /**
+   * @param connectionPool
+   * @param {String} prefix The prefix used for the database tables
+   */
+  constructor (connectionPool, prefix) {
+    super(connectionPool)
+    this.tableName = `${prefix}contentslots`
   }
 
   /**
@@ -12,47 +19,49 @@ class ContentSlotRepository {
    * @param {Number} columnEnd
    * @param {Number} rowEnd
    *
-   * @return {Promise}
+   * @return {Promise<Number>}
    */
-  createContentSlot (componentType, viewId, columnStart, rowStart, columnEnd, rowEnd) {
-    return new Promise(resolve => {
-      const newContentSlot = {
-        id: this.instanceCounter++,
-        componentType: componentType,
-        viewId: viewId,
-        columnStart: columnStart,
-        rowStart: rowStart,
-        columnEnd: columnEnd,
-        rowEnd: rowEnd
+  async createContentSlot (componentType, viewId, columnStart, rowStart, columnEnd, rowEnd) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const result = await conn.query(
+        `INSERT INTO ${this.tableName} (\`view_id\`, \`component_type\`, \`column_start\`, \`row_start\`, \`column_end\`, \`row_end\`) VALUES (?,?,?,?,?,?)`,
+        [viewId, componentType, columnStart, rowStart, columnEnd, rowEnd]
+      )
+      return result.insertId
+    } catch (e) {
+      if (e.errno === 1062) {
+        throw new DuplicateEntryError(e.code)
       }
-      this.contentSlots.set(newContentSlot.id, newContentSlot)
-      resolve(newContentSlot)
-    })
-  }
 
-  /**
-   * @return {Promise}
-   */
-  getAllContentSlots () {
-    return new Promise(resolve => {
-      const contentSlots = Array.from(this.contentSlots.values())
-      resolve(contentSlots)
-    })
+      throw new Error(e.code)
+    } finally {
+      if (conn) {
+        conn.release()
+      }
+    }
   }
 
   /**
    * @param {Number} id
    *
-   * @return {Promise}
+   * @return {Promise<Object>|Promise<null>}
    */
-  getContentSlot (id) {
-    return new Promise((resolve, reject) => {
-      if (!this.contentSlots.has(id)) {
-        return reject(new Error(`No Content Slot with ID ${id} found`))
+  async getContentSlot (id) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE id = ? LIMIT 1`, id)
+      if (rows.length === 0) {
+        return null
       }
-
-      resolve(this.contentSlots.get(id))
-    })
+      return this.rowToObject(rows[0])
+    } finally {
+      if (conn) {
+        conn.release()
+      }
+    }
   }
 
   /**
@@ -62,17 +71,17 @@ class ContentSlotRepository {
    *
    * @return {Promise<Object[]>}
    */
-  getContentSlotsByViewId (viewId) {
-    return new Promise((resolve) => {
-      const contentSlots = []
-      for (const contentSlot of this.contentSlots.values()) {
-        if (contentSlot.viewId === viewId) {
-          contentSlots.push(contentSlot)
-        }
+  async getContentSlotsByViewId (viewId) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE view_id = ?`, viewId)
+      return rows.map(this.rowToObject)
+    } finally {
+      if (conn) {
+        conn.release()
       }
-
-      resolve(contentSlots)
-    })
+    }
   }
 
   /**
@@ -82,35 +91,33 @@ class ContentSlotRepository {
    *
    * @return {Promise<Object[]>}
    */
-  getContentSlotsByComponentType (componentType) {
-    return new Promise((resolve) => {
-      const contentSlots = []
-      for (const contentSlot of this.contentSlots.values()) {
-        if (contentSlot.componentType === componentType) {
-          contentSlots.push(contentSlot)
-        }
+  async getContentSlotsByComponentType (componentType) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE component_type = ?`, componentType)
+      return rows.map(this.rowToObject)
+    } finally {
+      if (conn) {
+        conn.release()
       }
-
-      resolve(contentSlots)
-    })
+    }
   }
 
   /**
-   * Deletes a Content Slot object.
-   *
-   * @param {Number} id The ID of the Content Slot
-   *
-   * @return {Promise}
+   * @param row
+   * @return {{componentType: String, columnEnd: Number, viewId: Number, columnStart: Number, rowStart: Number, rowEnd: Number, id: Number}}
    */
-  deleteContentSlot (id) {
-    return new Promise(resolve => {
-      const itemDidExist = this.contentSlots.delete(id)
-      if (itemDidExist) {
-        resolve(id)
-      } else {
-        resolve(undefined)
-      }
-    })
+  rowToObject (row) {
+    return {
+      id: row.id,
+      componentType: row.component_type,
+      viewId: row.view_id,
+      columnStart: row.column_start,
+      rowStart: row.row_start,
+      columnEnd: row.column_end,
+      rowEnd: row.row_end
+    }
   }
 
   /**
@@ -122,26 +129,22 @@ class ContentSlotRepository {
    * @param {Number} columnEnd
    * @param {Number} rowEnd
    *
-   * @return {Promise}
+   * @return {Promise<Number>|Promise<null>}
    */
-  updateContentSlot (id, componentType, viewId, columnStart, rowStart, columnEnd, rowEnd) {
-    return new Promise((resolve, reject) => {
-      if (!this.contentSlots.has(id)) {
-        return reject(new Error(`No Content Slot with ID ${id} found`))
+  async updateContentSlot (id, componentType, viewId, columnStart, rowStart, columnEnd, rowEnd) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const result = await conn.query(
+        `UPDATE ${this.tableName} SET \`view_id\` = ?, \`component_type\` = ?, \`column_start\` = ?, \`row_start\` = ?, \`column_end\` = ?, \`row_end\` = ? WHERE \`id\` = ?`,
+        [viewId, componentType, columnStart, rowStart, columnEnd, rowEnd, id]
+      )
+      return result.affectedRows === 1 ? id : null
+    } finally {
+      if (conn) {
+        conn.release()
       }
-
-      const contentSlot = {
-        id: id,
-        componentType: componentType,
-        viewId: viewId,
-        columnStart: columnStart,
-        rowStart: rowStart,
-        columnEnd: columnEnd,
-        rowEnd: rowEnd
-      }
-      this.contentSlots.set(id, contentSlot)
-      resolve(contentSlot)
-    })
+    }
   }
 }
 

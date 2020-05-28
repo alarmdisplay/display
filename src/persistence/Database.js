@@ -41,7 +41,7 @@ class Database {
       alertRepository: new AlertRepository(),
       announcementRepository: new AnnouncementRepository(),
       displayRepository: new DisplayRepository(pool, this.prefix),
-      contentSlotRepository: new ContentSlotRepository(),
+      contentSlotRepository: new ContentSlotRepository(pool, this.prefix),
       contentSlotOptionRepository: new ContentSlotOptionRepository(),
       viewRepository: new ViewRepository(pool, this.prefix)
     }

@@ -200,13 +200,14 @@ class DisplayService extends EventEmitter {
         try {
           for (const contentSlotId of removedComponents) {
             await this.contentSlotOptionRepository.deleteOptionsForContentSlot(contentSlotId)
-            await this.contentSlotRepository.deleteContentSlot(contentSlotId)
+            await this.contentSlotRepository.deleteOne(contentSlotId)
           }
 
           for (const contentSlot of newContentSlots) {
             if (contentSlot.id === undefined) {
               // Add a new Content Slot for this component
-              const newContentSlot = await this.contentSlotRepository.createContentSlot(contentSlot.componentType, viewId, contentSlot.columnStart, contentSlot.rowStart, contentSlot.columnEnd, contentSlot.rowEnd)
+              const newContentSlotId = await this.contentSlotRepository.createContentSlot(contentSlot.componentType, viewId, contentSlot.columnStart, contentSlot.rowStart, contentSlot.columnEnd, contentSlot.rowEnd)
+              const newContentSlot = await this.contentSlotRepository.getContentSlot(newContentSlotId)
               this.setOptionsForContentSlot(newContentSlot.id, contentSlot.options || {})
               continue
             }
