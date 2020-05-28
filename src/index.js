@@ -41,7 +41,7 @@ checkEnvironment()
 /**
  * Sets up the connection to the database.
  *
- * @return {Promise<{contentSlotRepository: ContentSlotRepository, contentSlotOptionRepository: ContentSlotOptionRepository, announcementRepository: AnnouncementRepository, displayRepository: DisplayRepository, viewRepository: ViewRepository, alertRepository: AlertRepository}>}
+ * @return {Promise<{contentSlotRepository: ContentSlotRepository, announcementRepository: AnnouncementRepository, displayRepository: DisplayRepository, viewRepository: ViewRepository, alertRepository: AlertRepository}>}
  * @throws Error If the connection to the database fails
  */
 async function connectDatabase () {
@@ -58,10 +58,10 @@ async function connectDatabase () {
 }
 
 connectDatabase()
-  .then(({ alertRepository, announcementRepository, contentSlotOptionRepository, contentSlotRepository, displayRepository, viewRepository }) => {
+  .then(({ alertRepository, announcementRepository, contentSlotRepository, displayRepository, viewRepository }) => {
     const alertService = new AlertService(alertRepository)
     const announcementService = new AnnouncementService(announcementRepository)
-    const displayService = new DisplayService(displayRepository, viewRepository, contentSlotRepository, contentSlotOptionRepository)
+    const displayService = new DisplayService(displayRepository, viewRepository, contentSlotRepository)
     const contentService = new ContentService(announcementService)
 
     const app = require('./app')(displayService, announcementService, alertService)

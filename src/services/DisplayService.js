@@ -6,14 +6,12 @@ class DisplayService extends EventEmitter {
    * @param {DisplayRepository} displayRepository
    * @param {ViewRepository} viewRepository
    * @param {ContentSlotRepository} contentSlotRepository
-   * @param {ContentSlotOptionRepository} contentSlotOptionRepository
    */
-  constructor (displayRepository, viewRepository, contentSlotRepository, contentSlotOptionRepository) {
+  constructor (displayRepository, viewRepository, contentSlotRepository) {
     super()
     this.displayRepository = displayRepository
     this.viewRepository = viewRepository
     this.contentSlotRepository = contentSlotRepository
-    this.contentSlotOptionRepository = contentSlotOptionRepository
     this.logger = log4js.getLogger('DisplayService')
   }
 
@@ -89,32 +87,11 @@ class DisplayService extends EventEmitter {
     const views = await this.viewRepository.getViewsByDisplayId(displayId)
     const enrichedViews = []
     for (const view of views) {
-      view.contentSlots = await this.getContentSlotsForView(view.id)
+      view.contentSlots = await this.contentSlotRepository.getContentSlotsByViewId(view.id)
       enrichedViews.push(view)
     }
 
     return enrichedViews
-  }
-
-  getContentSlotsForView (viewId) {
-    return this.contentSlotRepository.getContentSlotsByViewId(viewId)
-      .then(async contentSlots => {
-        const enrichedContentSlots = []
-        for (const contentSlot of contentSlots) {
-          const allOptions = await this.contentSlotOptionRepository.getOptionsForContentSlot(contentSlot.id)
-
-          // Transform the Map to a regular object
-          const options = {}
-          for (const [key, value] of allOptions.entries()) {
-            options[key] = value
-          }
-
-          contentSlot.options = options
-          enrichedContentSlots.push(contentSlot)
-        }
-
-        return enrichedContentSlots
-      })
   }
 
   /**
@@ -127,7 +104,7 @@ class DisplayService extends EventEmitter {
     if (!view) {
       return null
     }
-    view.contentSlots = await this.getContentSlotsForView(viewId)
+    view.contentSlots = await this.contentSlotRepository.getContentSlotsByViewId(viewId)
     return view
   }
 
@@ -199,23 +176,18 @@ class DisplayService extends EventEmitter {
 
         try {
           for (const contentSlotId of removedComponents) {
-            await this.contentSlotOptionRepository.deleteOptionsForContentSlot(contentSlotId)
             await this.contentSlotRepository.deleteOne(contentSlotId)
           }
 
           for (const contentSlot of newContentSlots) {
             if (contentSlot.id === undefined) {
               // Add a new Content Slot for this component
-              const newContentSlotId = await this.contentSlotRepository.createContentSlot(contentSlot.componentType, viewId, contentSlot.columnStart, contentSlot.rowStart, contentSlot.columnEnd, contentSlot.rowEnd)
-              const newContentSlot = await this.contentSlotRepository.getContentSlot(newContentSlotId)
-              this.setOptionsForContentSlot(newContentSlot.id, contentSlot.options || {})
+              await this.contentSlotRepository.createContentSlot(contentSlot.componentType, viewId, contentSlot.columnStart, contentSlot.rowStart, contentSlot.columnEnd, contentSlot.rowEnd, contentSlot.options || {})
               continue
             }
 
             // Update an existing Content Slot
-            const existingContentSlot = await this.contentSlotRepository.getContentSlot(contentSlot.id)
-            await this.contentSlotRepository.updateContentSlot(existingContentSlot.id, contentSlot.componentType, viewId, contentSlot.columnStart, contentSlot.rowStart, contentSlot.columnEnd, contentSlot.rowEnd)
-            this.setOptionsForContentSlot(existingContentSlot.id, contentSlot.options || {})
+            await this.contentSlotRepository.updateContentSlot(contentSlot.id, contentSlot.componentType, viewId, contentSlot.columnStart, contentSlot.rowStart, contentSlot.columnEnd, contentSlot.rowEnd, contentSlot.options || {})
           }
         } catch (e) {
           return Promise.reject(e)
@@ -223,28 +195,6 @@ class DisplayService extends EventEmitter {
 
         return Promise.resolve()
       })
-  }
-
-  setOptionsForContentSlot (contentSlotId, options = {}) {
-    return this.contentSlotOptionRepository.getOptionsForContentSlot(contentSlotId)
-      .then(async existingOptions => {
-        // Remove existing options not present in the new options object
-        for (const key of existingOptions.keys()) {
-          if (!Object.prototype.hasOwnProperty.call(options, key)) {
-            await this.contentSlotOptionRepository.deleteOption(contentSlotId, key)
-          }
-        }
-
-        for (const [key, value] of Object.entries(options)) {
-          if (existingOptions.has(key)) {
-            await this.contentSlotOptionRepository.updateOption(contentSlotId, key, value)
-            continue
-          }
-
-          await this.contentSlotOptionRepository.createOption(contentSlotId, key, value)
-        }
-      })
-      .then(() => this.contentSlotOptionRepository.getOptionsForContentSlot(contentSlotId))
   }
 }
 

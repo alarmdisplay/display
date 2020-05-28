@@ -12,7 +12,7 @@ describe('DisplayService', () => {
   })
 
   beforeEach(() => {
-    displayService = new DisplayService(displayRepository, undefined, undefined, undefined)
+    displayService = new DisplayService(displayRepository, undefined, undefined)
     DisplayRepository.mock.instances[0].createDisplay.mockClear()
   })
 

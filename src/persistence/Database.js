@@ -3,7 +3,6 @@ const mariadb = require('mariadb')
 
 const AlertRepository = require('./repositories/AlertRepository')
 const AnnouncementRepository = require('./repositories/AnnouncementRepository')
-const ContentSlotOptionRepository = require('./repositories/ContentSlotOptionRepository')
 const ContentSlotRepository = require('./repositories/ContentSlotRepository')
 const DisplayRepository = require('./repositories/DisplayRepository')
 const ViewRepository = require('./repositories/ViewRepository')
@@ -22,7 +21,7 @@ class Database {
   /**
    * Connects to the database and makes sure it is ready to be used.
    *
-   * @return {Promise<{contentSlotRepository: ContentSlotRepository, contentSlotOptionRepository: ContentSlotOptionRepository, announcementRepository: AnnouncementRepository, displayRepository: DisplayRepository, viewRepository: ViewRepository, alertRepository: AlertRepository}>}
+   * @return {Promise<{contentSlotRepository: ContentSlotRepository, announcementRepository: AnnouncementRepository, displayRepository: DisplayRepository, viewRepository: ViewRepository, alertRepository: AlertRepository}>}
    */
   async start () {
     this.logger.info('Connecting...')
@@ -42,7 +41,6 @@ class Database {
       announcementRepository: new AnnouncementRepository(),
       displayRepository: new DisplayRepository(pool, this.prefix),
       contentSlotRepository: new ContentSlotRepository(pool, this.prefix),
-      contentSlotOptionRepository: new ContentSlotOptionRepository(),
       viewRepository: new ViewRepository(pool, this.prefix)
     }
   }
