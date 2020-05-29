@@ -1,88 +1,88 @@
-const NotFoundError = require('../../errors/NotFoundError')
+const Repository = require('./Repository')
 
-class AnnouncementRepository {
-  constructor () {
-    this.announcements = new Map()
-    this.instanceCounter = 1
+class AnnouncementRepository extends Repository {
+  /**
+   * @param connectionPool
+   * @param {String} prefix The prefix used for the database tables
+   */
+  constructor (connectionPool, prefix) {
+    super(connectionPool)
+    this.tableName = `${prefix}announcements`
   }
 
   /**
    * @param {String} title
-   * @param {String} text
+   * @param {String} body
    * @param {Boolean} important
    * @param {Number} validFrom
    * @param {Number} validTo
    */
-  create (title, text, important, validFrom, validTo) {
-    return new Promise(resolve => {
-      const newAnnouncement = {
-        id: this.instanceCounter++,
-        title: title || '',
-        text: text || '',
-        important: important,
-        validFrom: validFrom,
-        validTo: validTo,
-        createdAt: Date.now(),
-        updatedAt: Date.now()
+  async create (title, body, important, validFrom, validTo) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const result = await conn.query(
+        `INSERT INTO ${this.tableName} (\`title\`, \`body\`, \`important\`, \`valid_from\`, \`valid_to\`) VALUES (?,?,?,?,?)`,
+        [title, body, important, validFrom, validTo]
+      )
+      return result.insertId
+    } finally {
+      if (conn) {
+        conn.release()
       }
-      this.announcements.set(newAnnouncement.id, newAnnouncement)
-      resolve(newAnnouncement)
-    })
+    }
   }
 
   /**
+   * Returns all items.
+   *
    * @return {Promise<Object[]>}
    */
-  getAll () {
-    return new Promise(resolve => {
-      const announcements = []
-      this.announcements.forEach(storedAnnouncement => {
-        // Clone each Announcement, so each recipient modifies their own copy
-        const announcement = {}
-        for (const prop of Object.getOwnPropertyNames(storedAnnouncement)) {
-          announcement[prop] = storedAnnouncement[prop]
-        }
-        announcements.push(announcement)
-      })
-      resolve(announcements)
-    })
+  async getAll () {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const rows = await conn.query('SELECT `id`, `title`, `body`, `important`, UNIX_TIMESTAMP(`valid_from`) AS valid_from, UNIX_TIMESTAMP(`valid_to`) AS valid_to, UNIX_TIMESTAMP(`created`) AS created, UNIX_TIMESTAMP(`updated`) AS updated FROM ' + this.tableName)
+      return rows.map(this.rowToObject)
+    } finally {
+      if (conn) {
+        conn.release()
+      }
+    }
   }
 
   /**
    * @param {Number} id
    *
-   * @return {Promise<Object>}
+   * @return {Promise<Object>|Promise<null>}
    */
-  getOne (id) {
-    return new Promise((resolve, reject) => {
-      if (!this.announcements.has(id)) {
-        return reject(new NotFoundError(`No Announcement with ID ${id} found`))
+  async getOne (id) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const rows = await conn.query(`SELECT \`id\`, \`title\`, \`body\`, \`important\`, UNIX_TIMESTAMP(\`valid_from\`) AS valid_from, UNIX_TIMESTAMP(\`valid_to\`) AS valid_to, UNIX_TIMESTAMP(\`created\`) AS created, UNIX_TIMESTAMP(\`updated\`) AS updated FROM ${this.tableName} WHERE id = ? LIMIT 1`, id)
+      if (rows.length === 0) {
+        return null
       }
-
-      // Clone the Announcement, so each recipient modifies their own copy
-      const announcement = {}
-      const storedAnnouncement = this.announcements.get(id)
-      for (const prop of Object.getOwnPropertyNames(storedAnnouncement)) {
-        announcement[prop] = storedAnnouncement[prop]
+      return this.rowToObject(rows[0])
+    } finally {
+      if (conn) {
+        conn.release()
       }
-      resolve(announcement)
-    })
+    }
   }
 
-  /**
-   * @param {Number} id
-   *
-   * @return {Promise}
-   */
-  deleteOne (id) {
-    return new Promise(resolve => {
-      const itemDidExist = this.announcements.delete(id)
-      if (itemDidExist) {
-        resolve(id)
-      } else {
-        resolve(undefined)
-      }
-    })
+  rowToObject (row) {
+    return {
+      id: row.id,
+      title: row.title || '',
+      text: row.body || '',
+      important: row.important === 1,
+      validFrom: row.valid_from,
+      validTo: row.valid_to,
+      createdAt: row.created,
+      updatedAt: row.updated
+    }
   }
 
   /**
@@ -93,24 +93,22 @@ class AnnouncementRepository {
    * @param {Number} validFrom
    * @param {Number} validTo
    *
-   * @return {Promise<Object>}
+   * @return {Promise<Object>|Promise<null>}
    */
-  updateOne (id, title, text, important, validFrom, validTo) {
-    return this.getOne(id)
-      .then(announcement => {
-        const updatedAnnouncement = {
-          id: announcement.id,
-          title: title,
-          text: text,
-          important: important,
-          validFrom: validFrom,
-          validTo: validTo,
-          createdAt: announcement.createdAt,
-          updatedAt: Date.now()
-        }
-        this.announcements.set(id, updatedAnnouncement)
-        return updatedAnnouncement
-      })
+  async updateOne (id, title, text, important, validFrom, validTo) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const result = await conn.query(
+        `UPDATE ${this.tableName} SET \`title\` = ?, \`body\` = ?, \`important\` = ?, \`valid_from\` = FROM_UNIXTIME(?), \`valid_to\` = FROM_UNIXTIME(?) WHERE \`id\` = ?`,
+        [title, text, important, validFrom, validTo, id]
+      )
+      return result.affectedRows === 1 ? id : null
+    } finally {
+      if (conn) {
+        conn.release()
+      }
+    }
   }
 }
 

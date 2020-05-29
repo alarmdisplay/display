@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 
+const NotFoundError = require('../errors/NotFoundError')
+
 /**
  * @param {AnnouncementService} announcementService
  */
@@ -56,12 +58,13 @@ module.exports = function (announcementService) {
    *     tags:
    *       - Announcements
    */
-  router.get('/', (req, res, next) => {
-    announcementService.getAllAnnouncements()
-      .then(announcements => {
-        res.json(announcements)
-      })
-      .catch(error => next(error))
+  router.get('/', async (req, res, next) => {
+    try {
+      const announcements = await announcementService.getAllAnnouncements()
+      res.json(announcements)
+    } catch (e) {
+      return next(e)
+    }
   })
 
   /**
@@ -89,14 +92,15 @@ module.exports = function (announcementService) {
    *     tags:
    *       - Announcements
    */
-  router.post('/', (req, res, next) => {
-    announcementService.createAnnouncement(req.body.title, req.body.text, req.body.important, req.body.validFrom, req.body.validTo)
-      .then(announcement => {
-        const baseUrl = req.originalUrl.replace(/\/$/, '')
-        const newLocation = `${baseUrl}/${announcement.id}`
-        res.set('Location', newLocation).status(201).json(announcement)
-      })
-      .catch(error => next(error))
+  router.post('/', async (req, res, next) => {
+    try {
+      const announcement = await announcementService.createAnnouncement(req.body.title, req.body.text, req.body.important, req.body.validFrom, req.body.validTo)
+      const baseUrl = req.originalUrl.replace(/\/$/, '')
+      const newLocation = `${baseUrl}/${announcement.id}`
+      res.set('Location', newLocation).status(201).json(announcement)
+    } catch (e) {
+      return next(e)
+    }
   })
 
   /**
@@ -120,12 +124,17 @@ module.exports = function (announcementService) {
    *     tags:
    *       - Announcements
    */
-  router.get('/:id', (req, res, next) => {
-    announcementService.getAnnouncement(parseInt(req.params.id))
-      .then(announcement => {
-        res.json(announcement)
-      })
-      .catch(error => next(error))
+  router.get('/:id', async (req, res, next) => {
+    try {
+      const announcement = await announcementService.getAnnouncement(parseInt(req.params.id))
+      if (!announcement) {
+        next(new NotFoundError(`No Announcement with ID ${req.params.id} found`))
+        return
+      }
+      res.json(announcement)
+    } catch (e) {
+      next(e)
+    }
   })
 
   /**
@@ -155,11 +164,18 @@ module.exports = function (announcementService) {
    *     tags:
    *       - Announcements
    */
-  router.put('/:id', (req, res, next) => {
-    announcementService.getAnnouncement(parseInt(req.params.id))
-      .then(announcement => announcementService.updateAnnouncement(announcement.id, req.body.title, req.body.text, req.body.important, req.body.validFrom, req.body.validTo))
-      .then(updatedAnnouncement => res.json(updatedAnnouncement))
-      .catch(error => next(error))
+  router.put('/:id', async (req, res, next) => {
+    try {
+      const announcementId = parseInt(req.params.id)
+      const announcement = await announcementService.updateAnnouncement(announcementId, req.body.title, req.body.text, req.body.important, req.body.validFrom, req.body.validTo)
+      if (!announcement) {
+        next(new NotFoundError(`No Announcement with ID ${announcementId} found`))
+        return
+      }
+      res.json(announcement)
+    } catch (e) {
+      next(e)
+    }
   })
 
   /**
@@ -179,10 +195,13 @@ module.exports = function (announcementService) {
    *     tags:
    *       - Announcements
    */
-  router.delete('/:id', (req, res, next) => {
-    announcementService.deleteAnnouncement(parseInt(req.params.id))
-      .then(() => res.sendStatus(204))
-      .catch(error => next(error))
+  router.delete('/:id', async (req, res, next) => {
+    try {
+      await announcementService.deleteAnnouncement(parseInt(req.params.id))
+      res.sendStatus(204)
+    } catch (e) {
+      return next(e)
+    }
   })
 
   return router
