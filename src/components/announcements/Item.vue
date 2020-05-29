@@ -51,4 +51,8 @@
         font-weight: bold;
         margin-bottom: 0.2em;
     }
+
+    .text {
+        white-space: pre-line;
+    }
 </style>
