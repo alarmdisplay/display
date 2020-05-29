@@ -1,9 +1,14 @@
-const NotFoundError = require('../../errors/NotFoundError')
+const Repository = require('./Repository')
 
-class AlertRepository {
-  constructor () {
-    this.alerts = new Map()
-    this.instanceCounter = 1
+class AlertRepository extends Repository {
+  /**
+   * @param connectionPool
+   * @param {String} prefix The prefix used for the database tables
+   */
+  constructor (connectionPool, prefix) {
+    super(connectionPool)
+    this.tableName = `${prefix}alerts`
+    this.selectFields = '`id`, `title`, `keyword`, `description`, UNIX_TIMESTAMP(`time`) AS time, `location`, `status`, `category`, `contact`, UNIX_TIMESTAMP(`expires`) AS expires, UNIX_TIMESTAMP(`updated`) AS updated'
   }
 
   /**
@@ -16,115 +21,76 @@ class AlertRepository {
    * @param {String} category
    * @param {String} contact
    * @param {Number} expires
+   *
+   * @return {Promise<Number>}
    */
-  create (title, keyword, description, time, location, status, category, contact, expires) {
-    return new Promise(resolve => {
-      const newAlert = {
-        id: this.instanceCounter++,
-        title: title,
-        keyword: keyword,
-        description: description,
-        time: time,
-        location: location,
-        status: status,
-        category: category,
-        contact: contact,
-        expires: expires,
-        updatedAt: Math.floor(Date.now() / 1000)
+  async create (title, keyword, description, time, location, status, category, contact, expires) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const result = await conn.query(
+        `INSERT INTO ${this.tableName} (\`title\`, \`keyword\`, \`description\`, \`time\`, \`location\`, \`status\`, \`category\`, \`contact\`, \`expires\`) VALUES (?,?,?,FROM_UNIXTIME(?),?,?,?,?,FROM_UNIXTIME(?))`,
+        [title, keyword, description, time, location, status, category, contact, expires]
+      )
+      return result.insertId
+    } finally {
+      if (conn) {
+        conn.release()
       }
-      this.alerts.set(newAlert.id, newAlert)
-      resolve(newAlert)
-    })
+    }
   }
 
   /**
    * @return {Promise<Object[]>}
    */
-  getAll () {
-    return new Promise(resolve => {
-      const alerts = []
-      this.alerts.forEach(storedAlert => {
-        // Clone each Alert, so each recipient modifies their own copy
-        const alert = {}
-        for (const prop of Object.getOwnPropertyNames(storedAlert)) {
-          alert[prop] = storedAlert[prop]
-        }
-        alerts.push(alert)
-      })
-      resolve(alerts)
-    })
+  async getAll () {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const rows = await conn.query('SELECT ' + this.selectFields + ' FROM ' + conn.escapeId(this.tableName))
+      return rows.map(this.rowToObject)
+    } finally {
+      if (conn) {
+        conn.release()
+      }
+    }
   }
 
   /**
    * @param {Number} id
    *
-   * @return {Promise<Object>}
+   * @return {Promise<Object>|Promise<null>}
    */
-  getOne (id) {
-    return new Promise((resolve, reject) => {
-      if (!this.alerts.has(id)) {
-        return reject(new NotFoundError(`No Alert with ID ${id} found`))
+  async getOne (id) {
+    let conn
+    try {
+      conn = await this.connectionPool.getConnection()
+      const rows = await conn.query('SELECT ' + this.selectFields + ' FROM ' + conn.escapeId(this.tableName) + ' WHERE id = ? LIMIT 1', id)
+      if (rows.length === 0) {
+        return null
       }
-
-      // Clone the Alert, so each recipient modifies their own copy
-      const alert = {}
-      const storedAlert = this.alerts.get(id)
-      for (const prop of Object.getOwnPropertyNames(storedAlert)) {
-        alert[prop] = storedAlert[prop]
+      return this.rowToObject(rows[0])
+    } finally {
+      if (conn) {
+        conn.release()
       }
-      resolve(alert)
-    })
+    }
   }
 
-  /**
-   * @param {Number} id
-   *
-   * @return {Promise}
-   */
-  deleteOne (id) {
-    return new Promise(resolve => {
-      const itemDidExist = this.alerts.delete(id)
-      if (itemDidExist) {
-        resolve(id)
-      } else {
-        resolve(undefined)
-      }
-    })
-  }
-
-  /**
-   * @param {Number} id
-   * @param {String} title
-   * @param {String} keyword
-   * @param {String} description
-   * @param {Number} time
-   * @param {String} location
-   * @param {String} status
-   * @param {String} category
-   * @param {String} contact
-   * @param {Number} expires
-   *
-   * @return {Promise<Object>}
-   */
-  updateOne (id, title, keyword, description, time, location, status, category, contact, expires) {
-    return this.getOne(id)
-      .then(alert => {
-        const updatedAlert = {
-          id: alert.id,
-          title: title,
-          keyword: keyword,
-          description: description,
-          time: time,
-          location: location,
-          status: status,
-          category: category,
-          contact: contact,
-          expires: expires,
-          updatedAt: Math.floor(Date.now() / 1000)
-        }
-        this.alerts.set(id, updatedAlert)
-        return updatedAlert
-      })
+  rowToObject (row) {
+    return {
+      id: row.id,
+      title: row.title,
+      keyword: row.keyword,
+      description: row.description,
+      time: row.time,
+      location: row.location,
+      status: row.status,
+      category: row.category,
+      contact: row.contact,
+      expires: row.expires,
+      updatedAt: row.updated
+    }
   }
 }
 

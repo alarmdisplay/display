@@ -37,7 +37,7 @@ class Database {
     const pool = await mariadb.createPool({ host: this.host, user: this.username, password: this.password, database: this.database, connectionLimit: 5 })
 
     return {
-      alertRepository: new AlertRepository(),
+      alertRepository: new AlertRepository(pool, this.prefix),
       announcementRepository: new AnnouncementRepository(pool, this.prefix),
       displayRepository: new DisplayRepository(pool, this.prefix),
       contentSlotRepository: new ContentSlotRepository(pool, this.prefix),
@@ -97,6 +97,7 @@ class Database {
       views: '(`id` int(10) unsigned NOT NULL AUTO_INCREMENT, `display_id` int(10) unsigned NOT NULL, `view_order` int(11) NOT NULL, `screen_type` varchar(20) NOT NULL DEFAULT \'idle\', `columns` tinyint(3) unsigned NOT NULL DEFAULT 1, `rows` tinyint(3) unsigned NOT NULL DEFAULT 1, PRIMARY KEY (`id`), UNIQUE KEY `display_id` (`display_id`,`view_order`,`screen_type`), CONSTRAINT FOREIGN KEY (`display_id`) REFERENCES `' + this.prefix + 'displays` (`id`) ON DELETE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4',
       contentslots: '(`id` int(10) unsigned NOT NULL AUTO_INCREMENT, `view_id` int(10) unsigned NOT NULL, `component_type` varchar(30) NOT NULL, `column_start` tinyint(3) unsigned NOT NULL, `row_start` tinyint(3) unsigned NOT NULL, `column_end` tinyint(3) unsigned NOT NULL, `row_end` tinyint(3) unsigned NOT NULL, PRIMARY KEY (`id`), CONSTRAINT FOREIGN KEY (`view_id`) REFERENCES `' + this.prefix + 'views` (`id`) ON DELETE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4',
       contentslot_options: '(`contentslot_id` int(10) unsigned NOT NULL, `name` varchar(50) NOT NULL, `value` text NOT NULL, UNIQUE KEY `contentslot_id` (`contentslot_id`,`name`), CONSTRAINT FOREIGN KEY (`contentslot_id`) REFERENCES `' + this.prefix + 'contentslots` (`id`) ON DELETE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4',
+      alerts: '(`id` int(10) unsigned NOT NULL AUTO_INCREMENT, `title` varchar(200) NOT NULL, `keyword` varchar(100) NOT NULL, `description` text NOT NULL DEFAULT \'\', `time` timestamp NOT NULL DEFAULT current_timestamp(), `location` varchar(250) NOT NULL DEFAULT \'\', `status` varchar(20) NOT NULL, `category` varchar(20) NOT NULL DEFAULT \'Other\', `contact` varchar(150) NOT NULL DEFAULT \'\', `expires` timestamp NULL DEFAULT NULL, `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(), PRIMARY KEY (`id`)) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4',
       announcements: '( `id` int(10) unsigned NOT NULL AUTO_INCREMENT, `title` varchar(200) NOT NULL, `body` text NOT NULL, `important` tinyint(1) NOT NULL DEFAULT 0, `valid_from` timestamp NULL DEFAULT NULL, `valid_to` timestamp NULL DEFAULT NULL, `created` timestamp NOT NULL DEFAULT current_timestamp(), `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(), PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4',
       options: '(`id` int(10) unsigned NOT NULL AUTO_INCREMENT, `name` varchar(100) NOT NULL, `value` text NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `name` (`name`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4'
     }
