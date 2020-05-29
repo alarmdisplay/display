@@ -144,8 +144,21 @@ export default {
     },
     saveChanges: function () {
       this.saveButtonEnabled = false
-      this.announcementData.validFrom = this.restrictValidFrom ? Math.floor(this.validFromDate.valueOf() / 1000) : undefined
-      this.announcementData.validTo = this.restrictValidTo ? Math.floor(this.validToDate.valueOf() / 1000) : undefined
+
+      // Prepare the date entries for the API request
+      if (this.restrictValidFrom) {
+        this.validFromDate.setSeconds(0)
+        this.announcementData.validFrom = Math.floor(this.validFromDate.valueOf() / 1000)
+      } else {
+        this.announcementData.validFrom = undefined
+      }
+      if (this.restrictValidTo) {
+        this.validToDate.setSeconds(0)
+        this.announcementData.validTo = Math.floor(this.validToDate.valueOf() / 1000)
+      } else {
+        this.announcementData.validTo = undefined
+      }
+
       this.$store.dispatch('updateAnnouncement', { id: this.id, data: this.announcementData })
         .then(() => {
           this.$router.replace('/announcements')
