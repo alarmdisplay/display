@@ -5,7 +5,7 @@
         </div>
         <div class="w3-bar-item">
             <span class="title w3-large">{{ announcement.title || '(Kein Titel)' }}</span><br>
-            <span>{{ getTextPreview() }}</span>
+            <span class="announcement-body">{{ getTextPreview() }}</span>
             <p v-if="announcement.validFrom || announcement.validTo">{{ getValidityInfo() }}</p>
         </div>
         <router-link :to="`/announcements/${announcement.id}`" tag="button" class="w3-bar-item w3-button w3-border w3-border-blue w3-hover-blue w3-round-medium w3-right">
@@ -55,5 +55,9 @@ export default {
 <style scoped>
 .important .title {
     font-weight: bold;
+}
+
+.announcement-body {
+    white-space: pre;
 }
 </style>
