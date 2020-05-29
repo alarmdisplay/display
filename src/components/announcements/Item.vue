@@ -11,11 +11,11 @@
         name: "Item",
         computed: {
             theDate: function () {
-                let date = new Date(this.announcement.updatedAt || this.announcement.createdAt);
+                let date = new Date(this.announcement.updatedAt * 1000);
                 if (isNaN(date.valueOf())) {
                     return ''
                 }
-                return this.$moment(date).format("LL")
+                return this.$moment(date).format("L")
             }
         },
         methods: {
