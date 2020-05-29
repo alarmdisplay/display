@@ -1,10 +1,15 @@
 <template>
     <div v-bind:id="elementId" class="announcement-list">
         <p class="header">{{ this.options.title || 'Ankündigungen' }}</p>
-        <ul>
-            <li v-if="announcements.length === 0" class="no-announcements">Keine Ankündigungen</li>
+        <ul v-if="announcements.length > 0">
             <Item v-for="announcement in announcements" v-bind:key="announcement.id" v-bind:announcement="announcement" />
         </ul>
+        <div v-else class="no-announcements">
+            <div class="icon-and-text">
+                <font-awesome-icon icon="bullhorn" size="2x"/>
+                <p>Keine Ankündigungen</p>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -44,6 +49,7 @@
 <style scoped>
     .announcement-list {
         box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+        background-color: #cccccc;
     }
 
     .header {
@@ -61,11 +67,17 @@
         padding: 0;
     }
 
-    li.no-announcements {
-        background-color: #ddd;
-        border-bottom: 1px solid #999;
-        list-style: none;
-        padding: 2em;
+    .no-announcements {
+        color: #393939;
+        height: 100%;
+        font-size: 2vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .no-announcements .icon-and-text {
         text-align: center;
     }
 </style>
