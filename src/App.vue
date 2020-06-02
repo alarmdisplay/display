@@ -50,4 +50,10 @@ html {
   height: 100vh;
   background-color: #777777;
 }
+
+.gridview-component {
+  overflow: hidden;
+  padding: 1em;
+  text-align: center;
+}
 </style>

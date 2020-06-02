@@ -1,5 +1,7 @@
 <template>
-    <img :src="imgurl" alt="">
+    <div class="gridview-component">
+        <img :src="imgurl" alt="">
+    </div>
 </template>
 
 <script>
@@ -125,5 +127,6 @@
         box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
         max-height: 100%;
         max-width: 100%;
+        object-fit: scale-down;
     }
 </style>

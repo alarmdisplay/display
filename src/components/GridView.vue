@@ -30,20 +30,7 @@
                     return '';
                 }
 
-                /**
-                 * Generate strings for the number of columns and rows, make all the entries the same percentage so they
-                 * have the same height/width. Specifying all the entries as 'auto' should have the same effect, but
-                 * causes rows/columns to shrink if they have no content.
-                 */
-                let columnsPercentage = 100 / this.view.columns;
-                let columnsPercentageString = columnsPercentage.toFixed(1) + '%';
-                let templateColumns = Array(this.view.columns).fill(columnsPercentageString).join(' ');
-
-                let rowsPercentage = 100 / this.view.rows;
-                let rowPercentageString = rowsPercentage.toFixed(1) + '%';
-                let templateRows = Array(this.view.rows).fill(rowPercentageString).join(' ');
-
-                return 'grid-template-columns: ' + templateColumns + '; grid-template-rows: ' + templateRows + ';';
+                return `grid-template-columns: repeat(${this.view.columns}, 1fr); grid-template-rows: repeat(${this.view.rows}, 1fr);`;
             },
             getChildComponents: function () {
                 let components = [];
@@ -73,8 +60,7 @@
 <style scoped>
     .view {
         display: grid;
-        height: 96%;
-        margin: 2%;
-        width: 96%;
+        max-height: 100%;
+        max-width: 100%;
     }
 </style>

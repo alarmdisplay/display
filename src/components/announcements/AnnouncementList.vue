@@ -1,13 +1,16 @@
 <template>
-    <div v-bind:id="elementId" class="announcement-list">
-        <p class="header">{{ this.options.title || 'Ankündigungen' }}</p>
-        <ul v-if="announcements.length > 0">
-            <Item v-for="announcement in announcements" v-bind:key="announcement.id" v-bind:announcement="announcement" />
-        </ul>
-        <div v-else class="no-announcements">
-            <div class="icon-and-text">
-                <font-awesome-icon icon="bullhorn" size="2x"/>
-                <p>Keine Ankündigungen</p>
+    <div v-bind:id="elementId" class="gridview-component">
+        <div class="announcement-list">
+            <p class="header">{{ this.options.title || 'Ankündigungen' }}</p>
+            <ul v-if="announcements.length > 0">
+                <Item v-for="announcement in announcements" v-bind:key="announcement.id"
+                      v-bind:announcement="announcement"/>
+            </ul>
+            <div v-else class="no-announcements">
+                <div class="icon-and-text">
+                    <font-awesome-icon icon="bullhorn" size="2x"/>
+                    <p>Keine Ankündigungen</p>
+                </div>
             </div>
         </div>
     </div>
@@ -50,6 +53,7 @@
     .announcement-list {
         box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
         background-color: #cccccc;
+        text-align: start;
     }
 
     .header {

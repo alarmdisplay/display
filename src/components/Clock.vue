@@ -1,5 +1,5 @@
 <template>
-    <div class="clock">
+    <div class="gridview-component clock">
         <div v-if="showTime" class="time">{{ time }}</div>
         <div v-if="showDate" class="date">{{ date }}</div>
     </div>
@@ -51,8 +51,6 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        text-align: center;
-        overflow: hidden;
     }
 
     .time {
