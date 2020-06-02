@@ -54,11 +54,11 @@
     }
 
     .time {
-        font-size: 8em;
+        font-size: 6em;
         font-weight: bold;
     }
 
     .date {
-        font-size: 3em;
+        font-size: 2.5em;
     }
 </style>
