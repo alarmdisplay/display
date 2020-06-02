@@ -54,6 +54,8 @@
         box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
         background-color: #cccccc;
         text-align: start;
+        height: 100%;
+        overflow: hidden;
     }
 
     .header {
@@ -67,7 +69,7 @@
     }
 
     ul {
-        margin-top: 0;
+        margin: 0;
         padding: 0;
     }
 
@@ -79,6 +81,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        margin-top: -5vh;
     }
 
     .no-announcements .icon-and-text {
