@@ -5,6 +5,7 @@ const AlertRepository = require('./repositories/AlertRepository')
 const AnnouncementRepository = require('./repositories/AnnouncementRepository')
 const ContentSlotRepository = require('./repositories/ContentSlotRepository')
 const DisplayRepository = require('./repositories/DisplayRepository')
+const DuplicateEntryError = require('../errors/DuplicateEntryError')
 const ViewRepository = require('./repositories/ViewRepository')
 
 class Database {
@@ -35,6 +36,7 @@ class Database {
 
     // Create a connection pool that the repositories can get connections from
     const pool = await mariadb.createPool({ host: this.host, user: this.username, password: this.password, database: this.database, connectionLimit: 5 })
+    this.connectionPool = pool
 
     return {
       alertRepository: new AlertRepository(pool, this.prefix),
@@ -63,6 +65,48 @@ class Database {
 
         throw reason
       })
+  }
+
+  async delete (table, where, limit = 0) {
+    let connection
+    try {
+      connection = await this.connectionPool.getConnection()
+      const { sql, values } = this.addWhereAndLimit(connection, `DELETE FROM ${connection.escapeId(table)}`, [], where, limit)
+      this.logger.debug(sql, values)
+      const result = await connection.query(sql, values)
+      return result.affectedRows
+    } catch (e) {
+      throw new Error(e.code || e.message)
+    } finally {
+      if (connection) {
+        connection.release()
+      }
+    }
+  }
+
+  addWhereAndLimit (connection, sql, values, where = {}, limit = 0) {
+    const whereParts = []
+    for (const [column, value] of Object.entries(where)) {
+      if (Array.isArray(value)) {
+        whereParts.push(`${connection.escapeId(column)} IN ?`)
+      } else {
+        whereParts.push(`${connection.escapeId(column)} = ?`)
+      }
+      values.push(value)
+    }
+
+    // Add a where clause if restrictions were given
+    if (whereParts.length > 0) {
+      sql += ` WHERE ${whereParts.join(' AND ')}`
+    }
+
+    // Add a limit if we have one
+    if (limit > 0) {
+      sql += ' LIMIT ?'
+      values.push(limit)
+    }
+
+    return { sql, values }
   }
 
   /**
@@ -123,6 +167,87 @@ class Database {
         // If all went well, we can fill the database with essential data
         return connection.query(`INSERT INTO ${this.prefix}options (name, value) VALUES (?, ?)`, ['db_version', 1])
       })
+  }
+
+  /**
+   * @param {String} table
+   * @param {Object} values
+   *
+   * @return {Promise<Number>} The ID of the inserted row
+   */
+  async insert (table, values) {
+    let connection
+    try {
+      connection = await this.connectionPool.getConnection()
+      const columnNames = Object.keys(values)
+      const escapedColumnNames = columnNames.map(connection.escapeId)
+      const valuePlaceholders = Array(columnNames.length).fill('?')
+      const sql = `INSERT INTO ${connection.escapeId(table)} (${escapedColumnNames.join(',')}) VALUES (${valuePlaceholders.join(',')})`
+      this.logger.debug(sql)
+      const result = await connection.query(sql, Object.values(values))
+      return result.insertId
+    } catch (e) {
+      if (e.errno === 1062) {
+        throw new DuplicateEntryError(e.code)
+      }
+
+      throw new Error(e.code || e.message)
+    } finally {
+      if (connection) {
+        connection.release()
+      }
+    }
+  }
+
+  /**
+   * @param {String} table
+   * @param {String} columns
+   * @param {Object} where
+   * @param {Number} limit
+   *
+   * @return {Promise<Object[]>}
+   */
+  async select (table, columns = '*', where = {}, limit = 0) {
+    let connection
+    try {
+      connection = await this.connectionPool.getConnection()
+      const sqlBase = `SELECT ${columns} FROM ${connection.escapeId(table)}`
+      const { sql, values } = this.addWhereAndLimit(connection, sqlBase, [], where, limit)
+      this.logger.debug(sql, values)
+      const rows = await connection.query(sql, values)
+      return Array.from(rows)
+    } catch (e) {
+      throw new Error(e.code || e.message)
+    } finally {
+      if (connection) {
+        connection.release()
+      }
+    }
+  }
+
+  /**
+   * @param {String} table
+   * @param {Object} values
+   * @param {Object} where
+   * @return {Promise<number>}
+   */
+  async update (table, values, where = {}) {
+    let connection
+    try {
+      connection = await this.connectionPool.getConnection()
+      const columnNames = Object.keys(values)
+      const escapedValueAssignments = columnNames.map(column => `${connection.escapeId(column)} = ?`)
+      const sqlBase = `UPDATE ${connection.escapeId(table)} SET ${escapedValueAssignments.join(',')}`
+      const { sql, values: queryValues } = this.addWhereAndLimit(connection, sqlBase, Object.values(values), where, 0)
+      const result = await connection.query(sql, Object.values(queryValues))
+      return result.affectedRows
+    } catch (e) {
+      throw new Error(e.code || e.message)
+    } finally {
+      if (connection) {
+        connection.release()
+      }
+    }
   }
 }
 
