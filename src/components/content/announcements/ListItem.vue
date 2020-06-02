@@ -29,7 +29,7 @@ export default {
       return classes
     },
     getTextPreview: function () {
-      const maxLength = 40
+      const maxLength = 100
       const text = this.announcement.text || ''
 
       if (text.length <= maxLength) {
