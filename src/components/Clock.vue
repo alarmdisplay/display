@@ -10,7 +10,7 @@
         name: 'Clock',
         computed: {
             dateFormat: function () {
-                return Object.prototype.hasOwnProperty.call(this.options, 'dateFormat') ? this.options.dateFormat : 'LL'
+                return Object.prototype.hasOwnProperty.call(this.options, 'dateFormat') ? this.options.dateFormat : 'll'
             },
             showDate: function () {
                 return Object.prototype.hasOwnProperty.call(this.options, 'showDate') ? this.options.showDate : true
