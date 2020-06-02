@@ -104,6 +104,7 @@
 
     .alert.category-Fire .badge-category {
         background-color: red;
+        color: white;
     }
 
     .alert.category-Health .badge-category {
