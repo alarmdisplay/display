@@ -47,7 +47,6 @@
 
     .title {
         display: block;
-        font-size: large;
         font-weight: bold;
         margin-bottom: 0.2em;
     }

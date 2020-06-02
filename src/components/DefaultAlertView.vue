@@ -69,6 +69,7 @@
         place-content: space-evenly;
         grid-template-columns: 90%;
         grid-template-rows: 90%;
+        font-size: 2vh;
     }
 
     .clock-container {
