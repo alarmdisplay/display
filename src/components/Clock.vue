@@ -40,6 +40,9 @@
         props: {
             instanceId: Number,
             options: Object
+        },
+        watch: {
+            options: 'updateTime'
         }
     }
 </script>
