@@ -1,13 +1,14 @@
-const DuplicateEntryError = require('../../errors/DuplicateEntryError')
 const Repository = require('./Repository')
 
 class DisplayRepository extends Repository {
   /**
    * @param connectionPool
+   * @param {Database} database
    * @param {String} prefix The prefix used for the database tables
    */
-  constructor (connectionPool, prefix) {
+  constructor (connectionPool, database, prefix) {
     super(connectionPool)
+    this.database = database
     this.tableName = `${prefix}displays`
   }
 
@@ -23,22 +24,8 @@ class DisplayRepository extends Repository {
    * @return {Promise<Number>}
    */
   async createDisplay (name, active, clientId, description, location) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const result = await conn.query(`INSERT INTO ${this.tableName} (name, active, client_id, description, location) VALUES (?,?,?,?,?)`, [name, active, clientId, description, location])
-      return result.insertId
-    } catch (e) {
-      if (e.errno === 1062) {
-        throw new DuplicateEntryError(e.code)
-      }
-
-      throw new Error(e.code)
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
+    const activeValue = active === true ? 1 : 0
+    return this.database.insert(this.tableName, { name, active: activeValue, client_id: clientId, description, location })
   }
 
   rowToObject (row) {
@@ -53,6 +40,26 @@ class DisplayRepository extends Repository {
   }
 
   /**
+   * @param {Number} id The ID of the item to delete
+   *
+   * @return {Promise<Number>|Promise<null>} Returns the ID if the item existed before deletion, null otherwise
+   */
+  async deleteOne (id) {
+    const affectedRows = await this.database.delete(this.tableName, { id }, 1)
+    return (affectedRows === 1 ? id : null)
+  }
+
+  /**
+   * Returns all items.
+   *
+   * @return {Promise<Object[]>}
+   */
+  async getAll () {
+    const rows = await this.database.select(this.tableName)
+    return rows.map(this.rowToObject)
+  }
+
+  /**
    * Finds and returns a Display object with a certain ID.
    *
    * @param {Number} displayId The ID of the Display
@@ -60,19 +67,8 @@ class DisplayRepository extends Repository {
    * @return {Promise}
    */
   async getDisplayById (displayId) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE id = ? LIMIT 1`, displayId)
-      if (rows.length === 0) {
-        return null
-      }
-      return this.rowToObject(rows[0])
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
+    const rows = await this.database.select(this.tableName, '*', { id: displayId }, 1)
+    return rows.length === 1 ? this.rowToObject(rows[0]) : null
   }
 
   /**
@@ -83,16 +79,8 @@ class DisplayRepository extends Repository {
    * @return {Promise<Object[]>}
    */
   async getDisplaysById (displayIds) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const rows = await conn.query('SELECT * FROM ' + this.tableName + ' WHERE id IN ?', [displayIds])
-      return rows.map(this.rowToObject)
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
+    const rows = await this.database.select(this.tableName, '*', { id: displayIds })
+    return rows.map(this.rowToObject)
   }
 
   /**
@@ -101,16 +89,8 @@ class DisplayRepository extends Repository {
    * @return {Promise<Object>|Promise<null>}
    */
   async getDisplayByClientId (clientId) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE client_id = ? LIMIT 1`, clientId)
-      return rows.length === 1 ? this.rowToObject(rows[0]) : null
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
+    const rows = await this.database.select(this.tableName, '*', { client_id: clientId }, 1)
+    return rows.length === 1 ? this.rowToObject(rows[0]) : null
   }
 
   /**
@@ -126,20 +106,10 @@ class DisplayRepository extends Repository {
    * @return {Promise<Number>|Promise<null>}
    */
   async updateDisplay (displayId, name, active, clientId, description, location) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const activeValue = active === true ? 1 : 0
-      const result = await conn.query(
-        `UPDATE ${this.tableName} SET name = ?, active = ?, client_id = ?, description = ?, location = ? WHERE id = ?`,
-        [name, activeValue, clientId, description, location, displayId]
-      )
-      return result.affectedRows === 1 ? displayId : null
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
+    const activeValue = active === true ? 1 : 0
+    const values = { name, active: activeValue, client_id: clientId, description, location }
+    const affectedRows = await this.database.update(this.tableName, values, { id: displayId })
+    return affectedRows === 1 ? displayId : null
   }
 }
 
