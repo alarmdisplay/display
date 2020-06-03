@@ -2,8 +2,8 @@
     <div v-bind:id="elementId" class="gridview-component">
         <div class="announcement-list">
             <p class="header">{{ this.options.title || 'Ankündigungen' }}</p>
-            <ul v-if="announcements.length > 0">
-                <Item v-for="announcement in announcements" v-bind:key="announcement.id"
+            <ul v-if="activeAnnouncements.length > 0">
+                <Item v-for="announcement in activeAnnouncements" v-bind:key="announcement.id"
                       v-bind:announcement="announcement"/>
             </ul>
             <div v-else class="no-announcements">
@@ -30,10 +30,24 @@
                     return []
                 }
 
+                return content.map(item => {
+                    return {
+                        id: item.id,
+                        title: item.title,
+                        text: item.text,
+                        important: item.important,
+                        validFrom: item.validFrom ? new Date(item.validFrom) : null,
+                        validTo: item.validTo ? new Date(item.validTo) : null,
+                        createdAt: item.createdAt ? new Date(item.createdAt) : null,
+                        updatedAt: item.updatedAt ? new Date(item.updatedAt) : null
+                    }
+                })
+            },
+            activeAnnouncements: function () {
                 // Return all announcements that are currently valid or do not have validity information
-                return content.filter(announcement => {
-                    return (!announcement.validFrom || announcement.validFrom <= this.$root.$data.seconds) &&
-                        (!announcement.validTo || announcement.validTo >= this.$root.$data.seconds)
+                return this.announcements.filter(announcement => {
+                    return (!announcement.validFrom || Math.floor(announcement.validFrom.valueOf() / 1000) <= this.$root.$data.seconds) &&
+                        (!announcement.validTo || Math.floor(announcement.validTo.valueOf() / 1000) >= this.$root.$data.seconds)
                 })
             }
         },

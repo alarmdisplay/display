@@ -11,7 +11,7 @@
         name: "Item",
         computed: {
             theDate: function () {
-                let date = new Date(this.announcement.updatedAt * 1000);
+                let date = new Date(this.announcement.updatedAt);
                 if (isNaN(date.valueOf())) {
                     return ''
                 }
