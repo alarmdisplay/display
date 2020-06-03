@@ -35,8 +35,13 @@ class Database {
     await connection.end()
 
     // Create a connection pool that the repositories can get connections from
-    const pool = await mariadb.createPool({ host: this.host, user: this.username, password: this.password, database: this.database, connectionLimit: 5 })
-    this.connectionPool = pool
+    this.connectionPool = await mariadb.createPool({
+      host: this.host,
+      user: this.username,
+      password: this.password,
+      database: this.database,
+      connectionLimit: 5
+    })
 
     return {
       alertRepository: new AlertRepository(this, `${this.prefix}alerts`),
