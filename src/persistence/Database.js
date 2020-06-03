@@ -42,7 +42,7 @@ class Database {
       alertRepository: new AlertRepository(this, `${this.prefix}alerts`),
       announcementRepository: new AnnouncementRepository(this, `${this.prefix}announcements`),
       displayRepository: new DisplayRepository(this, `${this.prefix}displays`),
-      contentSlotRepository: new ContentSlotRepository(pool, this.prefix),
+      contentSlotRepository: new ContentSlotRepository(this, `${this.prefix}contentslots`, `${this.prefix}contentslot_options`),
       viewRepository: new ViewRepository(this, `${this.prefix}views`)
     }
   }

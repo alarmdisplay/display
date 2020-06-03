@@ -1,15 +1,14 @@
-const DuplicateEntryError = require('../../errors/DuplicateEntryError')
 const Repository = require('./Repository')
 
 class ContentSlotRepository extends Repository {
   /**
-   * @param connectionPool
-   * @param {String} prefix The prefix used for the database tables
+   * @param {Database} database The Database instance to use for queries
+   * @param {String} tableName The name of the database table, including the optional prefix
+   * @param {String} optionsTableName
    */
-  constructor (connectionPool, prefix) {
-    super(undefined, `${prefix}contentslots`)
-    this.connectionPool = connectionPool
-    this.optionsTableName = `${prefix}contentslot_options`
+  constructor (database, tableName, optionsTableName) {
+    super(database, tableName)
+    this.optionsTableName = optionsTableName
   }
 
   /**
@@ -24,45 +23,16 @@ class ContentSlotRepository extends Repository {
    * @return {Promise<Number>}
    */
   async createContentSlot (componentType, viewId, columnStart, rowStart, columnEnd, rowEnd, options) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const insertResult = await conn.query(
-        `INSERT INTO ${this.tableName} (\`view_id\`, \`component_type\`, \`column_start\`, \`row_start\`, \`column_end\`, \`row_end\`) VALUES (?,?,?,?,?,?)`,
-        [viewId, componentType, columnStart, rowStart, columnEnd, rowEnd]
-      )
-      const contentSlotId = insertResult.insertId
-      await this.setOptionsForContentSlot(conn, contentSlotId, options)
-      return contentSlotId
-    } catch (e) {
-      if (e.errno === 1062) {
-        throw new DuplicateEntryError(e.code)
-      }
-
-      throw new Error(e.code)
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
-  }
-
-  /**
-   * @param {Number} id The ID of the item to delete
-   *
-   * @return {Promise<Number>|Promise<null>} Returns the ID if the item existed before deletion, null otherwise
-   */
-  async deleteOne (id) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const result = await conn.query(`DELETE FROM ${this.tableName} WHERE id = ? LIMIT 1`, id)
-      return (result.affectedRows === 1 ? id : null)
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
+    const contentSlotId = await this.database.insert(this.tableName, {
+      view_id: viewId,
+      component_type: componentType,
+      column_start: columnStart,
+      row_start: rowStart,
+      column_end: columnEnd,
+      row_end: rowEnd
+    })
+    await this.setOptionsForContentSlot(contentSlotId, options)
+    return contentSlotId
   }
 
   /**
@@ -73,27 +43,19 @@ class ContentSlotRepository extends Repository {
    * @return {Promise<Object[]>}
    */
   async getContentSlotsByViewId (viewId) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE view_id = ?`, viewId)
+    const rows = await this.database.select(this.tableName, '*', { view_id: viewId })
 
-      if (rows.length === 0) {
-        return []
-      }
-
-      // Get options for all found content slots
-      const contentSlotIds = rows.map(row => row.id)
-      const options = await this.getOptionsForContentSlots(conn, contentSlotIds)
-      return rows.map(row => {
-        // Combine each content slot row with the option rows belonging to that content slot
-        return this.rowToObjectWithOptions(row, options.get(row.id))
-      })
-    } finally {
-      if (conn) {
-        conn.release()
-      }
+    if (rows.length === 0) {
+      return []
     }
+
+    // Get options for all found content slots
+    const contentSlotIds = rows.map(row => row.id)
+    const options = await this.getOptionsForContentSlots(contentSlotIds)
+    return rows.map(row => {
+      // Combine each content slot row with the option rows belonging to that content slot
+      return this.rowToObjectWithOptions(row, options.get(row.id))
+    })
   }
 
   /**
@@ -104,26 +66,17 @@ class ContentSlotRepository extends Repository {
    * @return {Promise<Object[]>}
    */
   async getContentSlotsByComponentType (componentType) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE component_type = ?`, componentType)
-      return rows.map(this.rowToObject)
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
+    const rows = await this.database.select(this.tableName, '*', { component_type: componentType })
+    return rows.map(this.rowToObject)
   }
 
   /**
-   * @param conn An open connection to the database
    * @param id
    *
    * @return {Promise<Map<String,String>>}
    */
-  async getOptionsForContentSlot (conn, id) {
-    const rows = await conn.query(`SELECT * FROM ${this.optionsTableName} WHERE contentslot_id = ?`, id)
+  async getOptionsForContentSlot (id) {
+    const rows = await this.database.select(this.optionsTableName, '*', { contentslot_id: id })
     const options = new Map()
     rows.forEach(row => {
       options.set(row.name, row.value)
@@ -132,13 +85,12 @@ class ContentSlotRepository extends Repository {
   }
 
   /**
-   * @param conn An open connection to the database
    * @param ids
    *
    * @return {Promise<Map<Number,Map<String,String>>>} A Map of Maps, keyed by component ID, then by option name
    */
-  async getOptionsForContentSlots (conn, ids) {
-    const rows = await conn.query(`SELECT * FROM ${this.optionsTableName} WHERE contentslot_id IN ?`, [ids])
+  async getOptionsForContentSlots (ids) {
+    const rows = await this.database.select(this.optionsTableName, '*', { contentslot_id: ids })
 
     // Initialize the Map with a Map for each content slot
     const options = new Map()
@@ -154,39 +106,32 @@ class ContentSlotRepository extends Repository {
   }
 
   /**
-   * @param conn An open connection to the database
    * @param {Number} id The ID of the content slot
    * @param {Object} options
    *
    * @return {Promise<Boolean>}
    */
-  async setOptionsForContentSlot (conn, id, options = {}) {
+  async setOptionsForContentSlot (id, options) {
     let optionsChanged = false
-    const existingOptions = await this.getOptionsForContentSlot(conn, id)
+    const existingOptions = await this.getOptionsForContentSlot(id)
     // Remove existing options not present in the new options object
     for (const key of existingOptions.keys()) {
       if (!Object.prototype.hasOwnProperty.call(options, key)) {
-        await conn.query(`DELETE FROM ${this.optionsTableName} WHERE contentslot_id = ? AND name = ?`, [id, key])
+        await this.database.delete(this.optionsTableName, { contentslot_id: id, name: key })
         optionsChanged = true
       }
     }
 
     for (const [key, value] of Object.entries(options)) {
       if (existingOptions.has(key)) {
-        const updateResult = await conn.query(
-          `UPDATE ${this.optionsTableName} SET \`value\` = ? WHERE \`contentslot_id\` = ? AND \`name\` = ?`,
-          [value, id, key]
-        )
-        if (updateResult.affectedRows === 1) {
+        const affectedRows = await this.database.update(this.optionsTableName, { value }, { contentslot_id: id, name: key })
+        if (affectedRows === 1) {
           optionsChanged = true
         }
         continue
       }
 
-      await conn.query(
-        `INSERT INTO ${this.optionsTableName} (\`contentslot_id\`, \`name\`, \`value\`) VALUES (?,?,?)`,
-        [id, key, value]
-      )
+      await this.database.insert(this.optionsTableName, { contentslot_id: id, name: key, value })
       optionsChanged = true
     }
 
@@ -238,21 +183,18 @@ class ContentSlotRepository extends Repository {
    * @return {Promise<Number>|Promise<null>}
    */
   async updateContentSlot (id, componentType, viewId, columnStart, rowStart, columnEnd, rowEnd, options) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const result = await conn.query(
-        `UPDATE ${this.tableName} SET \`view_id\` = ?, \`component_type\` = ?, \`column_start\` = ?, \`row_start\` = ?, \`column_end\` = ?, \`row_end\` = ? WHERE \`id\` = ?`,
-        [viewId, componentType, columnStart, rowStart, columnEnd, rowEnd, id]
-      )
-      const contentSlotChanged = result.affectedRows === 1
-      const optionsChanged = await this.setOptionsForContentSlot(conn, id, options)
-      return (contentSlotChanged || optionsChanged) ? id : null
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
+    const affectedRows = await this.database.update(this.tableName, {
+      view_id: viewId,
+      component_type: componentType,
+      column_start: columnStart,
+      row_start: rowStart,
+      column_end: columnEnd,
+      row_end: rowEnd
+    }, { id })
+    const contentSlotChanged = affectedRows === 1
+    const optionsChanged = await this.setOptionsForContentSlot(id, options)
+    const result = contentSlotChanged || optionsChanged
+    return result === true ? id : null
   }
 }
 
