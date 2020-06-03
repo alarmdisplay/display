@@ -43,7 +43,7 @@ class Database {
       announcementRepository: new AnnouncementRepository(pool, this.prefix),
       displayRepository: new DisplayRepository(this, this.prefix),
       contentSlotRepository: new ContentSlotRepository(pool, this.prefix),
-      viewRepository: new ViewRepository(pool, this.prefix)
+      viewRepository: new ViewRepository(this, this.prefix)
     }
   }
 

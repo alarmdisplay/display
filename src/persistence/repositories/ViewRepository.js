@@ -1,13 +1,13 @@
-const DuplicateEntryError = require('../../errors/DuplicateEntryError')
 const Repository = require('./Repository')
 
 class ViewRepository extends Repository {
   /**
-   * @param connectionPool
+   * @param {Database} database
    * @param {String} prefix The prefix used for the database tables
    */
-  constructor (connectionPool, prefix) {
-    super(connectionPool)
+  constructor (database, prefix) {
+    super()
+    this.database = database
     this.tableName = `${prefix}views`
   }
 
@@ -23,25 +23,17 @@ class ViewRepository extends Repository {
    * @return {Promise<Number>}
    */
   async create (displayId, order, screenType, columns, rows) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const result = await conn.query(
-        `INSERT INTO ${this.tableName} (\`display_id\`, \`view_order\`, \`screen_type\`, \`columns\`, \`rows\`) VALUES (?,?,?,?,?)`,
-        [displayId, order, screenType, columns, rows]
-      )
-      return result.insertId
-    } catch (e) {
-      if (e.errno === 1062) {
-        throw new DuplicateEntryError(e.code)
-      }
+    return this.database.insert(this.tableName, { display_id: displayId, view_order: order, screen_type: screenType, columns, rows })
+  }
 
-      throw new Error(e.code)
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
+  /**
+   * @param {Number} id The ID of the item to delete
+   *
+   * @return {Promise<Number>|Promise<null>} Returns the ID if the item existed before deletion, null otherwise
+   */
+  async deleteOne (id) {
+    const affectedRows = await this.database.delete(this.tableName, { id }, 1)
+    return (affectedRows === 1 ? id : null)
   }
 
   /**
@@ -52,19 +44,11 @@ class ViewRepository extends Repository {
    * @return {Promise<Object>|Promise<null>}
    */
   async getViewById (id) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE id = ? LIMIT 1`, id)
-      if (rows.length === 0) {
-        return null
-      }
-      return this.rowToObject(rows[0])
-    } finally {
-      if (conn) {
-        conn.release()
-      }
+    const rows = await this.database.select(this.tableName, '*', { id }, {}, 1)
+    if (rows.length === 0) {
+      return null
     }
+    return this.rowToObject(rows[0])
   }
 
   /**
@@ -75,16 +59,8 @@ class ViewRepository extends Repository {
    * @return {Promise<Object[]>}
    */
   async getViewsById (viewIds) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const rows = await conn.query('SELECT * FROM ' + this.tableName + ' WHERE id IN ?', [viewIds])
-      return rows.map(this.rowToObject)
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
+    const rows = await this.database.select(this.tableName, '*', { id: viewIds })
+    return rows.map(this.rowToObject)
   }
 
   /**
@@ -95,16 +71,8 @@ class ViewRepository extends Repository {
    * @return {Promise<Object[]>}
    */
   async getViewsByDisplayId (displayId) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE display_id = ? ORDER BY view_order`, displayId)
-      return rows.map(this.rowToObject)
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
+    const rows = await this.database.select(this.tableName, '*', { display_id: displayId }, { view_order: 1 })
+    return rows.map(this.rowToObject)
   }
 
   /**
@@ -116,16 +84,8 @@ class ViewRepository extends Repository {
    * @return {Promise}
    */
   async getViewsByDisplayIdAndScreenType (displayId, screenType) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const rows = await conn.query(`SELECT * FROM ${this.tableName} WHERE display_id = ? AND screen_type = ? ORDER BY view_order`, [displayId, screenType])
-      return rows.map(this.rowToObject)
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
+    const rows = await this.database.select(this.tableName, '*', { display_id: displayId, screen_type: screenType }, { view_order: 1 })
+    return rows.map(this.rowToObject)
   }
 
   /**
@@ -141,19 +101,12 @@ class ViewRepository extends Repository {
    * @return {Promise<Number>|Promise<null>}
    */
   async update (id, displayId, order, screenType, columns, rows) {
-    let conn
-    try {
-      conn = await this.connectionPool.getConnection()
-      const result = await conn.query(
-        `UPDATE ${this.tableName} SET \`display_id\` = ?, \`view_order\` = ?, \`screen_type\` = ?, \`columns\` = ?, \`rows\` = ? WHERE \`id\` = ?`,
-        [displayId, order, screenType, columns, rows, id]
-      )
-      return result.affectedRows === 1 ? id : null
-    } finally {
-      if (conn) {
-        conn.release()
-      }
-    }
+    const affectedRows = await this.database.update(
+      this.tableName,
+      { display_id: displayId, view_order: order, screen_type: screenType, columns, rows },
+      { id }
+    )
+    return affectedRows === 1 ? id : null
   }
 
   rowToObject (row) {

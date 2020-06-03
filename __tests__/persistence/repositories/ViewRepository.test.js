@@ -1,109 +1,103 @@
-const DuplicateEntryError = require('../../../src/errors/DuplicateEntryError')
 const ViewRepository = require('../../../src/persistence/repositories/ViewRepository')
 
+const Database = require('../../../src/persistence/Database')
+jest.mock('../../../src/persistence/Database')
+
 describe('The ViewRepository', () => {
-  let connection, connectionPool
+  let database
 
   /**
    * @var {ViewRepository}
    */
   let viewRepository
 
+  beforeAll(() => {
+    database = new Database()
+    database.select.mockResolvedValue([])
+  })
+
   beforeEach(() => {
-    connection = {
-      query: jest.fn(),
-      release: jest.fn()
-    }
-    connectionPool = {
-      getConnection: jest.fn(() => {
-        return connection
-      })
-    }
-    viewRepository = new ViewRepository(connectionPool, 'test_')
+    viewRepository = new ViewRepository(database, 'test_')
+
+    database.delete.mockClear()
+    database.insert.mockClear()
+    database.select.mockClear()
+    database.update.mockClear()
   })
 
   describe('.create()', () => {
-    it('should execute an INSERT statement and return the ID', async () => {
-      connection.query.mockResolvedValueOnce({ insertId: 41 })
-      const viewId = await viewRepository.create(12, 2, 'idle', 3, 4)
-      expect(connection.query).toHaveBeenCalledTimes(1)
-      expect(connection.query).toHaveBeenCalledWith(
-        'INSERT INTO test_views (`display_id`, `view_order`, `screen_type`, `columns`, `rows`) VALUES (?,?,?,?,?)',
-        [12, 2, 'idle', 3, 4]
+    it('should call Database.insert()', async () => {
+      await viewRepository.create(12, 2, 'idle', 3, 4)
+      expect(database.insert).toHaveBeenCalledTimes(1)
+      expect(database.insert).toHaveBeenCalledWith(
+        'test_views',
+        { display_id: 12, view_order: 2, screen_type: 'idle', columns: 3, rows: 4 }
       )
-      expect(connection.release).toHaveBeenCalledTimes(1)
-      expect(viewId).toBe(41)
     })
 
-    it('should throw a DuplicateEntryError when a unique index is violated', async () => {
-      const error = new Error()
-      error.errno = 1062
-      error.code = 'error code'
-      connection.query.mockRejectedValueOnce(error)
-      await expect(viewRepository.create(1, 2, 'idle', 3, 4)).rejects.toThrowError(new DuplicateEntryError('error code'))
-    })
-
-    it('should throw a standard Error for other errors', async () => {
-      const error = new Error()
-      error.errno = 42
-      error.code = 'some code'
-      connection.query.mockRejectedValueOnce(error)
-      await expect(viewRepository.create(1, 2, 'idle', 3, 4)).rejects.toThrowError(new Error('some code'))
-    })
-
-    it('should not release the connection if it could not be acquired', async () => {
-      connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
-      await expect(viewRepository.create(1, 2, 'idle', 3, 4)).rejects.toThrowError()
-      expect(connection.query).toHaveBeenCalledTimes(0)
-      expect(connection.release).toHaveBeenCalledTimes(0)
+    it('should return the ID returned from Database.insert()', async () => {
+      database.insert.mockResolvedValueOnce(2895)
+      const id = await viewRepository.create(12, 2, 'idle', 3, 4)
+      expect(id).toBe(2895)
     })
   })
 
   describe('.deleteOne()', () => {
-    it('should execute a DELETE statement', async () => {
-      connection.query.mockResolvedValueOnce({ affectedRows: 1 })
+    it('should call Database.delete()', async () => {
       await viewRepository.deleteOne(512)
-      expect(connection.query).toHaveBeenCalledTimes(1)
-      expect(connection.query).toHaveBeenCalledWith('DELETE FROM test_views WHERE id = ? LIMIT 1', 512)
-      expect(connection.release).toHaveBeenCalledTimes(1)
+      expect(database.delete).toHaveBeenCalledTimes(1)
+      expect(database.delete).toHaveBeenCalledWith('test_views', { id: 512 }, 1
+      )
     })
 
     it('should return the ID if deletion was successful', async () => {
-      connection.query.mockResolvedValueOnce({ affectedRows: 1 })
+      database.delete.mockResolvedValueOnce(1)
       const viewId = await viewRepository.deleteOne(512)
       expect(viewId).toBe(512)
     })
 
     it('should return null if nothing was deleted', async () => {
-      connection.query.mockResolvedValueOnce({ affectedRows: 0 })
+      database.delete.mockResolvedValueOnce(0)
       const viewId = await viewRepository.deleteOne(456)
       expect(viewId).toBeNull()
     })
+  })
 
-    it('should not release the connection if it could not be acquired', async () => {
-      connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
-      await expect(viewRepository.deleteOne(1)).rejects.toThrowError()
-      expect(connection.query).toHaveBeenCalledTimes(0)
-      expect(connection.release).toHaveBeenCalledTimes(0)
+  describe('getViewById()', () => {
+    it('should call Database.select()', async () => {
+      await viewRepository.getViewById(37)
+      expect(database.select).toHaveBeenCalledTimes(1)
+      expect(database.select).toHaveBeenCalledWith('test_views', '*', { id: 37 }, {}, 1)
+    })
+
+    it('should return a View object', async () => {
+      const result = [{ id: 37, display_id: 5, view_order: 2, screen_type: 'idle', columns: 6, rows: 4 }]
+      result.meta = {}
+      database.select.mockResolvedValueOnce(result)
+      const view = await viewRepository.getViewById(37)
+      expect(view).toEqual({ id: 37, displayId: 5, order: 2, screenType: 'idle', columns: 6, rows: 4 })
+    })
+
+    it('should return null if View cannot be found', async () => {
+      const view = await viewRepository.getViewById(37)
+      expect(view).toBeNull()
     })
   })
 
   describe('getViewsByDisplayId()', () => {
-    it('should execute a SELECT statement', async () => {
-      connection.query.mockResolvedValueOnce([])
+    it('should call Database.select()', async () => {
       await viewRepository.getViewsByDisplayId(31)
-      expect(connection.query).toHaveBeenCalledTimes(1)
-      expect(connection.query).toHaveBeenCalledWith('SELECT * FROM test_views WHERE display_id = ? ORDER BY view_order', 31)
-      expect(connection.release).toHaveBeenCalledTimes(1)
+      expect(database.select).toHaveBeenCalledTimes(1)
+      expect(database.select).toHaveBeenCalledWith('test_views', '*', { display_id: 31 }, { view_order: 1 })
     })
 
-    it('should return an Array of View object', async () => {
+    it('should return an Array of View objects', async () => {
       const result = [
         { id: 30, display_id: 5, view_order: 1, screen_type: 'idle', columns: 6, rows: 4 },
         { id: 37, display_id: 5, view_order: 2, screen_type: 'idle', columns: 3, rows: 5 }
       ]
       result.meta = {}
-      connection.query.mockResolvedValueOnce(result)
+      database.select.mockResolvedValueOnce(result)
       const views = await viewRepository.getViewsByDisplayId(5)
       expect(views).toBeInstanceOf(Array)
       expect(views.length).toBe(2)
@@ -112,38 +106,26 @@ describe('The ViewRepository', () => {
     })
 
     it('should return an empty Array if no Views can be found', async () => {
-      const result = []
-      result.meta = {}
-      connection.query.mockResolvedValueOnce(result)
       const views = await viewRepository.getViewsByDisplayId(11)
       expect(views).toBeInstanceOf(Array)
       expect(views.length).toBe(0)
     })
-
-    it('should not release the connection if it could not be acquired', async () => {
-      connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
-      await expect(viewRepository.getViewsByDisplayId(123)).rejects.toThrowError()
-      expect(connection.query).toHaveBeenCalledTimes(0)
-      expect(connection.release).toHaveBeenCalledTimes(0)
-    })
   })
 
   describe('getViewsByDisplayIdAndScreenType()', () => {
-    it('should execute a SELECT statement', async () => {
-      connection.query.mockResolvedValueOnce([])
+    it('should call Database.select()', async () => {
       await viewRepository.getViewsByDisplayIdAndScreenType(5, 'news')
-      expect(connection.query).toHaveBeenCalledTimes(1)
-      expect(connection.query).toHaveBeenCalledWith('SELECT * FROM test_views WHERE display_id = ? AND screen_type = ? ORDER BY view_order', [5, 'news'])
-      expect(connection.release).toHaveBeenCalledTimes(1)
+      expect(database.select).toHaveBeenCalledTimes(1)
+      expect(database.select).toHaveBeenCalledWith('test_views', '*', { display_id: 5, screen_type: 'news' }, { view_order: 1 })
     })
 
-    it('should return an Array of Views', async () => {
+    it('should return an Array of View objects', async () => {
       const result = [
         { id: 52, display_id: 5, view_order: 1, screen_type: 'radio', columns: 6, rows: 4 },
         { id: 61, display_id: 5, view_order: 2, screen_type: 'radio', columns: 3, rows: 5 }
       ]
       result.meta = {}
-      connection.query.mockResolvedValueOnce(result)
+      database.select.mockResolvedValueOnce(result)
       const views = await viewRepository.getViewsByDisplayIdAndScreenType(5, 'radio')
       expect(views).toBeInstanceOf(Array)
       expect(views).toHaveLength(2)
@@ -152,62 +134,17 @@ describe('The ViewRepository', () => {
     })
 
     it('should return an empty Array if no View matches', async () => {
-      const result = []
-      result.meta = {}
-      connection.query.mockResolvedValueOnce(result)
       const views = await viewRepository.getViewsByDisplayIdAndScreenType(9, 'darkness')
       expect(views).toBeInstanceOf(Array)
       expect(views).toHaveLength(0)
-    })
-
-    it('should not release the connection if it could not be acquired', async () => {
-      connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
-      await expect(viewRepository.getViewsByDisplayIdAndScreenType(6, 'speaker')).rejects.toThrowError()
-      expect(connection.query).toHaveBeenCalledTimes(0)
-      expect(connection.release).toHaveBeenCalledTimes(0)
-    })
-  })
-
-  describe('getViewById()', () => {
-    it('should execute a SELECT statement', async () => {
-      connection.query.mockResolvedValueOnce([])
-      await viewRepository.getViewById(37)
-      expect(connection.query).toHaveBeenCalledTimes(1)
-      expect(connection.query).toHaveBeenCalledWith('SELECT * FROM test_views WHERE id = ? LIMIT 1', 37)
-      expect(connection.release).toHaveBeenCalledTimes(1)
-    })
-
-    it('should return a View object', async () => {
-      const result = [{ id: 37, display_id: 5, view_order: 2, screen_type: 'idle', columns: 6, rows: 4 }]
-      result.meta = {}
-      connection.query.mockResolvedValueOnce(result)
-      const view = await viewRepository.getViewById(37)
-      expect(view).toEqual({ id: 37, displayId: 5, order: 2, screenType: 'idle', columns: 6, rows: 4 })
-    })
-
-    it('should return null if View cannot be found', async () => {
-      const result = []
-      result.meta = {}
-      connection.query.mockResolvedValueOnce(result)
-      const view = await viewRepository.getViewById(37)
-      expect(view).toBeNull()
-    })
-
-    it('should not release the connection if it could not be acquired', async () => {
-      connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
-      await expect(viewRepository.getViewById(123)).rejects.toThrowError()
-      expect(connection.query).toHaveBeenCalledTimes(0)
-      expect(connection.release).toHaveBeenCalledTimes(0)
     })
   })
 
   describe('getViewsById()', () => {
     it('should execute a SELECT statement', async () => {
-      connection.query.mockResolvedValueOnce([])
       await viewRepository.getViewsById([47, 4, 513])
-      expect(connection.query).toHaveBeenCalledTimes(1)
-      expect(connection.query).toHaveBeenCalledWith('SELECT * FROM test_views WHERE id IN ?', [[47, 4, 513]])
-      expect(connection.release).toHaveBeenCalledTimes(1)
+      expect(database.select).toHaveBeenCalledTimes(1)
+      expect(database.select).toHaveBeenCalledWith('test_views', '*', { id: [47, 4, 513] })
     })
 
     it('should return an Array of Views', async () => {
@@ -216,7 +153,7 @@ describe('The ViewRepository', () => {
         { id: 137, display_id: 5, view_order: 2, screen_type: 'idle', columns: 3, rows: 5 }
       ]
       result.meta = {}
-      connection.query.mockResolvedValueOnce(result)
+      database.select.mockResolvedValueOnce(result)
       const views = await viewRepository.getViewsById([4, 130, 62, 137])
       expect(views).toBeInstanceOf(Array)
       expect(views).toHaveLength(2)
@@ -225,46 +162,34 @@ describe('The ViewRepository', () => {
     })
 
     it('should return an empty Array if no View matches', async () => {
-      const result = []
-      result.meta = {}
-      connection.query.mockResolvedValueOnce(result)
       const views = await viewRepository.getViewsById([4, 33, 62, 98])
       expect(views).toBeInstanceOf(Array)
       expect(views).toHaveLength(0)
     })
-
-    it('should not release the connection if it could not be acquired', async () => {
-      connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
-      await expect(viewRepository.getViewsById([1, 2])).rejects.toThrowError()
-      expect(connection.query).toHaveBeenCalledTimes(0)
-      expect(connection.release).toHaveBeenCalledTimes(0)
-    })
   })
 
   describe('update()', () => {
-    it('should execute an UPDATE statement and return the ID', async () => {
-      connection.query.mockResolvedValueOnce({ affectedRows: 1 })
-      const viewId = await viewRepository.update(72, 8, 2, 'abc', 9, 1)
-      expect(connection.query).toHaveBeenCalledTimes(1)
-      expect(connection.query).toHaveBeenCalledWith(
-        'UPDATE test_views SET `display_id` = ?, `view_order` = ?, `screen_type` = ?, `columns` = ?, `rows` = ? WHERE `id` = ?',
-        [8, 2, 'abc', 9, 1, 72]
+    it('should call Database.update()', async () => {
+      database.update.mockResolvedValueOnce(1)
+      await viewRepository.update(72, 8, 2, 'abc', 9, 1)
+      expect(database.update).toHaveBeenCalledTimes(1)
+      expect(database.update).toHaveBeenCalledWith(
+        'test_views',
+        { display_id: 8, view_order: 2, screen_type: 'abc', columns: 9, rows: 1 },
+        { id: 72 }
       )
-      expect(connection.release).toHaveBeenCalledTimes(1)
-      expect(viewId).toBe(72)
+    })
+
+    it('should return the ID on success', async () => {
+      database.update.mockResolvedValueOnce(1)
+      const viewId = await viewRepository.update(929, 1, 2, 'a', 5, 7)
+      expect(viewId).toBe(929)
     })
 
     it('should return null when nothing changed', async () => {
-      connection.query.mockResolvedValueOnce({ affectedRows: 0 })
+      database.update.mockResolvedValueOnce(0)
       const viewId = await viewRepository.update(929, 1, 2, 'a', 5, 7)
       expect(viewId).toBeNull()
-    })
-
-    it('should not release the connection if it could not be acquired', async () => {
-      connectionPool.getConnection = jest.fn().mockRejectedValueOnce(new Error())
-      await expect(viewRepository.update(1, 2, 3, '', 4, 5)).rejects.toThrowError()
-      expect(connection.query).toHaveBeenCalledTimes(0)
-      expect(connection.release).toHaveBeenCalledTimes(0)
     })
   })
 })
