@@ -100,7 +100,7 @@ describe('DisplayRepository', () => {
     it('should call Database.select()', async () => {
       await displayRepository.getDisplayByClientId('ABC123')
       expect(database.select).toHaveBeenCalledTimes(1)
-      expect(database.select).toHaveBeenCalledWith('test_displays', '*', { client_id: 'ABC123' }, 1)
+      expect(database.select).toHaveBeenCalledWith('test_displays', '*', { client_id: 'ABC123' }, {}, 1)
     })
 
     it('should transform the result row', async () => {
@@ -121,7 +121,7 @@ describe('DisplayRepository', () => {
     it('should call Database.select()', async () => {
       await displayRepository.getDisplayById(381)
       expect(database.select).toHaveBeenCalledTimes(1)
-      expect(database.select).toHaveBeenCalledWith('test_displays', '*', { id: 381 }, 1)
+      expect(database.select).toHaveBeenCalledWith('test_displays', '*', { id: 381 }, {}, 1)
     })
 
     it('should transform result rows', async () => {

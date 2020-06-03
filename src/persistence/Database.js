@@ -71,7 +71,7 @@ class Database {
     let connection
     try {
       connection = await this.connectionPool.getConnection()
-      const { sql, values } = this.addWhereAndLimit(connection, `DELETE FROM ${connection.escapeId(table)}`, [], where, limit)
+      const { sql, values } = this.addWhereAndLimit(connection, `DELETE FROM ${connection.escapeId(table)}`, [], where, {}, limit)
       this.logger.debug(sql, values)
       const result = await connection.query(sql, values)
       return result.affectedRows
@@ -84,7 +84,19 @@ class Database {
     }
   }
 
-  addWhereAndLimit (connection, sql, values, where = {}, limit = 0) {
+  /**
+   * Adds the WHERE, ORDER BY, and LIMIT clauses if necessary
+   *
+   * @param connection
+   * @param {String} sql
+   * @param {Array} values
+   * @param {Object} where
+   * @param {Object} orderBy
+   * @param {Number} limit
+   *
+   * @return {{values: Array, sql: String}}
+   */
+  addWhereAndLimit (connection, sql, values, where = {}, orderBy = {}, limit = 0) {
     const whereParts = []
     for (const [column, value] of Object.entries(where)) {
       if (Array.isArray(value)) {
@@ -98,6 +110,14 @@ class Database {
     // Add a where clause if restrictions were given
     if (whereParts.length > 0) {
       sql += ` WHERE ${whereParts.join(' AND ')}`
+    }
+
+    const orderByParts = []
+    for (const [column, value] of Object.entries(orderBy)) {
+      orderByParts.push(connection.escapeId(column) + (value < 0 ? ' DESC' : ''))
+    }
+    if (orderByParts.length > 0) {
+      sql += ` ORDER BY ${orderByParts.join(',')}`
     }
 
     // Add a limit if we have one
@@ -203,16 +223,17 @@ class Database {
    * @param {String} table
    * @param {String} columns
    * @param {Object} where
+   * @param {Object} orderBy
    * @param {Number} limit
    *
    * @return {Promise<Object[]>}
    */
-  async select (table, columns = '*', where = {}, limit = 0) {
+  async select (table, columns = '*', where = {}, orderBy = {}, limit = 0) {
     let connection
     try {
       connection = await this.connectionPool.getConnection()
       const sqlBase = `SELECT ${columns} FROM ${connection.escapeId(table)}`
-      const { sql, values } = this.addWhereAndLimit(connection, sqlBase, [], where, limit)
+      const { sql, values } = this.addWhereAndLimit(connection, sqlBase, [], where, orderBy, limit)
       this.logger.debug(sql, values)
       const rows = await connection.query(sql, values)
       return Array.from(rows)
@@ -238,7 +259,7 @@ class Database {
       const columnNames = Object.keys(values)
       const escapedValueAssignments = columnNames.map(column => `${connection.escapeId(column)} = ?`)
       const sqlBase = `UPDATE ${connection.escapeId(table)} SET ${escapedValueAssignments.join(',')}`
-      const { sql, values: queryValues } = this.addWhereAndLimit(connection, sqlBase, Object.values(values), where, 0)
+      const { sql, values: queryValues } = this.addWhereAndLimit(connection, sqlBase, Object.values(values), where)
       const result = await connection.query(sql, Object.values(queryValues))
       return result.affectedRows
     } catch (e) {

@@ -66,7 +66,7 @@ class DisplayRepository extends Repository {
    * @return {Promise}
    */
   async getDisplayById (displayId) {
-    const rows = await this.database.select(this.tableName, '*', { id: displayId }, 1)
+    const rows = await this.database.select(this.tableName, '*', { id: displayId }, {}, 1)
     return rows.length === 1 ? this.rowToObject(rows[0]) : null
   }
 
@@ -88,7 +88,7 @@ class DisplayRepository extends Repository {
    * @return {Promise<Object>|Promise<null>}
    */
   async getDisplayByClientId (clientId) {
-    const rows = await this.database.select(this.tableName, '*', { client_id: clientId }, 1)
+    const rows = await this.database.select(this.tableName, '*', { client_id: clientId }, {}, 1)
     return rows.length === 1 ? this.rowToObject(rows[0]) : null
   }
 
