@@ -15,17 +15,16 @@ class AnnouncementService extends EventEmitter {
    * @param {String} title
    * @param {String} text
    * @param {Boolean} important
-   * @param {Number} validFrom
-   * @param {Number} validTo
+   * @param {Date} validFrom
+   * @param {Date} validTo
    *
    * @return {Promise<Object>}
    */
-  createAnnouncement (title, text, important = false, validFrom = null, validTo = null) {
-    return this.announcementRepository.create(title || '', text || '', important, validFrom, validTo)
-      .then(announcement => {
-        this.emit('created', announcement.id)
-        return announcement
-      })
+  async createAnnouncement (title, text, important = false, validFrom = null, validTo = null) {
+    const id = await this.announcementRepository.create(title || '', text || '', important, validFrom, validTo)
+    const announcement = await this.announcementRepository.getOne(id)
+    this.emit('created', announcement.id)
+    return announcement
   }
 
   /**
@@ -49,17 +48,20 @@ class AnnouncementService extends EventEmitter {
    * @param {String} title
    * @param {String} text
    * @param {Boolean} important
-   * @param {Number} validFrom
-   * @param {Number} validTo
+   * @param {Date} validFrom
+   * @param {Date} validTo
    *
    * @return {Promise<Object>}
    */
-  updateAnnouncement (id, title, text, important = false, validFrom = null, validTo = null) {
-    return this.announcementRepository.updateOne(id, title || '', text || '', important, validFrom, validTo)
-      .then(announcement => {
-        this.emit('updated', announcement.id)
-        return announcement
-      })
+  async updateAnnouncement (id, title, text, important = false, validFrom = null, validTo = null) {
+    const announcementId = await this.announcementRepository.updateOne(id, title || '', text || '', important, validFrom, validTo)
+    if (!announcementId) {
+      return this.getAnnouncement(id)
+    }
+
+    const updatedAnnouncement = await this.getAnnouncement(announcementId)
+    this.emit('updated', updatedAnnouncement.id)
+    return updatedAnnouncement
   }
 
   /**

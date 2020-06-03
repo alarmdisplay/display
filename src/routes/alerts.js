@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 
+const NotFoundError = require('../errors/NotFoundError')
+
 /**
  * @param {AlertService} alertService
  */
@@ -21,9 +23,9 @@ module.exports = function (alertService) {
    *       description:
    *         type: string
    *       time:
-   *         type: integer
-   *         format: int32
-   *         description: Timestamp of the alert, defaults to time of request if not provided
+   *         type: string
+   *         format: date-time
+   *         description: Time of the alert (as RFC 3339 date-time), defaults to time of request if not provided
    *       location:
    *         type: string
    *         readOnly: true
@@ -53,10 +55,16 @@ module.exports = function (alertService) {
    *         default: Other
    *       contact:
    *         type: string
+   *       expires:
+   *         type: string
+   *         format: date-time
+   *         description: Time (as RFC 3339 date-time) when the alert will be removed automatically
+   *         readOnly: true
    *       updatedAt:
-   *         type: integer
-   *         format: int32
-   *         description: Timestamp of the last update
+   *         type: string
+   *         format: date-time
+   *         description: Time of the last update (as RFC 3339 date-time)
+   *         readOnly: true
    */
 
   /**
@@ -75,12 +83,13 @@ module.exports = function (alertService) {
    *     tags:
    *       - Alerts
    */
-  router.get('/', (req, res, next) => {
-    alertService.getAllAlerts()
-      .then(alerts => {
-        res.json(alerts)
-      })
-      .catch(error => next(error))
+  router.get('/', async (req, res, next) => {
+    try {
+      const alerts = await alertService.getAllAlerts()
+      res.json(alerts)
+    } catch (e) {
+      next(e)
+    }
   })
 
   /**
@@ -108,23 +117,24 @@ module.exports = function (alertService) {
    *     tags:
    *       - Alerts
    */
-  router.post('/', (req, res, next) => {
-    alertService.createAlert(
-      req.body.title,
-      req.body.keyword,
-      req.body.description,
-      req.body.time,
-      req.body.location,
-      req.body.status,
-      req.body.category,
-      req.body.contact
-    )
-      .then(alert => {
-        const baseUrl = req.originalUrl.replace(/\/$/, '')
-        const newLocation = `${baseUrl}/${alert.id}`
-        res.set('Location', newLocation).status(201).json(alert)
-      })
-      .catch(error => next(error))
+  router.post('/', async (req, res, next) => {
+    try {
+      const alert = await alertService.createAlert(
+        req.body.title,
+        req.body.keyword,
+        req.body.description,
+        req.body.time ? new Date(req.body.time) : null,
+        req.body.location,
+        req.body.status,
+        req.body.category,
+        req.body.contact
+      )
+      const baseUrl = req.originalUrl.replace(/\/$/, '')
+      const newLocation = `${baseUrl}/${alert.id}`
+      res.set('Location', newLocation).status(201).json(alert)
+    } catch (e) {
+      next(e)
+    }
   })
 
   /**
@@ -148,12 +158,17 @@ module.exports = function (alertService) {
    *     tags:
    *       - Alerts
    */
-  router.get('/:id', (req, res, next) => {
-    alertService.getAlert(parseInt(req.params.id))
-      .then(alert => {
-        res.json(alert)
-      })
-      .catch(error => next(error))
+  router.get('/:id', async (req, res, next) => {
+    try {
+      const alert = await alertService.getAlert(parseInt(req.params.id))
+      if (!alert) {
+        next(new NotFoundError(`No Alert with ID ${req.params.id} found`))
+        return
+      }
+      res.json(alert)
+    } catch (e) {
+      next(e)
+    }
   })
 
   /**
@@ -173,10 +188,13 @@ module.exports = function (alertService) {
    *     tags:
    *       - Alerts
    */
-  router.delete('/:id', (req, res, next) => {
-    alertService.removeAlert(parseInt(req.params.id))
-      .then(() => res.sendStatus(204))
-      .catch(error => next(error))
+  router.delete('/:id', async (req, res, next) => {
+    try {
+      await alertService.removeAlert(parseInt(req.params.id))
+      res.sendStatus(204)
+    } catch (e) {
+      next(e)
+    }
   })
 
   return router

@@ -7,7 +7,8 @@
     "dev": "nodemon src/index.js --exec 'npm run lint --silent && node'",
     "lint": "eslint src/",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:watchall": "jest --watchAll"
   },
   "repository": {
     "type": "git",
@@ -20,7 +21,6 @@
     "url": "https://github.com/alarmdisplay/display-backend/issues"
   },
   "devDependencies": {
-    "@shelf/jest-mongodb": "^1.1.5",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.20.1",
@@ -36,7 +36,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "log4js": "^6.1.2",
-    "mongoose": "^5.9.5",
+    "mariadb": "^2.4.0",
     "socket.io": "^2.3.0",
     "swagger-jsdoc": "^3.7.0"
   }

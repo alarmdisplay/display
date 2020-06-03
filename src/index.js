@@ -1,11 +1,14 @@
 require('dotenv').config()
 const log4js = require('log4js')
-const mongoose = require('mongoose')
 
 const logger = log4js.getLogger()
 const debugEnabled = process.env.DEBUG === '1'
 logger.level = debugEnabled ? 'debug' : 'info'
 
+const AlertService = require('./services/AlertService')
+const AnnouncementService = require('./services/AnnouncementService')
+const ContentService = require('./services/ContentService')
+const Database = require('./persistence/Database')
 const DisplayService = require('./services/DisplayService')
 const SocketController = require('./sockets/SocketController')
 const SocketServer = require('./sockets/SocketServer')
@@ -16,7 +19,7 @@ const SocketServer = require('./sockets/SocketServer')
 function checkEnvironment () {
   const missingEnvs = []
 
-  for (const env of ['MONGODB_URI']) {
+  for (const env of ['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME', 'DB_PREFIX']) {
     if (!Object.prototype.hasOwnProperty.call(process.env, env)) {
       missingEnvs.push(env)
     }
@@ -36,40 +39,29 @@ process.setUncaughtExceptionCaptureCallback(err => {
 checkEnvironment()
 
 /**
- * Sets up the connection to MongoDB.
+ * Sets up the connection to the database.
  *
- * @param mongoDbUri
- * @return {Promise}
+ * @return {Promise<{contentSlotRepository: ContentSlotRepository, announcementRepository: AnnouncementRepository, displayRepository: DisplayRepository, viewRepository: ViewRepository, alertRepository: AlertRepository}>}
  * @throws Error If the connection to the database fails
  */
-function connectDatabase (mongoDbUri) {
-  logger.debug('Connecting to database...')
-  return mongoose.connect(mongoDbUri, {
-    useFindAndModify: false,
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }).then(() => {
-    logger.info('Connected to database')
-  }).catch((reason) => {
-    throw new Error(`Could not connect to database: ${reason}`)
-  })
+async function connectDatabase () {
+  try {
+    const database = new Database(process.env.DB_HOST, process.env.DB_USER, process.env.DB_PASSWORD, process.env.DB_NAME, process.env.DB_PREFIX)
+    return await database.start()
+  } catch (e) {
+    if (e.errno && e.errno === 1045) {
+      throw new Error(`Could not connect to the database: ${e.message}`)
+    } else {
+      throw e
+    }
+  }
 }
 
-connectDatabase(process.env.MONGODB_URI)
-  .then(() => {
-    const AlertRepository = require('./persistence/AlertRepository')
-    const AlertService = require('./services/AlertService')
-    const AnnouncementRepository = require('./persistence/AnnouncementRepository')
-    const AnnouncementService = require('./services/AnnouncementService')
-    const ContentSlotOptionRepository = require('./persistence/ContentSlotOptionRepository')
-    const ContentService = require('./services/ContentService')
-    const ContentSlotRepository = require('./persistence/ContentSlotRepository')
-    const DisplayRepository = require('./persistence/DisplayRepository')
-    const ViewRepository = require('./persistence/ViewRepository')
-
-    const alertService = new AlertService(new AlertRepository())
-    const announcementService = new AnnouncementService(new AnnouncementRepository())
-    const displayService = new DisplayService(new DisplayRepository(), new ViewRepository(), new ContentSlotRepository(), new ContentSlotOptionRepository())
+connectDatabase()
+  .then(({ alertRepository, announcementRepository, contentSlotRepository, displayRepository, viewRepository }) => {
+    const alertService = new AlertService(alertRepository)
+    const announcementService = new AnnouncementService(announcementRepository)
+    const displayService = new DisplayService(displayRepository, viewRepository, contentSlotRepository)
     const contentService = new ContentService(announcementService)
 
     const app = require('./app')(displayService, announcementService, alertService)

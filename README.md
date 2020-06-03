@@ -5,7 +5,7 @@ This component is the connection point for all Display units.
 While it maintains a [Socket.IO](https://socket.io/) connection with the Displays to push updates, it also offers a REST API to manage the Displays and their contents.
 
 ## Development
-In order to run a development version on your local system, you need a [Node.js](https://nodejs.org/) environment and a [MongoDB](https://www.mongodb.com/) instance.
+In order to run a development version on your local system, you need a [Node.js](https://nodejs.org/) environment and a MariaDB instance.
 Clone the repository and run `npm install` inside the project folder to install all the dependencies.
 Then create a `.env` file based on `.env.example` and adapt it to your local setup.
 

@@ -4,6 +4,10 @@ node_js:
   - 12
   - 10
 
+branches:
+  except:
+    - /^feature\/[-\w]+$/
+
 env:
   global:
     - CC_TEST_REPORTER_ID=c1c885065adfd5bb4901e0bb11111b73d3b71833597bc1759741e02f89b1be7b
