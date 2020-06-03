@@ -15,8 +15,8 @@ class AnnouncementService extends EventEmitter {
    * @param {String} title
    * @param {String} text
    * @param {Boolean} important
-   * @param {Number} validFrom
-   * @param {Number} validTo
+   * @param {Date} validFrom
+   * @param {Date} validTo
    *
    * @return {Promise<Object>}
    */
@@ -48,8 +48,8 @@ class AnnouncementService extends EventEmitter {
    * @param {String} title
    * @param {String} text
    * @param {Boolean} important
-   * @param {Number} validFrom
-   * @param {Number} validTo
+   * @param {Date} validFrom
+   * @param {Date} validTo
    *
    * @return {Promise<Object>}
    */
