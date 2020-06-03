@@ -17,16 +17,6 @@ class ViewRepository extends Repository {
   }
 
   /**
-   * @param {Number} id The ID of the item to delete
-   *
-   * @return {Promise<Number>|Promise<null>} Returns the ID if the item existed before deletion, null otherwise
-   */
-  async deleteOne (id) {
-    const affectedRows = await this.database.delete(this.tableName, { id }, 1)
-    return (affectedRows === 1 ? id : null)
-  }
-
-  /**
    * Finds and returns a View object with a certain ID.
    *
    * @param {Number} id The ID of the View

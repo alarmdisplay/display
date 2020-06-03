@@ -29,26 +29,6 @@ class DisplayRepository extends Repository {
   }
 
   /**
-   * @param {Number} id The ID of the item to delete
-   *
-   * @return {Promise<Number>|Promise<null>} Returns the ID if the item existed before deletion, null otherwise
-   */
-  async deleteOne (id) {
-    const affectedRows = await this.database.delete(this.tableName, { id }, 1)
-    return (affectedRows === 1 ? id : null)
-  }
-
-  /**
-   * Returns all items.
-   *
-   * @return {Promise<Object[]>}
-   */
-  async getAll () {
-    const rows = await this.database.select(this.tableName)
-    return rows.map(this.rowToObject)
-  }
-
-  /**
    * Finds and returns a Display object with a certain ID.
    *
    * @param {Number} displayId The ID of the Display
