@@ -1,7 +1,11 @@
 class Repository {
-  constructor (connectionPool) {
-    this.connectionPool = connectionPool
-    this.tableName = '' // Has to be set in a child class
+  /**
+   * @param {Database} database The Database instance to use for queries
+   * @param {String} tableName The name of the database table, including the optional prefix
+   */
+  constructor (database, tableName) {
+    this.database = database
+    this.tableName = tableName
   }
 
   /**

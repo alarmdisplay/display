@@ -2,16 +2,6 @@ const Repository = require('./Repository')
 
 class ViewRepository extends Repository {
   /**
-   * @param {Database} database
-   * @param {String} prefix The prefix used for the database tables
-   */
-  constructor (database, prefix) {
-    super()
-    this.database = database
-    this.tableName = `${prefix}views`
-  }
-
-  /**
    * Stores a new View object.
    *
    * @param {Number} displayId The ID of the Display that uses this View

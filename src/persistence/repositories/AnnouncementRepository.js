@@ -6,8 +6,8 @@ class AnnouncementRepository extends Repository {
    * @param {String} prefix The prefix used for the database tables
    */
   constructor (connectionPool, prefix) {
-    super(connectionPool)
-    this.tableName = `${prefix}announcements`
+    super(undefined, `${prefix}announcements`)
+    this.connectionPool = connectionPool
   }
 
   /**

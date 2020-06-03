@@ -17,7 +17,7 @@ describe('DisplayRepository', () => {
   })
 
   beforeEach(() => {
-    displayRepository = new DisplayRepository(database, 'test_')
+    displayRepository = new DisplayRepository(database, 'test_displays')
 
     database.delete.mockClear()
     database.insert.mockClear()

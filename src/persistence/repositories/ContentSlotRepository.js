@@ -7,8 +7,8 @@ class ContentSlotRepository extends Repository {
    * @param {String} prefix The prefix used for the database tables
    */
   constructor (connectionPool, prefix) {
-    super(connectionPool)
-    this.tableName = `${prefix}contentslots`
+    super(undefined, `${prefix}contentslots`)
+    this.connectionPool = connectionPool
     this.optionsTableName = `${prefix}contentslot_options`
   }
 

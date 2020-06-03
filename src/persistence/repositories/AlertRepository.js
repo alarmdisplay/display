@@ -6,8 +6,8 @@ class AlertRepository extends Repository {
    * @param {String} prefix The prefix used for the database tables
    */
   constructor (connectionPool, prefix) {
-    super(connectionPool)
-    this.tableName = `${prefix}alerts`
+    super(undefined, `${prefix}alerts`)
+    this.connectionPool = connectionPool
     this.selectFields = '`id`, `title`, `keyword`, `description`, UNIX_TIMESTAMP(`time`) AS time, `location`, `status`, `category`, `contact`, UNIX_TIMESTAMP(`expires`) AS expires, UNIX_TIMESTAMP(`updated`) AS updated'
   }
 

@@ -2,16 +2,6 @@ const Repository = require('./Repository')
 
 class DisplayRepository extends Repository {
   /**
-   * @param {Database} database
-   * @param {String} prefix The prefix used for the database tables
-   */
-  constructor (database, prefix) {
-    super()
-    this.database = database
-    this.tableName = `${prefix}displays`
-  }
-
-  /**
    * Stores a new Display.
    *
    * @param {String} name

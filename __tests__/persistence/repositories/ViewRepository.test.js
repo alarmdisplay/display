@@ -17,7 +17,7 @@ describe('The ViewRepository', () => {
   })
 
   beforeEach(() => {
-    viewRepository = new ViewRepository(database, 'test_')
+    viewRepository = new ViewRepository(database, 'test_views')
 
     database.delete.mockClear()
     database.insert.mockClear()
