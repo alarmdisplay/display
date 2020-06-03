@@ -1,11 +1,10 @@
 const DisplayRepository = require('../../../src/persistence/repositories/DisplayRepository')
 
 const Database = require('../../../src/persistence/Database')
-
 jest.mock('../../../src/persistence/Database')
 
 describe('DisplayRepository', () => {
-  let connection, connectionPool, database
+  let database
 
   /**
    * @var {DisplayRepository}
@@ -18,16 +17,7 @@ describe('DisplayRepository', () => {
   })
 
   beforeEach(() => {
-    connection = {
-      query: jest.fn(),
-      release: jest.fn()
-    }
-    connectionPool = {
-      getConnection: jest.fn(() => {
-        return connection
-      })
-    }
-    displayRepository = new DisplayRepository(connectionPool, database, 'test_')
+    displayRepository = new DisplayRepository(database, 'test_')
 
     database.delete.mockClear()
     database.insert.mockClear()
