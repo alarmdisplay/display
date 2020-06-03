@@ -119,11 +119,11 @@ export default {
             validTo: response.data.validTo
           }
           if (this.announcementData.validFrom) {
-            this.validFromDate = new Date(this.announcementData.validFrom * 1000)
+            this.validFromDate = new Date(this.announcementData.validFrom)
             this.restrictValidFrom = true
           }
           if (this.announcementData.validTo) {
-            this.validToDate = new Date(this.announcementData.validTo * 1000)
+            this.validToDate = new Date(this.announcementData.validTo)
             this.restrictValidTo = true
           }
           this.saveButtonEnabled = true
@@ -148,13 +148,13 @@ export default {
       // Prepare the date entries for the API request
       if (this.restrictValidFrom) {
         this.validFromDate.setSeconds(0)
-        this.announcementData.validFrom = Math.floor(this.validFromDate.valueOf() / 1000)
+        this.announcementData.validFrom = this.validFromDate
       } else {
         this.announcementData.validFrom = undefined
       }
       if (this.restrictValidTo) {
         this.validToDate.setSeconds(0)
-        this.announcementData.validTo = Math.floor(this.validToDate.valueOf() / 1000)
+        this.announcementData.validTo = this.validToDate
       } else {
         this.announcementData.validTo = undefined
       }

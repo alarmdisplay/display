@@ -41,10 +41,10 @@ export default {
     getValidityInfo: function () {
       let string = 'Gültig'
       if (this.announcement.validFrom) {
-        string += ' ab ' + this.$moment(this.announcement.validFrom * 1000).format('LLL') + ' Uhr'
+        string += ' ab ' + this.$moment(this.announcement.validFrom).format('LLL') + ' Uhr'
       }
       if (this.announcement.validTo) {
-        string += ' bis ' + this.$moment(this.announcement.validTo * 1000).format('LLL') + ' Uhr'
+        string += ' bis ' + this.$moment(this.announcement.validTo).format('LLL') + ' Uhr'
       }
       return string
     }
