@@ -58,7 +58,20 @@ let vm = new Vue({
   methods: {
     addAlert: function (alert) {
       // TODO validate alert
-      this.alerts.push(alert)
+      const alertObject = {
+        id: alert.id,
+        title: alert.title,
+        keyword: alert.keyword,
+        description: alert.description,
+        time: new Date(alert.time),
+        location: alert.location,
+        status: alert.status,
+        category: alert.category,
+        contact: alert.contact,
+        expires: new Date(alert.expires),
+        updatedAt: new Date(alert.updatedAt)
+      }
+      this.alerts.push(alertObject)
     },
     setAuthentication: function (state) {
       this.authenticated = state;

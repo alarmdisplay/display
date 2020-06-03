@@ -17,7 +17,7 @@
         },
         computed: {
             activeAlerts: function () {
-                return this.alerts.filter(alert => alert.expires > this.$root.$data.seconds)
+                return this.alerts.filter(alert => Math.floor(alert.expires.valueOf() / 1000) > this.$root.$data.seconds)
             }
         },
         methods: {

@@ -32,7 +32,7 @@
                 return classes.join(' ')
             },
             elapsedTime: function () {
-                let elapsedSeconds = this.$root.$data.seconds - this.alert.time;
+                let elapsedSeconds = this.$root.$data.seconds - Math.floor(this.alert.time.valueOf() / 1000);
                 return textForSeconds(elapsedSeconds);
             }
         },
