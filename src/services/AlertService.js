@@ -13,7 +13,7 @@ class AlertService extends EventEmitter {
    * @param {String} title
    * @param {String} keyword
    * @param {String} description
-   * @param {Number} time
+   * @param {Date} time
    * @param {String} location
    * @param {String} status
    * @param {String} category
@@ -22,7 +22,7 @@ class AlertService extends EventEmitter {
    * @return {Promise<Object>}
    */
   async createAlert (title, keyword, description, time, location, status, category, contact) {
-    const alertTime = time || Math.floor(Date.now() / 1000)
+    const alertTime = time || new Date()
     const minutesActive = status === 'Test' ? 1 : 60
     const alertId = await this.alertRepository.create(
       title || 'Einsatz',
@@ -33,7 +33,7 @@ class AlertService extends EventEmitter {
       status || 'Actual',
       category || 'Other',
       contact || '',
-      alertTime + 60 * minutesActive
+      new Date(alertTime.valueOf() + 60 * minutesActive * 1000)
     )
     const alert = await this.alertRepository.getOne(alertId)
     this.emit('alert_created', alert)

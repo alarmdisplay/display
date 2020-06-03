@@ -23,9 +23,9 @@ module.exports = function (alertService) {
    *       description:
    *         type: string
    *       time:
-   *         type: integer
-   *         format: int32
-   *         description: Timestamp of the alert, defaults to time of request if not provided
+   *         type: string
+   *         format: date-time
+   *         description: Time of the alert (as RFC 3339 date-time), defaults to time of request if not provided
    *       location:
    *         type: string
    *         readOnly: true
@@ -55,10 +55,16 @@ module.exports = function (alertService) {
    *         default: Other
    *       contact:
    *         type: string
+   *       expires:
+   *         type: string
+   *         format: date-time
+   *         description: Time (as RFC 3339 date-time) when the alert will be removed automatically
+   *         readOnly: true
    *       updatedAt:
-   *         type: integer
-   *         format: int32
-   *         description: Timestamp of the last update
+   *         type: string
+   *         format: date-time
+   *         description: Time of the last update (as RFC 3339 date-time)
+   *         readOnly: true
    */
 
   /**
@@ -117,7 +123,7 @@ module.exports = function (alertService) {
         req.body.title,
         req.body.keyword,
         req.body.description,
-        req.body.time,
+        req.body.time ? new Date(req.body.time) : null,
         req.body.location,
         req.body.status,
         req.body.category,

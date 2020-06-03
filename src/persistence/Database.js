@@ -39,7 +39,7 @@ class Database {
     this.connectionPool = pool
 
     return {
-      alertRepository: new AlertRepository(pool, this.prefix),
+      alertRepository: new AlertRepository(this, `${this.prefix}alerts`),
       announcementRepository: new AnnouncementRepository(pool, this.prefix),
       displayRepository: new DisplayRepository(this, `${this.prefix}displays`),
       contentSlotRepository: new ContentSlotRepository(pool, this.prefix),
@@ -203,7 +203,7 @@ class Database {
       const escapedColumnNames = columnNames.map(connection.escapeId)
       const valuePlaceholders = Array(columnNames.length).fill('?')
       const sql = `INSERT INTO ${connection.escapeId(table)} (${escapedColumnNames.join(',')}) VALUES (${valuePlaceholders.join(',')})`
-      this.logger.debug(sql)
+      this.logger.debug(sql, values)
       const result = await connection.query(sql, Object.values(values))
       return result.insertId
     } catch (e) {
