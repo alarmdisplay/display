@@ -6,7 +6,7 @@ class ViewRepository extends Repository {
    *
    * @param {Number} displayId The ID of the Display that uses this View
    * @param {Number} order A number that defines the order of Views per screenType of a Display
-   * @param {String} screenType An identifier for the type of screen the View is used for (e.g. IdleScreen)
+   * @param {String} screenType An identifier for the type of screen the View is used for (e.g. idle)
    * @param {Number} columns The number of columns the View's layout should have
    * @param {Number} rows The number of rows the View's layout should have
    *
@@ -59,7 +59,7 @@ class ViewRepository extends Repository {
    * Finds and returns View objects for a certain Display and of a certain screen type.
    *
    * @param {Number} displayId The ID of the Display
-   * @param {String} screenType An identifier for the type of screen the View is used for (e.g. IdleScreen)
+   * @param {String} screenType An identifier for the type of screen the View is used for (e.g. idle)
    *
    * @return {Promise}
    */
@@ -74,7 +74,7 @@ class ViewRepository extends Repository {
    * @param {Number} id A unique ID
    * @param {Number} displayId The ID of the Display that uses this View
    * @param {Number} order A number that defines the order of Views per screenType of a Display
-   * @param {String} screenType An identifier for the type of screen the View is used for (e.g. IdleScreen)
+   * @param {String} screenType An identifier for the type of screen the View is used for (e.g. idle)
    * @param {Number} columns The number of columns the View's layout should have
    * @param {Number} rows The number of rows the View's layout should have
    *
