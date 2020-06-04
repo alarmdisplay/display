@@ -13,9 +13,7 @@ module.exports = function (displayService, announcementService, alertService) {
   const logger = log4js.getLogger()
   const app = express()
 
-  app.get('/', function (req, res) {
-    res.send('Hello World!')
-  })
+  app.use('/', express.static('static'))
 
   if (fs.existsSync('ext-display')) {
     app.use('/display', express.static('ext-display'))
