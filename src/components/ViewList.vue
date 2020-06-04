@@ -50,7 +50,7 @@ export default {
       return display.name || 'Unbenannt'
     },
     idleScreenViews: function () {
-      return this.views.filter(view => view.screenType === 'IdleScreen')
+      return this.views.filter(view => view.screenType === 'idle')
     }
   },
   components: {
