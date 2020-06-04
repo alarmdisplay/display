@@ -1,7 +1,7 @@
 <template>
     <div class="display-app">
         <AlertScreen v-if="activeAlerts.length > 0" :alerts="activeAlerts"/>
-        <IdleScreen v-else v-bind:child-views="getViewsForScreenType('IdleScreen')"/>
+        <IdleScreen v-else v-bind:child-views="getViewsForScreenType('idle')"/>
     </div>
 </template>
 

@@ -286,7 +286,7 @@ function validateView(view) {
     throw new Error('Configuration is empty');
   }
 
-  const validScreenTypes = ['IdleScreen']
+  const validScreenTypes = ['idle']
   if (!Object.prototype.hasOwnProperty.call(view, 'screenType') || !validScreenTypes.includes(view.screenType)) {
     throw new Error('Screen type is not valid');
   }
