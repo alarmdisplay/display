@@ -5,7 +5,7 @@ if [ "$NODE_ENV" != "production" ]; then
     exit 1
 fi
 
-BUILD_FOLDER=build/display-backend/
+BUILD_FOLDER=build/display/
 
 # Ensure an empty build folder
 if [ -d $BUILD_FOLDER ]; then
@@ -17,6 +17,7 @@ mkdir -p $BUILD_FOLDER
 mv ext-display $BUILD_FOLDER
 mv ext-console $BUILD_FOLDER
 mv src $BUILD_FOLDER
+mv static $BUILD_FOLDER
 mv .env.example $BUILD_FOLDER
 mv package.json $BUILD_FOLDER
 mv package-lock.json $BUILD_FOLDER
@@ -24,4 +25,4 @@ mv LICENSE $BUILD_FOLDER
 
 # shellcheck disable=SC2164
 cd build
-tar -czf release.tar.gz display-backend
+tar -czf release.tar.gz display
