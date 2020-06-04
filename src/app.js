@@ -21,6 +21,12 @@ module.exports = function (displayService, announcementService, alertService) {
     logger.warn('The static files for the display frontend could not be found, the path /display will not work')
   }
 
+  if (fs.existsSync('ext-console')) {
+    app.use('/console', express.static('ext-console'))
+  } else {
+    logger.warn('The static files for the Console could not be found, the path /console will not work')
+  }
+
   const APIv1 = require('./api')
 
   app.use('/api/v1', cors(), new APIv1(displayService, announcementService, alertService).router)

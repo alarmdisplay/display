@@ -15,7 +15,7 @@ mkdir -p $BUILD_FOLDER
 
 # Copy all required files into the build folder
 mv ext-display $BUILD_FOLDER
-mv node_modules $BUILD_FOLDER
+mv ext-console $BUILD_FOLDER
 mv src $BUILD_FOLDER
 mv .env.example $BUILD_FOLDER
 mv package.json $BUILD_FOLDER
