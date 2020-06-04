@@ -47,7 +47,7 @@ checkEnvironment()
 async function connectDatabase () {
   try {
     const database = new Database(process.env.DB_HOST, process.env.DB_USER, process.env.DB_PASSWORD, process.env.DB_NAME, process.env.DB_PREFIX)
-    return await database.start()
+    return database.start()
   } catch (e) {
     if (e.errno && e.errno === 1045) {
       throw new Error(`Could not connect to the database: ${e.message}`)
