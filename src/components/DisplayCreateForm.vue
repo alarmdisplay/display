@@ -4,7 +4,7 @@
             <h2>Display anlegen</h2>
         </header>
         <div>
-            <form class="w3-container">
+            <form class="w3-container" @submit.prevent="createDisplay">
                 <p>
                     <label for="input-name">Name:</label>
                     <input id="input-name" type="text" class="w3-input w3-border" v-model.trim="displayName">
@@ -25,8 +25,8 @@
                     <input id="input-location" type="text" class="w3-input w3-border" v-model.trim="location">
                 </p>
                 <p>
-                    <button class="w3-btn w3-gray" @click="maybeCancel">Abbrechen</button>
-                    <button id="button-create" class="w3-btn w3-blue" v-on:click="createDisplay" :disabled="!createButtonEnabled">Anlegen</button>
+                    <button type="button" class="w3-btn w3-gray" @click="maybeCancel">Abbrechen</button>
+                    <button type="submit" class="w3-btn w3-blue" :disabled="!createButtonEnabled">Anlegen</button>
                 </p>
             </form>
         </div>
@@ -79,7 +79,7 @@ export default {
         width: unset;
     }
 
-    #button-create {
+    button[type="submit"] {
         float: right;
     }
 </style>

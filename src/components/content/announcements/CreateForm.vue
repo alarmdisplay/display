@@ -4,7 +4,7 @@
             <h2>Ank&uuml;ndigung anlegen</h2>
         </header>
         <div>
-            <form class="w3-container">
+            <form class="w3-container" @submit.prevent="createAnnouncement">
                 <p>
                     <label for="input-title">Titel:</label>
                     <input id="input-title" type="text" class="w3-input w3-border" v-model.trim="title">
@@ -18,8 +18,8 @@
                     <label for="input-important">Diese Ank&uuml;ndigung als wichtig markieren</label>
                 </p>
                 <p>
-                    <button class="w3-btn w3-gray" @click="maybeCancel">Abbrechen</button>
-                    <button id="button-create" class="w3-btn w3-blue" v-on:click="createAnnouncement" :disabled="!createButtonEnabled">Anlegen</button>
+                    <button type="button" class="w3-btn w3-gray" @click="maybeCancel">Abbrechen</button>
+                    <button type="submit" class="w3-btn w3-blue" :disabled="!createButtonEnabled">Anlegen</button>
                 </p>
             </form>
         </div>
@@ -63,7 +63,7 @@ export default {
 </script>
 
 <style scoped>
-    #button-create {
+    button[type="submit"] {
         float: right;
     }
 

@@ -16,7 +16,7 @@
             </div>
 
             <div v-if="announcementData">
-                <form>
+                <form class="w3-container" @submit.prevent="saveChanges">
                     <p>
                         <label for="input-title">Titel:</label>
                         <input id="input-title" type="text" class="w3-input w3-border" v-model.trim="announcementData.title">
@@ -43,13 +43,13 @@
                     </div>
                     <div class="w3-row">
                         <div class="w3-third w3-padding">
-                            <button class="w3-btn w3-block w3-gray" @click="maybeCancel">Abbrechen</button>
+                            <button type="button" class="w3-btn w3-block w3-gray" @click="maybeCancel">Abbrechen</button>
                         </div>
                         <div class="w3-third w3-padding">
-                            <button class="w3-btn w3-block w3-red" @click="deleteAnnouncement">L&ouml;schen</button>
+                            <button type="button" class="w3-btn w3-block w3-red" @click="deleteAnnouncement">L&ouml;schen</button>
                         </div>
                         <div class="w3-third w3-padding">
-                            <button id="button-save" class="w3-btn w3-block w3-green" v-on:click="saveChanges" :disabled="!saveButtonEnabled">Speichern</button>
+                            <button type="submit" id="button-save" class="w3-btn w3-block w3-green" :disabled="!saveButtonEnabled">Speichern</button>
                         </div>
                     </div>
                 </form>

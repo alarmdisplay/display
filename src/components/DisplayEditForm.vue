@@ -16,7 +16,7 @@
             </div>
 
             <div v-if="displayData">
-                <form>
+                <form class="w3-container" @submit.prevent="saveChanges">
                     <p>
                         <label for="input-name">Name:</label>
                         <input id="input-name" type="text" class="w3-input w3-border" v-model.trim="displayData.name">
@@ -38,13 +38,13 @@
                     </p>
                     <div class="w3-row">
                         <div class="w3-third w3-padding">
-                            <button class="w3-btn w3-block w3-gray" @click="maybeCancel">Abbrechen</button>
+                            <button type="button" class="w3-btn w3-block w3-gray" @click="maybeCancel">Abbrechen</button>
                         </div>
                         <div class="w3-third w3-padding">
-                            <button class="w3-btn w3-block w3-red" @click="deleteDisplay">Löschen</button>
+                            <button type="button" class="w3-btn w3-block w3-red" @click="deleteDisplay">Löschen</button>
                         </div>
                         <div class="w3-third w3-padding">
-                            <button id="button-save" class="w3-btn w3-block w3-green" v-on:click="saveChanges" :disabled="!saveButtonEnabled">Speichern</button>
+                            <button type="submit" class="w3-btn w3-block w3-green" :disabled="!saveButtonEnabled">Speichern</button>
                         </div>
                     </div>
                 </form>
@@ -125,9 +125,5 @@ export default {
 <style scoped>
 #input-client-id {
     width: unset;
-}
-
-#button-save {
-    float: right;
 }
 </style>
