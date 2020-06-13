@@ -34,15 +34,23 @@
                     <ul class="w3-ul">
                         <li v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" class="w3-bar">
                             <h4><font-awesome-icon :icon="getIcon(contentSlot.componentType)"/> {{ getComponentName(contentSlot.componentType) }}</h4>
-                            <label :for="`input-col-start-${contentSlot.id}`">Startspalte:</label>
-                            <input :id="`input-col-start-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.columnStart">
-                            <label :for="`input-row-start-${contentSlot.id}`">Startzeile:</label>
-                            <input :id="`input-row-start-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.rowStart">
-                            <label :for="`input-col-end-${contentSlot.id}`">Endspalte:</label>
-                            <input :id="`input-col-end-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.columnEnd">
-                            <label :for="`input-row-end-${contentSlot.id}`">Endzeile:</label>
-                            <input :id="`input-row-end-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.rowEnd">
-                            <button @click="removeContentSlot(contentSlot)" class="w3-btn w3-red">Komponente entfernen</button>
+                            <font-awesome-icon icon="times" @click="removeContentSlot(contentSlot)" title="Komponente entfernen" class="w3-right" />
+                            <div class="w3-col m2 w3-padding">
+                                <label :for="`input-col-start-${contentSlot.id}`">Startspalte:</label>
+                                <input :id="`input-col-start-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.columnStart">
+                            </div>
+                            <div class="w3-col m2 w3-padding">
+                                <label :for="`input-row-start-${contentSlot.id}`">Startzeile:</label>
+                                <input :id="`input-row-start-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.rowStart">
+                            </div>
+                            <div class="w3-col m2 w3-padding">
+                                <label :for="`input-col-end-${contentSlot.id}`">Endspalte:</label>
+                                <input :id="`input-col-end-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.columnEnd">
+                            </div>
+                            <div class="w3-col m2 w3-padding">
+                                <label :for="`input-row-end-${contentSlot.id}`">Endzeile:</label>
+                                <input :id="`input-row-end-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.rowEnd">
+                            </div>
                         </li>
                     </ul>
                     <label for="select-component-to-add">Verf&uuml;gbare Komponenten: </label>
