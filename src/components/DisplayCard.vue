@@ -6,17 +6,19 @@
         </header>
 
         <div class="w3-container">
-            <p><strong>Ort:</strong> {{ display.location }}</p>
+            <p class="location"><strong>Ort:</strong> {{ display.location }}</p>
         </div>
 
-        <div class="w3-bar">
-            <router-link tag="button" :to="`/displays/${display.id}`" class="w3-bar-item w3-button w3-block w3-dark-grey w3-border" style="width: 50%">
-                <font-awesome-icon icon="pencil-alt"/> Bearbeiten
-            </router-link>
-            <router-link tag="button" :to="`/displays/${display.id}/views`" class="w3-bar-item w3-button w3-block w3-dark-grey w3-border" style="width: 50%">
-                <font-awesome-icon icon="columns"/> Ansichten
-            </router-link>
-        </div>
+        <footer>
+            <div class="w3-bar">
+                <router-link tag="button" :to="`/displays/${display.id}`" class="w3-bar-item w3-button w3-block w3-dark-grey w3-border" style="width: 50%">
+                    <font-awesome-icon icon="pencil-alt"/> Bearbeiten
+                </router-link>
+                <router-link tag="button" :to="`/displays/${display.id}/views`" class="w3-bar-item w3-button w3-block w3-dark-grey w3-border" style="width: 50%">
+                    <font-awesome-icon icon="columns"/> Ansichten
+                </router-link>
+            </div>
+        </footer>
     </div>
 </template>
 
@@ -44,7 +46,9 @@ export default {
 
 <style scoped>
 .display-card {
-    margin-bottom: 2em;
+    margin: 1em;
+    width: 20em;
+    overflow: hidden;
 }
 
 h3 svg {
@@ -55,7 +59,23 @@ header {
     border-bottom: 1px solid gray;
 }
 
+header h3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+footer {
+    align-self: end;
+}
+
 .tech-info {
     font-size: small;
+}
+
+.location {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 </style>

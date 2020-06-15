@@ -5,12 +5,8 @@
             <router-link tag="button" :to="`/displays/new`" class="w3-btn w3-blue w3-right">Neu</router-link>
         </header>
 
-        <div class="w3-row-padding w3-margin-bottom w3-margin-top">
-            <template v-for="display in displays">
-                <div class="w3-quarter" v-bind:key="display.id">
-                    <DisplayCard v-bind:display="display" />
-                </div>
-            </template>
+        <div class="displays">
+            <DisplayCard v-for="display in displays" :key="display.id" :display="display" />
         </div>
     </div>
 </template>
@@ -32,4 +28,8 @@ export default {
 </script>
 
 <style scoped>
+    .displays {
+        display: flex;
+        flex-flow: row wrap;
+    }
 </style>
