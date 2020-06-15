@@ -29,10 +29,17 @@
                                 <label for="input-rows">Zeilen:</label>
                                 <input id="input-rows" type="number" min="1" class="w3-input w3-border" v-model.number="viewData.rows">
                             </fieldset>
+                            <p>
+                                Die Komponenten können auf einem Raster angeordnet werden, wobei sie mehrere Spalten und/oder Zeilen überspannen können.
+                            </p>
                         </div>
                     </div>
 
                     <h3>Komponenten</h3>
+                    <p>
+                        Die Daten zur Anordnung der Komponenten müssen derzeit noch manuell angegeben werden, ein visueller Editor ist geplant.
+                        Die Vorschau oben soll helfen, das Ergebnis zu beurteilen.
+                    </p>
                     <ul class="w3-ul">
                         <li v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" class="w3-bar">
                             <h4><font-awesome-icon :icon="getIcon(contentSlot.componentType)"/> {{ getComponentName(contentSlot.componentType) }}</h4>
@@ -55,12 +62,15 @@
                             </div>
                         </li>
                     </ul>
-                    <label for="select-component-to-add">Verf&uuml;gbare Komponenten: </label>
-                    <select id="select-component-to-add">
-                        <option value="">Komponente wählen</option>
-                        <option v-for="componentType in availableComponentTypes" :key="`add-${componentType}`" :value="componentType">{{ getComponentName(componentType) }}</option>
-                    </select>
-                    <button @click="addContentSlot" class="w3-btn w3-gray w3-margin-left">Hinzuf&uuml;gen</button>
+                    <fieldset>
+                        <legend>Komponente hinzufügen</legend>
+                        <label for="select-component-to-add">Verf&uuml;gbare Komponenten: </label>
+                        <select id="select-component-to-add">
+                            <option value="">Komponente wählen</option>
+                            <option v-for="componentType in availableComponentTypes" :key="`add-${componentType}`" :value="componentType">{{ getComponentName(componentType) }}</option>
+                        </select>
+                        <button type="button" @click="addContentSlot" class="w3-btn w3-gray w3-margin-left">Hinzuf&uuml;gen</button>
+                    </fieldset>
 
                     <div class="w3-row">
                         <div class="w3-third w3-padding">
@@ -198,5 +208,6 @@ export default {
     .preview-container {
         height: 30vh;
         width: 53.3vh; /* simulates a 16:9 screen */
+        box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2);
     }
 </style>
