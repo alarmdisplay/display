@@ -18,10 +18,6 @@
             <div v-if="viewData">
                 <form class="w3-container" @submit.prevent="saveChanges">
                     <p>
-                        <label for="input-name">Name:</label>
-                        <input id="input-name" type="text" class="w3-input w3-border" v-model.trim="viewData.name">
-                    </p>
-                    <p>
                         <label for="input-columns">Spalten:</label>
                         <input id="input-columns" type="number" min="1" class="w3-input w3-border" v-model.number="viewData.columns">
                     </p>
