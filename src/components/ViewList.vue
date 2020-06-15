@@ -17,12 +17,9 @@
 
         <div v-if="views.length > 0" class="w3-container">
             <h3>Ruhemodus</h3>
-            <ul class="w3-ul" v-if="idleScreenViews.length > 0">
+            <div class="views">
                 <ViewListItem v-for="view in idleScreenViews" :key="view.id" :view="view"/>
-            </ul>
-            <p v-else>
-                Noch nicht konfiguriert
-            </p>
+            </div>
 
             <h3>Alarmbildschirm</h3>
             <p>
@@ -85,5 +82,8 @@ export default {
 </script>
 
 <style scoped>
-
+.views {
+    display: flex;
+    flex-flow: row wrap;
+}
 </style>

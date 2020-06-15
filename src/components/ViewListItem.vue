@@ -1,21 +1,21 @@
 <template>
-    <li class="w3-bar">
-        <!-- TODO show preview -->
-        <div class="w3-bar-item" style="vertical-align: center">
-            <font-awesome-icon icon="columns" size="2x"/>
+    <div class="w3-card view">
+        <div class="w3-container preview-container">
+            <ViewPreview :view-data="view"/>
         </div>
-        <div class="w3-bar-item">
-            <span class="w3-large">Ansicht {{ view.id }}</span><br>
-        </div>
-        <router-link :to="`/displays/${view.displayId}/views/${view.id}`" tag="button" class="w3-bar-item w3-button w3-border w3-border-blue w3-hover-blue w3-round-medium w3-right">
+        <router-link :to="`/displays/${view.displayId}/views/${view.id}`" tag="button" class="w3-button w3-block">
             <font-awesome-icon icon="pencil-alt"/> Bearbeiten
         </router-link>
-    </li>
+    </div>
 </template>
 
 <script>
+import ViewPreview from '@/components/ViewPreview'
 export default {
   name: 'ViewListItem',
+  components: {
+    ViewPreview
+  },
   props: {
     view: Object
   }
@@ -23,5 +23,19 @@ export default {
 </script>
 
 <style scoped>
+.view {
+    width: 25em;
+    height: 20em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
 
+.preview-container {
+    height: 66%;
+}
+
+.preview {
+    border: 1px solid #9e9e9e;
+}
 </style>

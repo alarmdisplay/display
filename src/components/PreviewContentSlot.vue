@@ -38,7 +38,7 @@ export default {
 .preview-content-slot {
     height: 100%;
     overflow: hidden;
-    padding: 1em;
+    padding: 7px;
 }
 .content {
     display: flex;
