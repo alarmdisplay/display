@@ -208,6 +208,7 @@ export default {
     .preview-container {
         height: 30vh;
         width: 53.3vh; /* simulates a 16:9 screen */
+        max-width: 100%;
         box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2);
     }
 </style>
