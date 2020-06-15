@@ -35,6 +35,10 @@
                         </div>
                     </div>
 
+                    <div style="height: 300px">
+                        <GridEditor :view-data="viewData"/>
+                    </div>
+
                     <h3>Komponenten</h3>
                     <p>
                         Die Daten zur Anordnung der Komponenten müssen derzeit noch manuell angegeben werden, ein visueller Editor ist geplant.
@@ -91,6 +95,7 @@
 
 <script>
 import axios from 'axios'
+import GridEditor from '@/components/views/editor/GridEditor'
 import ViewPreview from '@/components/views/ViewPreview'
 
 export default {
@@ -105,6 +110,7 @@ export default {
     }
   },
   components: {
+    GridEditor,
     ViewPreview
   },
   created: function () {
