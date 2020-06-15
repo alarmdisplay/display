@@ -24,12 +24,9 @@
                 Noch nicht konfiguriert
             </p>
 
-            <h3>Alarmmodus</h3>
-            <ul class="w3-ul" v-if="alarmScreenViews.length > 0">
-                <ViewListItem v-for="view in alarmScreenViews" :key="view.id" :view="view"/>
-            </ul>
-            <p v-else>
-                Noch nicht konfiguriert
+            <h3>Alarmbildschirm</h3>
+            <p>
+                Für den Alarmbildschirm besteht noch keine Möglichkeit zur Konfiguration.
             </p>
         </div>
     </div>
@@ -42,9 +39,6 @@ import axios from 'axios'
 export default {
   name: 'ViewList',
   computed: {
-    alarmScreenViews: function () {
-      return this.views.filter(view => view.screenType === 'AlarmScreen')
-    },
     displayName: function () {
       const display = this.$store.state.displays.get(parseInt(this.display_id))
       return display.name || 'Unbenannt'
