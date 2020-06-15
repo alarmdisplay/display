@@ -17,14 +17,20 @@
 
             <div v-if="viewData">
                 <form class="w3-container" @submit.prevent="saveChanges">
-                    <p>
-                        <label for="input-columns">Spalten:</label>
-                        <input id="input-columns" type="number" min="1" class="w3-input w3-border" v-model.number="viewData.columns">
-                    </p>
-                    <p>
-                        <label for="input-rows">Zeilen:</label>
-                        <input id="input-rows" type="number" min="1" class="w3-input w3-border" v-model.number="viewData.rows">
-                    </p>
+                    <div class="w3-row w3-margin-bottom">
+                        <div class="w3-twothird preview-container">
+                            <ViewPreview :view-data="viewData"/>
+                        </div>
+                        <div class="w3-third w3-right">
+                            <fieldset>
+                                <legend>Raster</legend>
+                                <label for="input-columns">Spalten:</label>
+                                <input id="input-columns" type="number" min="1" class="w3-input w3-border" v-model.number="viewData.columns">
+                                <label for="input-rows">Zeilen:</label>
+                                <input id="input-rows" type="number" min="1" class="w3-input w3-border" v-model.number="viewData.rows">
+                            </fieldset>
+                        </div>
+                    </div>
 
                     <h3>Komponenten</h3>
                     <ul class="w3-ul">
@@ -75,6 +81,7 @@
 
 <script>
 import axios from 'axios'
+import ViewPreview from '@/components/ViewPreview'
 
 export default {
   name: 'ViewEditForm',
@@ -86,6 +93,9 @@ export default {
       loading: false,
       saveButtonEnabled: false
     }
+  },
+  components: {
+    ViewPreview
   },
   created: function () {
     this.fetchData()
@@ -185,4 +195,8 @@ export default {
 </script>
 
 <style scoped>
+    .preview-container {
+        height: 30vh;
+        width: 53.3vh; /* simulates a 16:9 screen */
+    }
 </style>
