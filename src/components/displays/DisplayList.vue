@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import DisplayCard from '@/components/DisplayCard'
+import DisplayCard from '@/components/displays/DisplayCard'
 
 export default {
   name: 'DisplayList',

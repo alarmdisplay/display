@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import ViewListItem from '@/components/ViewListItem'
+import ViewListItem from '@/components/views/ViewListItem'
 import axios from 'axios'
 
 export default {

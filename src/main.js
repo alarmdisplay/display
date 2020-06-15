@@ -16,12 +16,12 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import AnnouncementCreateForm from '@/components/content/announcements/CreateForm'
 import AnnouncementEditForm from '@/components/content/announcements/EditForm'
 import AnnouncementList from '@/components/content/announcements/List'
-import DisplayCreateForm from '@/components/DisplayCreateForm'
-import DisplayEditForm from '@/components/DisplayEditForm'
-import DisplayList from '@/components/DisplayList'
+import DisplayCreateForm from '@/components/displays/DisplayCreateForm'
+import DisplayEditForm from '@/components/displays/DisplayEditForm'
+import DisplayList from '@/components/displays/DisplayList'
 import Overview from '@/components/Overview'
-import ViewEditForm from '@/components/ViewEditForm'
-import ViewList from '@/components/ViewList'
+import ViewEditForm from '@/components/views/ViewEditForm'
+import ViewList from '@/components/views/ViewList'
 
 // Configure Font Awesome
 library.add(faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faHome, faPencilAlt, faSpinner, faTimes)

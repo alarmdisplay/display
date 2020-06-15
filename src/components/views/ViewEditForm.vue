@@ -91,7 +91,7 @@
 
 <script>
 import axios from 'axios'
-import ViewPreview from '@/components/ViewPreview'
+import ViewPreview from '@/components/views/ViewPreview'
 
 export default {
   name: 'ViewEditForm',

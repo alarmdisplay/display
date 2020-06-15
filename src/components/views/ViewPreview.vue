@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import PreviewContentSlot from '@/components/PreviewContentSlot'
+import PreviewContentSlot from '@/components/views/PreviewContentSlot'
 
 export default {
   name: 'ViewPreview',

@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import ViewPreview from '@/components/ViewPreview'
+import ViewPreview from '@/components/views/ViewPreview'
 export default {
   name: 'ViewListItem',
   components: {
