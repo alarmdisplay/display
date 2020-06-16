@@ -19,7 +19,7 @@
                 <form class="w3-container" @submit.prevent="saveChanges">
                     <div class="w3-row w3-margin-bottom">
                         <div class="w3-twothird preview-container">
-                            <ViewPreview :view-data="viewData"/>
+                            <GridEditor :view-data="viewData" @content-slot-moved="onContentSlotMoved"/>
                         </div>
                         <div class="w3-third w3-right">
                             <fieldset>
@@ -33,10 +33,6 @@
                                 Die Komponenten können auf einem Raster angeordnet werden, wobei sie mehrere Spalten und/oder Zeilen überspannen können.
                             </p>
                         </div>
-                    </div>
-
-                    <div style="height: 300px">
-                        <GridEditor :view-data="viewData" @content-slot-moved="onContentSlotMoved"/>
                     </div>
 
                     <h3>Komponenten</h3>
@@ -96,7 +92,6 @@
 <script>
 import axios from 'axios'
 import GridEditor from '@/components/views/editor/GridEditor'
-import ViewPreview from '@/components/views/ViewPreview'
 
 export default {
   name: 'ViewEditForm',
@@ -110,8 +105,7 @@ export default {
     }
   },
   components: {
-    GridEditor,
-    ViewPreview
+    GridEditor
   },
   created: function () {
     this.fetchData()
@@ -223,8 +217,8 @@ export default {
 
 <style scoped>
     .preview-container {
-        height: 30vh;
-        width: 53.3vh; /* simulates a 16:9 screen */
+        height: 50vh;
+        width: 88.8vh; /* simulates a 16:9 screen */
         max-width: 100%;
         box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2);
     }
