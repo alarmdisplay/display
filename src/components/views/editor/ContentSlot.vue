@@ -60,11 +60,12 @@ export default {
 }
 .drag-handle {
     position: absolute;
-    top: 12px;
-    left: 12px;
+    top: 7px;
+    left: 7px;
     height: 1.6em;
     width: 1.6em;
     background-color: rgba(0, 0, 0, 0.1);
     text-align: center;
+    cursor: move;
 }
 </style>
