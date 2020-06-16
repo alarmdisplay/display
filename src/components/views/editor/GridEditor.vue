@@ -34,7 +34,21 @@ export default {
     onDrop: function (event) {
       console.log(event)
       const data = event.dataTransfer.getData('application/json')
-      console.log(JSON.parse(data))
+      const contentSlot = JSON.parse(data)
+      console.log(contentSlot)
+
+      // Calculate the X and Y coordinates relative to the drop zone
+      const clientRect = event.target.getBoundingClientRect()
+      const x = event.clientX - clientRect.left
+      const y = event.clientY - clientRect.top
+      console.log('Content Slot', contentSlot.id, 'dropped at', x, y)
+
+      // Calculate in which column and row the item has been dropped
+      const columnWidth = clientRect.width / this.viewData.columns
+      const rowHeight = clientRect.height / this.viewData.rows
+      const column = Math.floor(x / columnWidth) + 1
+      const row = Math.floor(y / rowHeight) + 1
+      console.log(`Content Slot has been dropped in column ${column} and row ${row}`)
     }
   },
   props: {
