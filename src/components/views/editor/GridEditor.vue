@@ -1,5 +1,5 @@
 <template>
-    <div class="grid" :style="`grid-template-columns: repeat(${viewData.columns}, 1fr); grid-template-rows: repeat(${viewData.rows}, 1fr);`" @drop="onDrop($event)" @dragenter.prevent @dragover.prevent>
+    <div class="grid" :style="`grid-template-columns: repeat(${viewData.columns}, 1fr); grid-template-rows: repeat(${viewData.rows}, 1fr);`" @drop="onDrop($event)" @dragenter="onDragEnter($event)" @dragover="onDragOver($event)">
         <ContentSlot v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" :content-slot="contentSlot"/>
     </div>
 </template>
@@ -13,6 +13,24 @@ export default {
     ContentSlot
   },
   methods: {
+    onDragEnter: function (event) {
+      // Do not allow drop if it is not the grid background or there is no JSON in the dataTransfer
+      if (!event.target.classList.contains('grid') || !event.dataTransfer.types.includes('application/json')) {
+        return
+      }
+
+      event.effectAllowed = 'move'
+      event.preventDefault()
+    },
+    onDragOver: function (event) {
+      // Do not allow drop if it is not the grid background or there is no JSON in the dataTransfer
+      if (!event.target.classList.contains('grid') || !event.dataTransfer.types.includes('application/json')) {
+        return
+      }
+
+      event.effectAllowed = 'move'
+      event.preventDefault()
+    },
     onDrop: function (event) {
       console.log(event)
       const data = event.dataTransfer.getData('application/json')
