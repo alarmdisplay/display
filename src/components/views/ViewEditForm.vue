@@ -19,7 +19,7 @@
                 <form class="w3-container" @submit.prevent="saveChanges">
                     <div class="w3-row w3-margin-bottom">
                         <div class="w3-twothird preview-container">
-                            <GridEditor :view-data="viewData" @content-slot-moved="onContentSlotMoved"/>
+                            <GridEditor :view-data="viewData" @content-slot-moved="onContentSlotMoved" @content-slot-resized="onContentSlotResized"/>
                         </div>
                         <div class="w3-third w3-right">
                             <fieldset>
@@ -188,6 +188,14 @@ export default {
         result[0].rowStart = data.newRow
         result[0].columnEnd += columnDifference
         result[0].rowEnd += rowDifference
+      }
+    },
+    onContentSlotResized: function (data) {
+      const result = this.viewData.contentSlots.filter(contentSlot => contentSlot.id === data.id)
+      // Only accept a resize, if the new values make sense (i.e. the end values are greater than the start values)
+      if (result.length > 0 && data.newColumn >= result[0].columnStart + 1 && data.newRow >= result[0].rowStart + 1) {
+        result[0].columnEnd = data.newColumn
+        result[0].rowEnd = data.newRow
       }
     },
     removeContentSlot: function (contentSlotToRemove) {

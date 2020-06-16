@@ -19,7 +19,7 @@ export default {
         return
       }
 
-      event.effectAllowed = 'move'
+      event.dropEffect = 'move'
       event.preventDefault()
     },
     onDragOver: function (event) {
@@ -28,12 +28,13 @@ export default {
         return
       }
 
-      event.effectAllowed = 'move'
+      event.dropEffect = 'move'
       event.preventDefault()
     },
     onDrop: function (event) {
       const data = event.dataTransfer.getData('application/json')
-      const contentSlot = JSON.parse(data)
+      const json = JSON.parse(data)
+      const contentSlot = json.contentSlot
 
       // Calculate the X and Y coordinates relative to the drop zone
       const clientRect = event.target.getBoundingClientRect()
@@ -45,8 +46,10 @@ export default {
       const rowHeight = clientRect.height / this.viewData.rows
       const column = Math.floor(x / columnWidth) + 1
       const row = Math.floor(y / rowHeight) + 1
-      if (contentSlot.columnStart !== column || contentSlot.rowStart !== row) {
+      if (json.action === 'move' && (contentSlot.columnStart !== column || contentSlot.rowStart !== row)) {
         this.$emit('content-slot-moved', { id: contentSlot.id, newColumn: column, newRow: row })
+      } else if (json.action === 'resize' && (contentSlot.columnEnd !== column + 1 || contentSlot.rowEnd !== row + 1)) {
+        this.$emit('content-slot-resized', { id: contentSlot.id, newColumn: column + 1, newRow: row + 1 })
       }
     }
   },
