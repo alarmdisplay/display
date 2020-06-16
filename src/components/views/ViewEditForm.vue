@@ -36,7 +36,7 @@
                     </div>
 
                     <div style="height: 300px">
-                        <GridEditor :view-data="viewData"/>
+                        <GridEditor :view-data="viewData" @content-slot-moved="onContentSlotMoved"/>
                     </div>
 
                     <h3>Komponenten</h3>
@@ -184,6 +184,17 @@ export default {
     maybeCancel: function () {
       // TODO check if data is dirty
       this.$router.back()
+    },
+    onContentSlotMoved: function (data) {
+      const result = this.viewData.contentSlots.filter(contentSlot => contentSlot.id === data.id)
+      if (result.length > 0) {
+        const columnDifference = data.newColumn - result[0].columnStart
+        const rowDifference = data.newRow - result[0].rowStart
+        result[0].columnStart = data.newColumn
+        result[0].rowStart = data.newRow
+        result[0].columnEnd += columnDifference
+        result[0].rowEnd += rowDifference
+      }
     },
     removeContentSlot: function (contentSlotToRemove) {
       this.viewData.contentSlots = this.viewData.contentSlots.filter(contentSlot => contentSlot !== contentSlotToRemove)
