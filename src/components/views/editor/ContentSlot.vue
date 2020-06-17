@@ -1,12 +1,12 @@
 <template>
     <div class="content-slot" :style="gridItemStyle">
-        <div class="handle drag-handle" draggable="true" @dragstart="startMove($event, contentSlot)">
+        <div class="handle drag-handle" draggable="true" @dragstart="startMove($event, contentSlot)" @dragend="onDragEnd">
             <font-awesome-icon icon="arrows-alt" />
         </div>
         <div class="content">
             <font-awesome-icon :icon="getIcon(contentSlot.componentType)"/>
         </div>
-        <div class="handle resize-handle" draggable="true" @dragstart="startResize($event, contentSlot)">
+        <div class="handle resize-handle" draggable="true" @dragstart="startResize($event, contentSlot)" @dragend="onDragEnd">
             <font-awesome-icon icon="expand-alt" rotation="90" />
         </div>
     </div>
@@ -32,6 +32,9 @@ export default {
         default:
           return 'cube'
       }
+    },
+    onDragEnd: function () {
+      this.$emit('drag-ended')
     },
     startMove: function (event, item) {
       event.dataTransfer.effectAllowed = 'move'
