@@ -31,7 +31,15 @@ export default {
       const top = (this.targetIndicator.rowStart - 1) * this.rowHeight + margin
       const width = this.targetIndicator.columns * this.columnWidth - 2 * margin
       const height = this.targetIndicator.rows * this.rowHeight - 2 * margin
-      return `left: ${left}px; top: ${top}px; width: ${width}px; height: ${height}px`
+      let style = `left: ${left}px; top: ${top}px; width: ${width}px; height: ${height}px`
+
+      // If the content slot was dropped at the current position, it would be partially outside the grid
+      if (this.targetIndicator.columnStart + this.targetIndicator.columns > this.viewData.columns + 1 ||
+        this.targetIndicator.rowStart + this.targetIndicator.rows > this.viewData.rows + 1) {
+        style += '; border-color: red'
+      }
+
+      return style
     }
   },
   data: function () {
@@ -95,6 +103,13 @@ export default {
       const rowHeight = clientRect.height / this.viewData.rows
       const column = Math.floor(x / columnWidth) + 1
       const row = Math.floor(y / rowHeight) + 1
+
+      // If the content slot would be partially outside the grid, do not accept the drop
+      if (column + (contentSlot.columnEnd - contentSlot.columnStart) > this.viewData.columns + 1 ||
+        row + (contentSlot.rowEnd - contentSlot.rowStart) > this.viewData.rows + 1) {
+        return
+      }
+
       if (json.action === 'move' && (contentSlot.columnStart !== column || contentSlot.rowStart !== row)) {
         this.$emit('content-slot-moved', { id: contentSlot.id, newColumn: column, newRow: row })
       } else if (json.action === 'resize' && (contentSlot.columnEnd !== column + 1 || contentSlot.rowEnd !== row + 1)) {
@@ -115,6 +130,7 @@ export default {
     height: 100%;
     width: 100%;
     position: relative;
+    overflow: hidden;
 }
 
 .target-indicator {
