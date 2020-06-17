@@ -75,6 +75,7 @@ export default {
     width: 1.6em;
     background-color: rgba(0, 0, 0, 0.1);
     text-align: center;
+    z-index: 2;
 }
 
 .drag-handle {
