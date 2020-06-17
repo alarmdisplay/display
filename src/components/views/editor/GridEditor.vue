@@ -1,7 +1,8 @@
 <template>
-    <div ref="grid" class="grid" :style="`grid-template-columns: repeat(${viewData.columns}, 1fr); grid-template-rows: repeat(${viewData.rows}, 1fr);`" @drop="onDrop($event)" @dragenter="onDragEnter($event)" @dragover="onDragOver($event)" @dragleave="onDragLeave($event)">
+    <div ref="grid" class="grid" :style="`grid-template-columns: repeat(${viewData.columns}, 1fr); grid-template-rows: repeat(${viewData.rows}, 1fr);`">
         <ContentSlot v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" :content-slot="contentSlot" @move-started="onMoveStarted" @resize-started="onResizeStarted" @drag-ended="onDragEnded"/>
         <div v-show="targetIndicator" ref="target-indicator" class="target-indicator" :style="targetIndicatorStyle"></div>
+        <div v-show="action" class="drop-zone" @drop="onDrop($event)" @dragenter="onDragEnter($event)" @dragover="onDragOver($event)" @dragleave="onDragLeave($event)"></div>
     </div>
 </template>
 
@@ -54,8 +55,8 @@ export default {
       this.targetIndicator = null
     },
     onDragEnter: function (event) {
-      // Do not allow drop if it is not the grid background or there is no JSON in the dataTransfer
-      if (event.target.classList.contains('grid') && event.dataTransfer.types.includes('application/json')) {
+      // Do not allow drop if it is not the drop zone or there is no JSON in the dataTransfer
+      if (event.target.classList.contains('drop-zone') && event.dataTransfer.types.includes('application/json')) {
         event.dropEffect = 'move'
         event.preventDefault()
       }
@@ -72,13 +73,13 @@ export default {
     },
     onDragLeave: function (event) {
       // When the mouse leaves the grid, hide the target indicator, because dropping the content slot won't do anything
-      if (event.target.classList.contains('grid')) {
+      if (event.target.classList.contains('drop-zone')) {
         this.targetIndicator = null
       }
     },
     onDragOver: function (event) {
-      // Do not allow drop if it is not the grid background or there is no JSON in the dataTransfer
-      if (event.target.classList.contains('grid') && event.dataTransfer.types.includes('application/json')) {
+      // Do not allow drop if it is not the drop zone or there is no JSON in the dataTransfer
+      if (event.target.classList.contains('drop-zone') && event.dataTransfer.types.includes('application/json')) {
         event.dropEffect = 'move'
         event.preventDefault()
       }
@@ -154,5 +155,12 @@ export default {
     border: 2px dashed gray;
     z-index: -2;
     position: absolute;
+}
+
+.drop-zone {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 3;
 }
 </style>
