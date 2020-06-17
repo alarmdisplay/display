@@ -1,6 +1,6 @@
 <template>
-    <div ref="grid" class="grid" :style="`grid-template-columns: repeat(${viewData.columns}, 1fr); grid-template-rows: repeat(${viewData.rows}, 1fr);`" @drop="onDrop($event)" @dragenter="onDragEnter($event)" @dragover="onDragOver($event)">
-        <ContentSlot v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" :content-slot="contentSlot" @drag-ended="onDragEnded"/>
+    <div ref="grid" class="grid" :style="`grid-template-columns: repeat(${viewData.columns}, 1fr); grid-template-rows: repeat(${viewData.rows}, 1fr);`" @drop="onDrop($event)" @dragenter="onDragEnter($event)" @dragover="onDragOver($event)" @dragleave="onDragLeave($event)">
+        <ContentSlot v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" :content-slot="contentSlot" @move-started="onMoveStarted" @resize-started="onResizeStarted" @drag-ended="onDragEnded"/>
         <div v-show="targetIndicator" ref="target-indicator" class="target-indicator" :style="targetIndicatorStyle"></div>
     </div>
 </template>
@@ -44,17 +44,20 @@ export default {
   },
   data: function () {
     return {
+      action: null,
       targetIndicator: null
     }
   },
   methods: {
     onDragEnded: function () {
+      this.action = null
       this.targetIndicator = null
     },
     onDragEnter: function (event) {
       // Do not allow drop if it is not the grid background or there is no JSON in the dataTransfer
-      if (!event.target.classList.contains('grid') || !event.dataTransfer.types.includes('application/json')) {
-        return
+      if (event.target.classList.contains('grid') && event.dataTransfer.types.includes('application/json')) {
+        event.dropEffect = 'move'
+        event.preventDefault()
       }
 
       const data = event.dataTransfer.getData('application/json')
@@ -66,14 +69,18 @@ export default {
         columns: contentSlot.columnEnd - contentSlot.columnStart,
         rows: contentSlot.rowEnd - contentSlot.rowStart
       }
-
-      event.dropEffect = 'move'
-      event.preventDefault()
+    },
+    onDragLeave: function (event) {
+      // When the mouse leaves the grid, hide the target indicator, because dropping the content slot won't do anything
+      if (event.target.classList.contains('grid')) {
+        this.targetIndicator = null
+      }
     },
     onDragOver: function (event) {
       // Do not allow drop if it is not the grid background or there is no JSON in the dataTransfer
-      if (!event.target.classList.contains('grid') || !event.dataTransfer.types.includes('application/json')) {
-        return
+      if (event.target.classList.contains('grid') && event.dataTransfer.types.includes('application/json')) {
+        event.dropEffect = 'move'
+        event.preventDefault()
       }
 
       if (this.targetIndicator) {
@@ -81,12 +88,16 @@ export default {
         const clientRect = event.target.getBoundingClientRect()
         const x = event.clientX - clientRect.left
         const y = event.clientY - clientRect.top
-        this.targetIndicator.columnStart = Math.floor(x / this.columnWidth) + 1
-        this.targetIndicator.rowStart = Math.floor(y / this.rowHeight) + 1
+        const column = Math.floor(x / this.columnWidth) + 1
+        const row = Math.floor(y / this.rowHeight) + 1
+        if (this.action === 'move') {
+          this.targetIndicator.columnStart = column
+          this.targetIndicator.rowStart = row
+        } else if (this.action === 'resize') {
+          this.targetIndicator.columns = column + 1 - this.targetIndicator.columnStart
+          this.targetIndicator.rows = row + 1 - this.targetIndicator.rowStart
+        }
       }
-
-      event.dropEffect = 'move'
-      event.preventDefault()
     },
     onDrop: function (event) {
       const data = event.dataTransfer.getData('application/json')
@@ -115,6 +126,12 @@ export default {
       } else if (json.action === 'resize' && (contentSlot.columnEnd !== column + 1 || contentSlot.rowEnd !== row + 1)) {
         this.$emit('content-slot-resized', { id: contentSlot.id, newColumn: column + 1, newRow: row + 1 })
       }
+    },
+    onMoveStarted: function () {
+      this.action = 'move'
+    },
+    onResizeStarted: function () {
+      this.action = 'resize'
     }
   },
   props: {

@@ -39,10 +39,12 @@ export default {
     startMove: function (event, item) {
       event.dataTransfer.effectAllowed = 'move'
       event.dataTransfer.setData('application/json', JSON.stringify({ action: 'move', contentSlot: item }))
+      this.$emit('move-started')
     },
     startResize: function (event, item) {
       event.dataTransfer.effectAllowed = 'move'
       event.dataTransfer.setData('application/json', JSON.stringify({ action: 'resize', contentSlot: item }))
+      this.$emit('resize-started')
     }
   },
   props: {
