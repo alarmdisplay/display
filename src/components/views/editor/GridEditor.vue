@@ -117,8 +117,8 @@ export default {
       const row = Math.floor(y / rowHeight) + 1
 
       // If the content slot would be partially outside the grid, do not accept the drop
-      if (column + (contentSlot.columnEnd - contentSlot.columnStart) > this.viewData.columns + 1 ||
-        row + (contentSlot.rowEnd - contentSlot.rowStart) > this.viewData.rows + 1) {
+      if (json.action === 'move' && (column + (contentSlot.columnEnd - contentSlot.columnStart) > this.viewData.columns + 1 ||
+        row + (contentSlot.rowEnd - contentSlot.rowStart) > this.viewData.rows + 1)) {
         return
       }
 
