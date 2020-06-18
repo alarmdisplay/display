@@ -1,8 +1,10 @@
 <template>
-    <div ref="grid" class="grid" :style="`grid-template-columns: repeat(${viewData.columns}, 1fr); grid-template-rows: repeat(${viewData.rows}, 1fr);`">
-        <ContentSlot v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" :content-slot="contentSlot" @action-started="onActionStarted" @drag-ended="onDragEnded" @remove="onRemoveContentSlot"/>
-        <div v-show="targetIndicator" ref="target-indicator" class="target-indicator" :style="targetIndicatorStyle"></div>
-        <div v-show="action !== null" class="drop-zone" @drop="onDrop($event)" @dragenter="onDragEnter($event)" @dragover="onDragOver($event)" @dragleave="onDragLeave($event)"></div>
+    <div class="editor">
+        <div ref="grid" class="grid" :style="`grid-template-columns: repeat(${viewData.columns}, 1fr); grid-template-rows: repeat(${viewData.rows}, 1fr);`">
+            <ContentSlot v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" :content-slot="contentSlot" @action-started="onActionStarted" @drag-ended="onDragEnded" @remove="onRemoveContentSlot"/>
+            <div v-show="targetIndicator" ref="target-indicator" class="target-indicator" :style="targetIndicatorStyle"></div>
+            <div v-show="action !== null" class="drop-zone" @drop="onDrop($event)" @dragenter="onDragEnter($event)" @dragover="onDragOver($event)" @dragleave="onDragLeave($event)"></div>
+        </div>
     </div>
 </template>
 
@@ -146,13 +148,21 @@ export default {
 </script>
 
 <style scoped>
+.editor {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* simulate 16:9 aspect ratio */
+}
+
 .grid {
     display: grid;
     border: 1px solid gray;
-    height: 100%;
-    width: 100%;
-    position: relative;
     overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 .target-indicator {

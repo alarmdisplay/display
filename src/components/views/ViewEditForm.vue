@@ -21,7 +21,7 @@
                         <div class="w3-twothird preview-container">
                             <GridEditor :view-data="viewData" @content-slot-moved="onContentSlotMoved" @content-slot-resized="onContentSlotResized" @content-slot-removed="removeContentSlot"/>
                         </div>
-                        <div class="w3-third w3-right">
+                        <div class="w3-third w3-padding w3-right">
                             <fieldset>
                                 <legend>Raster</legend>
                                 <label for="input-columns">Spalten:</label>
@@ -198,9 +198,6 @@ export default {
 
 <style scoped>
     .preview-container {
-        height: 50vh;
-        width: 88.8vh; /* simulates a 16:9 screen */
-        max-width: 100%;
         box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2);
     }
 </style>
