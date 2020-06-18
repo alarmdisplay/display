@@ -29,6 +29,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
+    margin-right: 2em;
 }
 
 .preview-container {

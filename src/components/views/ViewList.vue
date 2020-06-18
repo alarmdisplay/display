@@ -15,11 +15,19 @@
             </p>
         </div>
 
-        <div v-if="views.length > 0" class="w3-container">
+        <div v-if="views != null" class="w3-container">
             <h3>Ruhemodus</h3>
             <div class="views">
                 <ViewListItem v-for="view in idleScreenViews" :key="view.id" :view="view"/>
+                <button type="button" class="w3-button" @click="addView('idle')">
+                    <font-awesome-icon icon="plus-circle" size="2x"/><br>
+                    Ansicht hinzufügen
+                </button>
             </div>
+            <p>
+                Wenn mehr als eine Anzeige konfiguriert ist, werden die Ansichten im Wechsel angezeigt.
+                Jede Ansicht wird dabei für 1 Minute angezeigt.
+            </p>
 
             <h3>Alarmbildschirm</h3>
             <p>
@@ -58,10 +66,14 @@ export default {
     }
   },
   methods: {
+    addView: function (screenType) {
+      this.$store.dispatch('createEmptyView', { displayId: this.display_id, screenType: screenType })
+        .then(() => this.fetchData())
+    },
     fetchData: function () {
       this.loading = true
       this.error = null
-      this.views = []
+      this.views = null
       axios.get(`/api/v1/displays/${this.display_id}/views`)
         .then(response => {
           this.views = response.data

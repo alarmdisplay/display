@@ -9,7 +9,7 @@ import VueMoment from 'vue-moment'
 
 // Import Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faArrowsAlt, faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faExpandAlt, faHome, faPencilAlt, faSpinner, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { faArrowsAlt, faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faExpandAlt, faHome, faPencilAlt, faPlusCircle, faSpinner, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 // Import components
@@ -24,7 +24,7 @@ import ViewEditForm from '@/components/views/ViewEditForm'
 import ViewList from '@/components/views/ViewList'
 
 // Configure Font Awesome
-library.add(faArrowsAlt, faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faExpandAlt, faHome, faPencilAlt, faSpinner, faTimes, faTrashAlt)
+library.add(faArrowsAlt, faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faExpandAlt, faHome, faPencilAlt, faPlusCircle, faSpinner, faTimes, faTrashAlt)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 require('moment/locale/de')
@@ -45,6 +45,13 @@ const store = new Vuex.Store({
   mutations: {
     appendAnnouncement (state, announcement) {
       state.announcements.push(announcement)
+    },
+    appendView (state, view) {
+      if (!state.views[view.displayId]) {
+        state.views[view.displayId] = []
+      }
+      const views = state.views[view.displayId]
+      views.push(view)
     },
     setAnnouncements (state, announcements) {
       state.announcements = announcements
@@ -77,6 +84,14 @@ const store = new Vuex.Store({
           const newDisplay = response.data
           context.commit('setDisplay', newDisplay)
           return newDisplay
+        })
+    },
+    createEmptyView (context, data) {
+      return axios.post(`/api/v1/displays/${data.displayId}/views`, { columns: 3, rows: 3, screenType: data.screenType })
+        .then(response => {
+          const newView = response.data
+          context.commit('appendView', newView)
+          return newView
         })
     },
     deleteAnnouncement (context, announcementId) {
