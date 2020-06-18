@@ -73,12 +73,21 @@ export default {
 }
 
 .icon {
+    visibility: hidden;
     position: absolute;
     height: 1.6em;
     width: 1.6em;
     background-color: rgba(0, 0, 0, 0.1);
     text-align: center;
     z-index: 2;
+}
+
+.content-slot:hover .icon {
+    visibility: visible;
+}
+
+.icon:hover {
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 .drag-handle {
