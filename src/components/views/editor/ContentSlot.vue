@@ -1,12 +1,12 @@
 <template>
     <div class="content-slot" :style="gridItemStyle">
-        <div class="icon drag-handle" draggable="true" @dragstart="startMove($event, contentSlot)" @dragend="onDragEnd" title="Ziehen, um die Komponente zu verschieben">
+        <div class="icon drag-handle" draggable="true" @dragstart="startMove" @dragend="onDragEnd" title="Ziehen, um die Komponente zu verschieben">
             <font-awesome-icon icon="arrows-alt" />
         </div>
         <div class="content">
             <font-awesome-icon :icon="getIcon(contentSlot.componentType)"/>
         </div>
-        <div class="icon resize-handle" draggable="true" @dragstart="startResize($event, contentSlot)" @dragend="onDragEnd" title="Ziehen, um die Größe der Komponente zu verändern">
+        <div class="icon resize-handle" draggable="true" @dragstart="startResize" @dragend="onDragEnd" title="Ziehen, um die Größe der Komponente zu verändern">
             <font-awesome-icon icon="expand-alt" rotation="90" />
         </div>
         <button type="button" class="icon remove-icon" @click.stop.prevent="$emit('remove', contentSlot.id)" title="Komponente entfernen">
@@ -39,15 +39,11 @@ export default {
     onDragEnd: function () {
       this.$emit('drag-ended')
     },
-    startMove: function (event, item) {
-      event.dataTransfer.effectAllowed = 'move'
-      event.dataTransfer.setData('application/json', JSON.stringify({ action: 'move', contentSlot: item }))
-      this.$emit('move-started')
+    startMove: function () {
+      this.$emit('action-started', 'move', this.contentSlot.id)
     },
-    startResize: function (event, item) {
-      event.dataTransfer.effectAllowed = 'move'
-      event.dataTransfer.setData('application/json', JSON.stringify({ action: 'resize', contentSlot: item }))
-      this.$emit('resize-started')
+    startResize: function () {
+      this.$emit('action-started', 'resize', this.contentSlot.id)
     }
   },
   props: {

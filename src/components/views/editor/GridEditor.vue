@@ -1,6 +1,6 @@
 <template>
     <div ref="grid" class="grid" :style="`grid-template-columns: repeat(${viewData.columns}, 1fr); grid-template-rows: repeat(${viewData.rows}, 1fr);`">
-        <ContentSlot v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" :content-slot="contentSlot" @move-started="onMoveStarted" @resize-started="onResizeStarted" @drag-ended="onDragEnded" @remove="onRemoveContentSlot"/>
+        <ContentSlot v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" :content-slot="contentSlot" @action-started="onActionStarted" @drag-ended="onDragEnded" @remove="onRemoveContentSlot"/>
         <div v-show="targetIndicator" ref="target-indicator" class="target-indicator" :style="targetIndicatorStyle"></div>
         <div v-show="action !== null" class="drop-zone" @drop="onDrop($event)" @dragenter="onDragEnter($event)" @dragover="onDragOver($event)" @dragleave="onDragLeave($event)"></div>
     </div>
@@ -55,20 +55,10 @@ export default {
       this.targetIndicator = null
     },
     onDragEnter: function (event) {
-      // Do not allow drop if it is not the drop zone or there is no JSON in the dataTransfer
-      if (event.target.classList.contains('drop-zone') && event.dataTransfer.types.includes('application/json')) {
+      // Do not allow drop if it is not the drop zone
+      if (event.target.classList.contains('drop-zone')) {
         event.dropEffect = 'move'
         event.preventDefault()
-      }
-
-      const data = event.dataTransfer.getData('application/json')
-      const json = JSON.parse(data)
-      const contentSlot = json.contentSlot
-      this.targetIndicator = {
-        columnStart: contentSlot.columnStart,
-        rowStart: contentSlot.rowStart,
-        columns: contentSlot.columnEnd - contentSlot.columnStart,
-        rows: contentSlot.rowEnd - contentSlot.rowStart
       }
     },
     onDragLeave: function (event) {
@@ -78,8 +68,8 @@ export default {
       }
     },
     onDragOver: function (event) {
-      // Do not allow drop if it is not the drop zone or there is no JSON in the dataTransfer
-      if (event.target.classList.contains('drop-zone') && event.dataTransfer.types.includes('application/json')) {
+      // Do not allow drop if it is not the drop zone
+      if (event.target.classList.contains('drop-zone')) {
         event.dropEffect = 'move'
         event.preventDefault()
       }
@@ -101,9 +91,11 @@ export default {
       }
     },
     onDrop: function (event) {
-      const data = event.dataTransfer.getData('application/json')
-      const json = JSON.parse(data)
-      const contentSlot = json.contentSlot
+      // Get the content slot object by the ID we stored at the beginning of the action
+      const contentSlot = this.viewData.contentSlots.find(contentSlot => contentSlot.id === this.actionId)
+      if (!contentSlot) {
+        return
+      }
 
       // Calculate the X and Y coordinates relative to the drop zone
       const clientRect = event.target.getBoundingClientRect()
@@ -117,25 +109,34 @@ export default {
       const row = Math.floor(y / rowHeight) + 1
 
       // If the content slot would be partially outside the grid, do not accept the drop
-      if (json.action === 'move' && (column + (contentSlot.columnEnd - contentSlot.columnStart) > this.viewData.columns + 1 ||
+      if (this.action === 'move' && (column + (contentSlot.columnEnd - contentSlot.columnStart) > this.viewData.columns + 1 ||
         row + (contentSlot.rowEnd - contentSlot.rowStart) > this.viewData.rows + 1)) {
         return
       }
 
-      if (json.action === 'move' && (contentSlot.columnStart !== column || contentSlot.rowStart !== row)) {
+      if (this.action === 'move' && (contentSlot.columnStart !== column || contentSlot.rowStart !== row)) {
         this.$emit('content-slot-moved', { id: contentSlot.id, newColumn: column, newRow: row })
-      } else if (json.action === 'resize' && (contentSlot.columnEnd !== column + 1 || contentSlot.rowEnd !== row + 1)) {
+      } else if (this.action === 'resize' && (contentSlot.columnEnd !== column + 1 || contentSlot.rowEnd !== row + 1)) {
         this.$emit('content-slot-resized', { id: contentSlot.id, newColumn: column + 1, newRow: row + 1 })
       }
     },
-    onMoveStarted: function () {
-      this.action = 'move'
+    onActionStarted: function (action, contentSlotId) {
+      const contentSlot = this.viewData.contentSlots.find(contentSlot => contentSlot.id === contentSlotId)
+      if (!contentSlot) {
+        return
+      }
+
+      this.action = action
+      this.actionId = contentSlotId
+      this.targetIndicator = {
+        columnStart: contentSlot.columnStart,
+        rowStart: contentSlot.rowStart,
+        columns: contentSlot.columnEnd - contentSlot.columnStart,
+        rows: contentSlot.rowEnd - contentSlot.rowStart
+      }
     },
     onRemoveContentSlot: function (contentSlotId) {
       this.$emit('content-slot-removed', contentSlotId)
-    },
-    onResizeStarted: function () {
-      this.action = 'resize'
     }
   },
   props: {
