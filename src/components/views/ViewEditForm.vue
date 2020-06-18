@@ -19,7 +19,7 @@
                 <form class="w3-container" @submit.prevent="saveChanges">
                     <div class="w3-row w3-margin-bottom">
                         <div class="w3-twothird preview-container">
-                            <GridEditor :view-data="viewData" @content-slot-moved="onContentSlotMoved" @content-slot-resized="onContentSlotResized"/>
+                            <GridEditor :view-data="viewData" @content-slot-moved="onContentSlotMoved" @content-slot-resized="onContentSlotResized" @content-slot-removed="removeContentSlot"/>
                         </div>
                         <div class="w3-third w3-right">
                             <fieldset>
@@ -43,7 +43,7 @@
                     <ul class="w3-ul">
                         <li v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" class="w3-bar">
                             <h4><font-awesome-icon :icon="getIcon(contentSlot.componentType)"/> {{ getComponentName(contentSlot.componentType) }}</h4>
-                            <font-awesome-icon icon="times" @click="removeContentSlot(contentSlot)" title="Komponente entfernen" class="w3-right" />
+                            <font-awesome-icon icon="times" @click="removeContentSlot(contentSlot.id)" title="Komponente entfernen" class="w3-right" />
                             <div class="w3-col m2 w3-padding">
                                 <label :for="`input-col-start-${contentSlot.id}`">Startspalte:</label>
                                 <input :id="`input-col-start-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.columnStart">
@@ -198,8 +198,8 @@ export default {
         result[0].rowEnd = data.newRow
       }
     },
-    removeContentSlot: function (contentSlotToRemove) {
-      this.viewData.contentSlots = this.viewData.contentSlots.filter(contentSlot => contentSlot !== contentSlotToRemove)
+    removeContentSlot: function (id) {
+      this.viewData.contentSlots = this.viewData.contentSlots.filter(contentSlot => contentSlot.id !== id)
     },
     saveChanges: function () {
       this.saveButtonEnabled = false

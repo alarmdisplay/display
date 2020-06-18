@@ -1,14 +1,17 @@
 <template>
     <div class="content-slot" :style="gridItemStyle">
-        <div class="handle drag-handle" draggable="true" @dragstart="startMove($event, contentSlot)" @dragend="onDragEnd">
+        <div class="icon drag-handle" draggable="true" @dragstart="startMove($event, contentSlot)" @dragend="onDragEnd">
             <font-awesome-icon icon="arrows-alt" />
         </div>
         <div class="content">
             <font-awesome-icon :icon="getIcon(contentSlot.componentType)"/>
         </div>
-        <div class="handle resize-handle" draggable="true" @dragstart="startResize($event, contentSlot)" @dragend="onDragEnd">
+        <div class="icon resize-handle" draggable="true" @dragstart="startResize($event, contentSlot)" @dragend="onDragEnd">
             <font-awesome-icon icon="expand-alt" rotation="90" />
         </div>
+        <button type="button" class="icon remove-icon" @click.stop.prevent="$emit('remove', contentSlot.id)" title="Komponente entfernen">
+            <font-awesome-icon icon="trash-alt"/>
+        </button>
     </div>
 </template>
 
@@ -69,7 +72,7 @@ export default {
     width: 100%;
 }
 
-.handle {
+.icon {
     position: absolute;
     height: 1.6em;
     width: 1.6em;
@@ -88,5 +91,13 @@ export default {
     bottom: 7px;
     right: 7px;
     cursor: nwse-resize;
+}
+
+.remove-icon {
+    top: 7px;
+    right: 7px;
+    cursor: pointer;
+    padding: 0;
+    border: 0;
 }
 </style>

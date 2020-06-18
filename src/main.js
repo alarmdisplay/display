@@ -9,7 +9,7 @@ import VueMoment from 'vue-moment'
 
 // Import Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faArrowsAlt, faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faExpandAlt, faHome, faPencilAlt, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faArrowsAlt, faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faExpandAlt, faHome, faPencilAlt, faSpinner, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 // Import components
@@ -24,7 +24,7 @@ import ViewEditForm from '@/components/views/ViewEditForm'
 import ViewList from '@/components/views/ViewList'
 
 // Configure Font Awesome
-library.add(faArrowsAlt, faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faExpandAlt, faHome, faPencilAlt, faSpinner, faTimes)
+library.add(faArrowsAlt, faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faExpandAlt, faHome, faPencilAlt, faSpinner, faTimes, faTrashAlt)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 require('moment/locale/de')
