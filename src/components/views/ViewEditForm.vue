@@ -19,9 +19,9 @@
                 <form class="w3-container" @submit.prevent="saveChanges">
                     <div class="w3-row w3-margin-bottom">
                         <div class="w3-twothird preview-container">
-                            <ViewPreview :view-data="viewData"/>
+                            <GridEditor :view-data="viewData" @content-slot-moved="onContentSlotMoved" @content-slot-resized="onContentSlotResized" @content-slot-removed="removeContentSlot"/>
                         </div>
-                        <div class="w3-third w3-right">
+                        <div class="w3-third w3-padding w3-right">
                             <fieldset>
                                 <legend>Raster</legend>
                                 <label for="input-columns">Spalten:</label>
@@ -35,33 +35,6 @@
                         </div>
                     </div>
 
-                    <h3>Komponenten</h3>
-                    <p>
-                        Die Daten zur Anordnung der Komponenten müssen derzeit noch manuell angegeben werden, ein visueller Editor ist geplant.
-                        Die Vorschau oben soll helfen, das Ergebnis zu beurteilen.
-                    </p>
-                    <ul class="w3-ul">
-                        <li v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" class="w3-bar">
-                            <h4><font-awesome-icon :icon="getIcon(contentSlot.componentType)"/> {{ getComponentName(contentSlot.componentType) }}</h4>
-                            <font-awesome-icon icon="times" @click="removeContentSlot(contentSlot)" title="Komponente entfernen" class="w3-right" />
-                            <div class="w3-col m2 w3-padding">
-                                <label :for="`input-col-start-${contentSlot.id}`">Startspalte:</label>
-                                <input :id="`input-col-start-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.columnStart">
-                            </div>
-                            <div class="w3-col m2 w3-padding">
-                                <label :for="`input-row-start-${contentSlot.id}`">Startzeile:</label>
-                                <input :id="`input-row-start-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.rowStart">
-                            </div>
-                            <div class="w3-col m2 w3-padding">
-                                <label :for="`input-col-end-${contentSlot.id}`">Endspalte:</label>
-                                <input :id="`input-col-end-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.columnEnd">
-                            </div>
-                            <div class="w3-col m2 w3-padding">
-                                <label :for="`input-row-end-${contentSlot.id}`">Endzeile:</label>
-                                <input :id="`input-row-end-${contentSlot.id}`" type="number" min="1" class="w3-input w3-border" v-model.number="contentSlot.rowEnd">
-                            </div>
-                        </li>
-                    </ul>
                     <fieldset>
                         <legend>Komponente hinzufügen</legend>
                         <label for="select-component-to-add">Verf&uuml;gbare Komponenten: </label>
@@ -91,7 +64,7 @@
 
 <script>
 import axios from 'axios'
-import ViewPreview from '@/components/views/ViewPreview'
+import GridEditor from '@/components/views/editor/GridEditor'
 
 export default {
   name: 'ViewEditForm',
@@ -105,7 +78,7 @@ export default {
     }
   },
   components: {
-    ViewPreview
+    GridEditor
   },
   created: function () {
     this.fetchData()
@@ -179,8 +152,27 @@ export default {
       // TODO check if data is dirty
       this.$router.back()
     },
-    removeContentSlot: function (contentSlotToRemove) {
-      this.viewData.contentSlots = this.viewData.contentSlots.filter(contentSlot => contentSlot !== contentSlotToRemove)
+    onContentSlotMoved: function (data) {
+      const result = this.viewData.contentSlots.filter(contentSlot => contentSlot.id === data.id)
+      if (result.length > 0) {
+        const columnDifference = data.newColumn - result[0].columnStart
+        const rowDifference = data.newRow - result[0].rowStart
+        result[0].columnStart = data.newColumn
+        result[0].rowStart = data.newRow
+        result[0].columnEnd += columnDifference
+        result[0].rowEnd += rowDifference
+      }
+    },
+    onContentSlotResized: function (data) {
+      const result = this.viewData.contentSlots.filter(contentSlot => contentSlot.id === data.id)
+      // Only accept a resize, if the new values make sense (i.e. the end values are greater than the start values)
+      if (result.length > 0 && data.newColumn >= result[0].columnStart + 1 && data.newRow >= result[0].rowStart + 1) {
+        result[0].columnEnd = data.newColumn
+        result[0].rowEnd = data.newRow
+      }
+    },
+    removeContentSlot: function (id) {
+      this.viewData.contentSlots = this.viewData.contentSlots.filter(contentSlot => contentSlot.id !== id)
     },
     saveChanges: function () {
       this.saveButtonEnabled = false
@@ -206,9 +198,6 @@ export default {
 
 <style scoped>
     .preview-container {
-        height: 30vh;
-        width: 53.3vh; /* simulates a 16:9 screen */
-        max-width: 100%;
         box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2);
     }
 </style>
