@@ -2,7 +2,7 @@
     <div ref="grid" class="grid" :style="`grid-template-columns: repeat(${viewData.columns}, 1fr); grid-template-rows: repeat(${viewData.rows}, 1fr);`">
         <ContentSlot v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" :content-slot="contentSlot" @move-started="onMoveStarted" @resize-started="onResizeStarted" @drag-ended="onDragEnded" @remove="onRemoveContentSlot"/>
         <div v-show="targetIndicator" ref="target-indicator" class="target-indicator" :style="targetIndicatorStyle"></div>
-        <div v-show="action" class="drop-zone" @drop="onDrop($event)" @dragenter="onDragEnter($event)" @dragover="onDragOver($event)" @dragleave="onDragLeave($event)"></div>
+        <div v-show="action !== null" class="drop-zone" @drop="onDrop($event)" @dragenter="onDragEnter($event)" @dragover="onDragOver($event)" @dragleave="onDragLeave($event)"></div>
     </div>
 </template>
 
@@ -164,6 +164,6 @@ export default {
     width: 100%;
     height: 100%;
     position: absolute;
-    z-index: 3;
+    z-index: 1;
 }
 </style>
