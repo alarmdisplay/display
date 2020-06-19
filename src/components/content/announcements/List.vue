@@ -2,9 +2,11 @@
     <div>
         <header class="w3-container">
             <h2>Ank&uuml;ndigungen</h2>
-            <router-link tag="button" :to="`/announcements/new`" class="w3-btn w3-blue w3-right">Neu</router-link>
         </header>
 
+        <router-link to="/announcements/new" tag="button" class="w3-button w3-border w3-border-blue w3-hover-blue w3-round-medium w3-margin">
+            <font-awesome-icon icon="plus-circle"/> Neue Ank&uuml;ndigung anlegen
+        </router-link>
         <ul class="w3-ul">
             <ListItem v-for="announcement in announcements" v-bind:key="announcement.id" :announcement="announcement"/>
         </ul>
