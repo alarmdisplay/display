@@ -2,11 +2,14 @@
     <div>
         <header class="w3-container">
             <h2>Displays</h2>
-            <router-link tag="button" :to="`/displays/new`" class="w3-btn w3-blue w3-right">Neu</router-link>
         </header>
 
         <div class="displays">
             <DisplayCard v-for="display in displays" :key="display.id" :display="display" />
+            <router-link tag="a" :to="`/displays/new`" class="w3-button add-display">
+                <font-awesome-icon icon="plus-circle" size="2x"/><br>
+                Display hinzufügen
+            </router-link>
         </div>
     </div>
 </template>
@@ -31,5 +34,10 @@ export default {
     .displays {
         display: flex;
         flex-flow: row wrap;
+        align-items: center;
+    }
+
+    .add-display {
+        margin: 1em;
     }
 </style>
