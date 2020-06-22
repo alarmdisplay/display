@@ -77,7 +77,6 @@ class Database {
     try {
       connection = await this.connectionPool.getConnection()
       const { sql, values } = this.addWhereAndLimit(connection, `DELETE FROM ${connection.escapeId(table)}`, [], where, {}, limit)
-      this.logger.debug(sql, values)
       const result = await connection.query(sql, values)
       return result.affectedRows
     } catch (e) {
@@ -208,7 +207,6 @@ class Database {
       const escapedColumnNames = columnNames.map(connection.escapeId)
       const valuePlaceholders = Array(columnNames.length).fill('?')
       const sql = `INSERT INTO ${connection.escapeId(table)} (${escapedColumnNames.join(',')}) VALUES (${valuePlaceholders.join(',')})`
-      this.logger.debug(sql, values)
       const result = await connection.query(sql, Object.values(values))
       return result.insertId
     } catch (e) {
@@ -239,7 +237,6 @@ class Database {
       connection = await this.connectionPool.getConnection()
       const sqlBase = `SELECT ${columns} FROM ${connection.escapeId(table)}`
       const { sql, values } = this.addWhereAndLimit(connection, sqlBase, [], where, orderBy, limit)
-      this.logger.debug(sql, values)
       const rows = await connection.query(sql, values)
       return Array.from(rows)
     } catch (e) {
