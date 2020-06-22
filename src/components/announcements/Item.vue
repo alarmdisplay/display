@@ -1,8 +1,8 @@
 <template>
     <li :class="getListItemClass()">
+        <div class="date">{{ theDate }}</div>
         <span class="title" v-if="announcement.title !== ''">{{ announcement.title }}</span>
         <span class="text">{{ announcement.text }}</span>
-        <div class="date">{{ theDate }}</div>
     </li>
 </template>
 
@@ -42,7 +42,8 @@
     }
 
     .date {
-        text-align: right;
+        float: right;
+        margin-left: 0.5em;
     }
 
     .title {
