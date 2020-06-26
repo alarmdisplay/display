@@ -17,6 +17,9 @@
 
         <div v-if="views != null" class="w3-container">
             <h3>Ruhemodus</h3>
+            <p>
+                Sofern kein Alarm vorliegt, befindet sich das Display im Ruhemodus.
+            </p>
             <div class="views">
                 <ViewListItem v-for="view in idleScreenViews" :key="view.id" :view="view"/>
                 <button type="button" class="w3-button" @click="addView('idle')">
