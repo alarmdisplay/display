@@ -35,6 +35,7 @@
         border-bottom: 1px solid #999;
         list-style: none;
         padding: 1em;
+        color: #222222;
     }
 
     li.important {

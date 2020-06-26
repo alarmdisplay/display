@@ -33,7 +33,6 @@ export default {
   font-family: 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
   margin: 0;
   padding: 0;
   height: 100%;
@@ -49,6 +48,7 @@ body {
 html {
   height: 100vh;
   background-color: #777777;
+  color: #dddddd;
 }
 
 .gridview-component {
