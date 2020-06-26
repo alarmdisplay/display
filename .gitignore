@@ -1,3 +1,7 @@
 node_modules
 .idea
 .env
+build
+coverage
+ext-display
+ext-console
