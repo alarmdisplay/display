@@ -45,7 +45,7 @@ export default {
     return {
       displayName: '',
       clientId: '',
-      active: false,
+      active: true,
       description: '',
       location: ''
     }
