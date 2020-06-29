@@ -67,7 +67,9 @@ connectDatabase()
     const app = require('./app')(displayService, announcementService, alertService)
     const server = require('http').createServer(app)
 
-    const port = process.env.PORT || 3000
+    // Development server runs on port 3000, production on 8080. Both can be overridden with the PORT environment variable.
+    const defaultPort = process.env.NODE_ENV === 'production' ? 8080 : 3000
+    const port = process.env.PORT || defaultPort
 
     const socketServer = new SocketServer()
     const socketController = new SocketController(socketServer, displayService, contentService, alertService)
