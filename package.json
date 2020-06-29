@@ -1,23 +1,37 @@
 {
   "name": "display-vue",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0-beta.1",
+  "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alarmdisplay/display-frontend-vue.git"
+  },
+  "keywords": [],
+  "author": "Andreas Brain",
+  "license": "AGPL-3.0-only",
   "dependencies": {
-    "core-js": "^3.6.4",
-    "vue": "^2.6.11"
+    "@fortawesome/fontawesome-svg-core": "^1.2.29",
+    "@fortawesome/free-solid-svg-icons": "^5.13.1",
+    "@fortawesome/vue-fontawesome": "^0.1.10",
+    "core-js": "^3.6.5",
+    "moment": "^2.27.0",
+    "socket.io-client": "^2.3.0",
+    "vue": "^2.6.11",
+    "vue-moment": "^4.1.0",
+    "vue-toast-notification": "0.0.3"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.2.0",
-    "@vue/cli-plugin-eslint": "~4.2.0",
-    "@vue/cli-service": "~4.2.0",
+    "@vue/cli-plugin-babel": "^4.4.6",
+    "@vue/cli-plugin-eslint": "^4.4.6",
+    "@vue/cli-service": "^4.4.6",
     "babel-eslint": "^10.0.3",
     "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.1.2",
+    "eslint-plugin-vue": "^6.2.2",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
