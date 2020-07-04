@@ -24,6 +24,8 @@ class AlertService extends EventEmitter {
   async createAlert (title, keyword, description, time, location, status, category, contact) {
     const alertTime = time || new Date()
     const minutesActive = status === 'Test' ? 1 : 60
+    const expireTime = new Date()
+    expireTime.setTime(alertTime.getTime() + 60 * minutesActive * 1000)
     const alertId = await this.alertRepository.create(
       title || 'Einsatz',
       keyword || '',
@@ -33,7 +35,7 @@ class AlertService extends EventEmitter {
       status || 'Actual',
       category || 'Other',
       contact || '',
-      new Date(alertTime.valueOf() + 60 * minutesActive * 1000)
+      expireTime
     )
     const alert = await this.alertRepository.getOne(alertId)
     this.emit('alert_created', alert)
