@@ -4,6 +4,7 @@ import incidents from './incidents/incidents.service';
 import displays from './displays/displays.service';
 import apiKeys from './api-keys/api-keys.service';
 import views from './views/views.service';
+import contentSlots from './content-slots/content-slots.service';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 export default function (app: Application): void {
@@ -12,4 +13,5 @@ export default function (app: Application): void {
   app.configure(displays);
   app.configure(apiKeys);
   app.configure(views);
+  app.configure(contentSlots);
 }

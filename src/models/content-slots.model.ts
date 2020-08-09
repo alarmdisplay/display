@@ -4,50 +4,53 @@ import { HookReturn } from 'sequelize/types/lib/hooks';
 
 export default function (app: Application): typeof Model {
   const sequelizeClient: Sequelize = app.get('sequelizeClient');
-  const View = sequelizeClient.define('view', {
-    type: {
+  const ContentSlot = sequelizeClient.define('content_slot', {
+    component: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    order: {
-      type: DataTypes.MEDIUMINT,
-      allowNull: false,
-      validate: {
-        min: 0
-      }
-    },
-    columns: {
+    columnStart: {
       type: DataTypes.TINYINT,
       allowNull: false,
       validate: {
         min: 1
       }
     },
-    rows: {
+    columnEnd: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      validate: {
+        min: 2
+      }
+    },
+    rowStart: {
       type: DataTypes.TINYINT,
       allowNull: false,
       validate: {
         min: 1
       }
-    }
+    },
+    rowEnd: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      validate: {
+        min: 2
+      }
+    },
   }, {
     hooks: {
       beforeCount(options: any): HookReturn {
         options.raw = true;
       }
     },
-    tableName: [app.get('db_prefix'), 'views'].join('_')
+    tableName: [app.get('db_prefix'), 'content_slots'].join('_')
   });
 
-  (View as any).associate = function (models: any): void {
-    models.view.belongsTo(models.display, {
-      as: 'display'
-    });
-    models.view.hasMany(models.content_slot, {
-      foreignKey: { allowNull: false },
-      as: 'contentSlots'
+  (ContentSlot as any).associate = function (models: any): void {
+    models.content_slot.belongsTo(models.view, {
+      as: 'view'
     });
   };
 
-  return View;
+  return ContentSlot;
 }
