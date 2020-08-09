@@ -4,7 +4,7 @@ import { HookReturn } from 'sequelize/types/lib/hooks';
 
 export default function (app: Application): typeof Model {
   const sequelizeClient: Sequelize = app.get('sequelizeClient');
-  const users = sequelizeClient.define('users', {
+  const User = sequelizeClient.define('user', {
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -29,8 +29,8 @@ export default function (app: Application): typeof Model {
   });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  (users as any).associate = function (models: any): void {
+  (User as any).associate = function (models: any): void {
   };
 
-  return users;
+  return User;
 }
