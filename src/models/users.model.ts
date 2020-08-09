@@ -19,7 +19,8 @@ export default function (app: Application): typeof Model {
       beforeCount(options: any): HookReturn {
         options.raw = true;
       }
-    }
+    },
+    tableName: [app.get('db_prefix'), 'users'].join('_')
   });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
