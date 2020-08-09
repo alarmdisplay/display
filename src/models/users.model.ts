@@ -10,6 +10,11 @@ export default function (app: Application): typeof Model {
       allowNull: false,
       unique: true
     },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: ''
+    },
     password: {
       type: DataTypes.STRING,
       allowNull: false
