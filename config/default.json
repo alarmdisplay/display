@@ -1,0 +1,31 @@
+{
+  "host": "localhost",
+  "port": 3031,
+  "public": "../public/",
+  "paginate": {
+    "default": 10,
+    "max": 50
+  },
+  "authentication": {
+    "entity": "user",
+    "service": "users",
+    "secret": "L6dLJEWc23hFtMrxXJJjxgbD37o=",
+    "authStrategies": [
+      "jwt",
+      "local"
+    ],
+    "jwtOptions": {
+      "header": {
+        "typ": "access"
+      },
+      "issuer": "Alarmdisplay Display",
+      "algorithm": "HS256",
+      "expiresIn": "1d"
+    },
+    "local": {
+      "usernameField": "email",
+      "passwordField": "password"
+    }
+  },
+  "mysql": "mysql://root:@localhost:3306/display_backend"
+}
