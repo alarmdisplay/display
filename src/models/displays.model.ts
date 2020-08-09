@@ -28,10 +28,11 @@ export default function (app: Application): typeof Model {
     tableName: [app.get('db_prefix'), 'displays'].join('_')
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (Display as any).associate = function (models: any): void {
-    // Define associations here
-    // See http://docs.sequelizejs.com/en/latest/docs/associations/
+    models.display.hasMany(models.view, {
+      foreignKey: { allowNull: false },
+      as: 'views'
+    });
   };
 
   return Display;
