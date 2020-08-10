@@ -15,15 +15,20 @@
   "author": "Andreas Brain",
   "license": "AGPL-3.0-only",
   "dependencies": {
+    "@feathersjs/feathers": "^4.5.7",
+    "@feathersjs/socketio-client": "^4.5.7",
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
     "@fortawesome/free-solid-svg-icons": "^5.13.1",
     "@fortawesome/vue-fontawesome": "^0.1.10",
+    "@vue/composition-api": "^0.6.7",
     "core-js": "^3.6.5",
+    "feathers-vuex": "^3.11.5",
     "moment": "^2.27.0",
     "socket.io-client": "^2.3.0",
     "vue": "^2.6.11",
     "vue-moment": "^4.1.0",
-    "vue-toast-notification": "0.0.3"
+    "vue-toast-notification": "0.0.3",
+    "vuex": "^3.5.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.4.6",

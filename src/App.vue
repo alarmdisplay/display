@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <SplashScreen v-if="showSplashScreen === true"/>
-    <DisplayApp v-else-if="authenticated === true" v-bind:views="views" :alerts="alerts"/>
-    <DisplaySetup v-else v-bind:display-identifier="displayId"/>
+    <DisplayApp v-else-if="showApp === true" v-bind:views="views" :alerts="alerts"/>
+    <DisplaySetup v-else/>
   </div>
 </template>
 
@@ -18,10 +18,13 @@ export default {
     DisplaySetup,
     SplashScreen
   },
+  computed: {
+    showApp: function () {
+      return !this.showSplashScreen && this.$store.state.socket.connected
+    }
+  },
   props: {
     alerts: Array,
-    authenticated: Boolean,
-    displayId: String,
     showSplashScreen: Boolean,
     views: Array
   }
