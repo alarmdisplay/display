@@ -33,6 +33,11 @@ export default function (app: Application): typeof Model {
       foreignKey: { allowNull: false },
       as: 'views'
     });
+    models.display.hasOne(models.api_key, {
+      foreignKey: { allowNull: true },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    });
   };
 
   return Display;

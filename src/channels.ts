@@ -1,6 +1,8 @@
 import '@feathersjs/transport-commons';
 import { HookContext } from '@feathersjs/feathers';
 import { Application } from './declarations';
+import { ApiKeyStrategy } from './auth-strategies/api-key.strategy';
+import logger from './logger';
 
 export default function(app: Application): void {
   if(typeof app.channel !== 'function') {
@@ -8,7 +10,28 @@ export default function(app: Application): void {
     return;
   }
 
-  app.on('connection', (connection: any): void => {
+  const apiKeyStrategy = new ApiKeyStrategy;
+  apiKeyStrategy.setApplication(app);
+
+  app.on('connection', async (connection: any): Promise<void> => {
+    // Accept authentication by API key on socket connection
+    if (connection.headers && connection.headers['x-api-key']) {
+      try {
+        // Check if the API key is valid
+        const authResult = await apiKeyStrategy.authenticate({
+          strategy: 'api-key',
+          'api-key': connection.headers['x-api-key']
+        }, {});
+
+        if (authResult['api-key']) {
+          app.channel('authenticated').join(connection);
+          return;
+        }
+      } catch (e) {
+        logger.warn('Socket connected, API key not accepted:', e.message || e);
+      }
+    }
+
     // On a new real-time connection, add it to the anonymous channel
     app.channel('anonymous').join(connection);
   });
@@ -19,21 +42,21 @@ export default function(app: Application): void {
     if(connection) {
       // Obtain the logged in user from the connection
       // const user = connection.user;
-      
+
       // The connection is no longer anonymous, remove it
       app.channel('anonymous').leave(connection);
 
       // Add it to the authenticated user channel
       app.channel('authenticated').join(connection);
 
-      // Channels can be named anything and joined on any condition 
-      
+      // Channels can be named anything and joined on any condition
+
       // E.g. to send real-time events only to admins use
       // if(user.isAdmin) { app.channel('admins').join(connection); }
 
       // If the user has joined e.g. chat rooms
       // if(Array.isArray(user.rooms)) user.rooms.forEach(room => app.channel(`rooms/${room.id}`).join(connection));
-      
+
       // Easily organize users by email and userid for things like messaging
       // app.channel(`emails/${user.email}`).join(connection);
       // app.channel(`userIds/${user.id}`).join(connection);
@@ -54,7 +77,7 @@ export default function(app: Application): void {
   // Here you can also add service specific event publishers
   // e.g. the publish the `users` service `created` event to the `admins` channel
   // app.service('users').publish('created', () => app.channel('admins'));
-  
+
   // With the userid and email organization from above you can easily select involved users
   // app.service('messages').publish(() => {
   //   return [

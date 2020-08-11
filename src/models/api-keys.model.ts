@@ -23,10 +23,8 @@ export default function (app: Application): typeof Model {
     tableName: [app.get('db_prefix'), 'api_keys'].join('_')
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (ApiKey as any).associate = function (models: any): void {
-    // Define associations here
-    // See http://docs.sequelizejs.com/en/latest/docs/associations/
+    models.api_key.belongsTo(models.display);
   };
 
   return ApiKey;

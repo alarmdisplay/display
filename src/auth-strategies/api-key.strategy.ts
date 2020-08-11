@@ -1,6 +1,6 @@
-import {AuthenticationBaseStrategy, AuthenticationRequest, AuthenticationResult} from '@feathersjs/authentication';
+import { AuthenticationBaseStrategy, AuthenticationRequest, AuthenticationResult } from '@feathersjs/authentication';
 import { Params } from '@feathersjs/feathers';
-import {NotAuthenticated} from '@feathersjs/errors';
+import { NotAuthenticated } from '@feathersjs/errors';
 import bcrypt from 'bcryptjs';
 
 export class ApiKeyStrategy extends AuthenticationBaseStrategy {
@@ -44,8 +44,20 @@ export class ApiKeyStrategy extends AuthenticationBaseStrategy {
       throw new NotAuthenticated('API key invalid');
     }
 
-    return {
-      'api-key': true
+    const result = {
+      'api-key': true,
+      display: undefined
     };
+
+    // If the API key belongs to a Display
+    if (storedApiKey.displayId) {
+      const DisplayService = this.app.service('api/v1/displays');
+      try {
+        result.display = await DisplayService.get(storedApiKey.displayId);
+      } catch (e) {
+      }
+    }
+
+    return result;
   }
 }
