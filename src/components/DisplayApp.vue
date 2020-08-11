@@ -6,6 +6,7 @@
 </template>
 
 <script>
+    import { makeGetMixin } from 'feathers-vuex';
     import AlertScreen from "@/components/AlertScreen";
     import IdleScreen from "@/components/IdleScreen";
 
@@ -18,6 +19,9 @@
         computed: {
             activeAlerts: function () {
                 return this.alerts.filter(alert => Math.floor(alert.expires.valueOf() / 1000) > this.$root.$data.seconds)
+            },
+            displaysParams() {
+                return {}
             }
         },
         methods: {
@@ -50,7 +54,14 @@
                 return views
             }
         },
+        mixins: [ makeGetMixin({
+            service: 'displays',
+            name: 'display',
+            id: 'theDisplayId',
+            params: 'displaysParams'
+        })],
         props: {
+            theDisplayId: Number,
             alerts: Array,
             views: Array
         }

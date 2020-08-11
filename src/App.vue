@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <SplashScreen v-if="showSplashScreen === true"/>
-    <DisplayApp v-else-if="showApp === true" v-bind:views="views" :alerts="alerts"/>
+    <DisplayApp v-else-if="showApp === true" :the-display-id="displayId" v-bind:views="views" :alerts="alerts"/>
     <DisplaySetup v-else/>
   </div>
 </template>
@@ -19,9 +19,20 @@ export default {
     SplashScreen
   },
   computed: {
+    displayId: function () {
+      return this.$store.state.ownDisplayId
+    },
     showApp: function () {
-      return !this.showSplashScreen && this.$store.state.socket.connected
+      return !this.showSplashScreen && this.$store.state.socket.connected && this.displayId !== undefined
     }
+  },
+  mounted() {
+    this.$store.subscribe(mutation => {
+      if (mutation.type === 'socket/setConnected' && mutation.payload === true) {
+        this.$store.dispatch('displays/get', 'self')
+          .catch(reason => console.error('Error while asking the backend about our identity', reason))
+      }
+    })
   },
   props: {
     alerts: Array,
