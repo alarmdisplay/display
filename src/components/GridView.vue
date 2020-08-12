@@ -36,13 +36,13 @@
                 let components = [];
                 console.log('Component configs', this.view.contentSlots);
                 for (let contentSlot of this.view.contentSlots) {
-                    if (!contentSlot || !contentSlot.componentType || !contentSlot.id) {
+                    if (!contentSlot || !contentSlot.component || !contentSlot.id) {
                         continue;
                     }
 
                     components.push({
                         instanceId: contentSlot.id,
-                        name: contentSlot.componentType,
+                        name: contentSlot.component,
                         options: contentSlot.options || {},
                         style: `grid-column-start: ${contentSlot.columnStart}; grid-row-start: ${contentSlot.rowStart}; grid-column-end: ${contentSlot.columnEnd}; grid-row-end: ${contentSlot.rowEnd}`
                     });
