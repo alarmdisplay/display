@@ -1,34 +1,26 @@
 import feathersClient, { makeServicePlugin, BaseModel } from '../../feathers-client'
 
-class View extends BaseModel {
+class ContentSlot extends BaseModel {
   constructor(data, options) {
     super(data, options)
   }
 
-  static modelName = 'View'
+  static modelName = 'ContentSlot'
 
   static instanceDefaults() {
     return {
-      type: 'idle',
-      order: 999,
-      columns: 3,
-      rows: 3,
-      contentSlots: []
+      component: 'Clock',
+      columnStart: 1,
+      columnEnd: 1,
+      rowStart: 2,
+      rowEnd: 2
     }
-  }
-
-  static setupInstance(data, { models }) {
-    if (data.contentSlots && Array.isArray(data.contentSlots)) {
-      data.contentSlots = data.contentSlots.map(contentSlot => new models.api.ContentSlot(contentSlot))
-    }
-
-    return data
   }
 }
 
-const servicePath = 'api/v1/views'
+const servicePath = 'api/v1/content-slots'
 const servicePlugin = makeServicePlugin({
-  Model: View,
+  Model: ContentSlot,
   service: feathersClient.service(servicePath),
   servicePath
 })
