@@ -1,33 +1,32 @@
 import feathersClient, { makeServicePlugin, BaseModel } from '../../feathers-client'
 
-class Display extends BaseModel {
+class View extends BaseModel {
   constructor(data, options) {
     super(data, options)
   }
 
-  static modelName = 'Display'
+  static modelName = 'View'
 
   static instanceDefaults() {
     return {
-      name: '',
-      active: false,
-      description: '',
-      views: []
+      type: 'idle',
+      order: 999,
+      columns: 3,
+      rows: 3,
+      contentSlots: []
     }
   }
 
-  static setupInstance(data, { models }) {
-    if (data.views && Array.isArray(data.views)) {
-      data.views = data.views.map(view => new models.api.View(view))
-    }
+  static setupInstance(data) {
+    // TODO connect with content slots
 
     return data
   }
 }
 
-const servicePath = 'api/v1/displays'
+const servicePath = 'api/v1/views'
 const servicePlugin = makeServicePlugin({
-  Model: Display,
+  Model: View,
   service: feathersClient.service(servicePath),
   servicePath
 })
@@ -46,7 +45,7 @@ feathersClient.service(servicePath).hooks({
   after: {
     all: [],
     find: [],
-    get: [ setOwnDisplayId ],
+    get: [],
     create: [],
     update: [],
     patch: [],
@@ -62,12 +61,5 @@ feathersClient.service(servicePath).hooks({
     remove: []
   }
 })
-
-function setOwnDisplayId(context) {
-  if (context.id === 'self') {
-    console.log('Own Display ID is', context.result.id)
-    context.service.FeathersVuexModel.store.commit('setOwnDisplayId', context.result.id)
-  }
-}
 
 export default servicePlugin

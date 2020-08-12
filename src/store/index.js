@@ -4,6 +4,7 @@ import feathersClient, { FeathersVuex } from '@/feathers-client'
 
 import displays from './services/displays'
 import incidents from './services/incidents'
+import views from "./services/views";
 import socket, { createSocketPlugin } from "./socket";
 
 Vue.use(Vuex)
@@ -26,6 +27,7 @@ export default new Vuex.Store({
   plugins: [
     createSocketPlugin(feathersClient.io),
     displays,
-    incidents
+    incidents,
+    views
   ]
 })
