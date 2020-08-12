@@ -54,7 +54,6 @@
         mixins: [ makeFindMixin({
             service: 'views',
             name: 'views',
-            id: 'theDisplayId',
             params: 'viewsParams',
             local: true
         })],
