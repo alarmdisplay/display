@@ -101,18 +101,8 @@
     }
 
     .badge-category {
-        background-color: orange;
-    }
-
-    .alert.category-Fire .badge-category {
-        background-color: red;
-        color: white;
-    }
-
-    .alert.category-Health .badge-category {
-        background-color: white;
-        border: 0.1em solid red;
-        color: red;
+      background-color: red;
+      color: white;
     }
 
     .badge-test {
