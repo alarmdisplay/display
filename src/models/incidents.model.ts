@@ -1,5 +1,3 @@
-// See http://docs.sequelizejs.com/en/latest/docs/models-definition/
-// for more of what you can do here.
 import { Sequelize, DataTypes, Model } from 'sequelize';
 import { Application } from '../declarations';
 import { HookReturn } from 'sequelize/types/lib/hooks';
@@ -68,10 +66,8 @@ export default function (app: Application): typeof Model {
     tableName: [app.get('db_prefix'), 'incidents'].join('_')
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (Incident as any).associate = function (models: any): void {
-    // Define associations here
-    // See http://docs.sequelizejs.com/en/latest/docs/associations/
+    models.incident.hasOne(models.locations);
   };
 
   return Incident;
