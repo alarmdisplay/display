@@ -30,21 +30,16 @@ new Vue({
   render: h => h(App),
   store,
   data: {
-    content: {},
     seconds: Math.floor(Date.now() / 1000)
   },
   created: function () {
     this.$moment.locale('de');
-    this.resetData();
   },
   mounted: function () {
     setTimeout(this.hideSplashScreen, 3000);
     setInterval(this.updateSeconds, 1000);
   },
   methods: {
-    resetData: function () {
-      this.content = {};
-    },
     updateSeconds: function () {
       this.seconds = Math.floor(Date.now() / 1000)
     },

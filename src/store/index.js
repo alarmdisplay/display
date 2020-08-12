@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import feathersClient, { FeathersVuex } from '@/feathers-client'
 
+import announcements from './services/announcements'
 import displays from './services/displays'
 import contentSlotOptions from './services/content-slot-options'
 import contentSlots from './services/content-slots'
@@ -33,6 +34,7 @@ export default new Vuex.Store({
   },
   plugins: [
     createSocketPlugin(feathersClient.io),
+    announcements,
     contentSlotOptions,
     contentSlots,
     displays,
