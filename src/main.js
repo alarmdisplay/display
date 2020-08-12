@@ -30,8 +30,7 @@ new Vue({
   render: function(h) {
     return h(App, {
       props: {
-        alerts: this.alerts,
-        showSplashScreen: this.showSplashScreen
+        alerts: this.alerts
       }
     });
   },
@@ -39,8 +38,7 @@ new Vue({
   data: {
     alerts: [],
     content: {},
-    seconds: Math.floor(Date.now() / 1000),
-    showSplashScreen: true
+    seconds: Math.floor(Date.now() / 1000)
   },
   created: function () {
     this.$moment.locale('de');
@@ -62,7 +60,7 @@ new Vue({
       this.alerts = alerts
     },
     hideSplashScreen: function () {
-      this.showSplashScreen = false;
+      this.$store.commit('setShowSplashScreen', false)
     }
   }
 }).$mount('#app');

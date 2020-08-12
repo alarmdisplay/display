@@ -13,11 +13,15 @@ Vue.use(FeathersVuex)
 
 export default new Vuex.Store({
   state: {
-    ownDisplayId: undefined
+    ownDisplayId: undefined,
+    showSplashScreen: true
   },
   mutations: {
     setOwnDisplayId: (state, payload) => {
       state.ownDisplayId = payload
+    },
+    setShowSplashScreen: (state, payload) => {
+      state.showSplashScreen = payload
     }
   },
   actions: {

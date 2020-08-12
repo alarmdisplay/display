@@ -24,6 +24,9 @@ export default {
     },
     showApp: function () {
       return !this.showSplashScreen && this.$store.state.socket.connected && this.displayId !== undefined
+    },
+    showSplashScreen() {
+      return this.$store.state.showSplashScreen
     }
   },
   mounted() {
@@ -35,8 +38,7 @@ export default {
     })
   },
   props: {
-    alerts: Array,
-    showSplashScreen: Boolean
+    alerts: Array
   }
 }
 </script>
