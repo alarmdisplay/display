@@ -4,7 +4,7 @@
             <Clock :instance-id="0" :options="{showDate: false}"/>
         </div>
         <div class="info">
-            <p class="title">{{ alert.title || 'Einsatz' }}</p>
+            <p class="title">{{ alert.reason || 'Einsatz' }}</p>
             <span class="badge badge-test">TEST</span>
             <span v-if="alert.keyword" class="badge badge-category">{{ alert.keyword }}</span>
             <span class="badge badge-elapsed-time"><font-awesome-icon icon="stopwatch"/> {{ elapsedTime }}</span>

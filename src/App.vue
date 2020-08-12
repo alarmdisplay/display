@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <SplashScreen v-if="showSplashScreen === true"/>
-    <DisplayApp v-else-if="showApp === true" :the-display-id="displayId" :alerts="alerts"/>
+    <DisplayApp v-else-if="showApp === true" :the-display-id="displayId"/>
     <DisplaySetup v-else/>
   </div>
 </template>
@@ -36,9 +36,6 @@ export default {
           .catch(reason => console.error('Error while asking the backend about our identity', reason))
       }
     })
-  },
-  props: {
-    alerts: Array
   }
 }
 </script>

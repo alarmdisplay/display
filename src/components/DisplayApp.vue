@@ -10,6 +10,13 @@
     import AlertScreen from "@/components/AlertScreen";
     import IdleScreen from "@/components/IdleScreen";
 
+    /**
+     * Incidents older that this amount of milliseconds are not loaded from the server
+     *
+     * @type {number}
+     */
+    const MAX_AGE_INCIDENTS_MS = 60 * 60 * 1000
+
     const fallbackView = {
       columns: 3,
       rows: 3,
@@ -32,8 +39,10 @@
             IdleScreen
         },
         computed: {
-            activeAlerts: function () {
-                return this.alerts.filter(alert => Math.floor(alert.expires.valueOf() / 1000) > this.$root.$data.seconds)
+            activeAlerts() {
+                return this.incidents.filter(incident => {
+                  return (Math.floor(incident.time.valueOf() / 1000) + 30) > this.$root.$data.seconds;
+                })
             },
             idleViews() {
               if (!this.views) {
@@ -47,19 +56,30 @@
 
               return idleViews
             },
+            incidentsParams() {
+              // Only load the most recent incidents from the server
+              return { query: {
+                time: {
+                  $gt: new Date().getTime() - MAX_AGE_INCIDENTS_MS
+                }
+              }}
+            },
             viewsParams() {
                 return { query: { displayId: this.theDisplayId}}
             }
         },
         mixins: [ makeFindMixin({
+            service: 'incidents',
+            name: 'incidents',
+            params: 'incidentsParams'
+        }), makeFindMixin({
             service: 'views',
             name: 'views',
             params: 'viewsParams',
             local: true
         })],
         props: {
-            theDisplayId: Number,
-            alerts: Array
+            theDisplayId: Number
         }
     }
 </script>

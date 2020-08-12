@@ -27,16 +27,9 @@ Vue.use(VueToast);
 Vue.config.productionTip = false;
 
 new Vue({
-  render: function(h) {
-    return h(App, {
-      props: {
-        alerts: this.alerts
-      }
-    });
-  },
+  render: h => h(App),
   store,
   data: {
-    alerts: [],
     content: {},
     seconds: Math.floor(Date.now() / 1000)
   },
@@ -50,14 +43,10 @@ new Vue({
   },
   methods: {
     resetData: function () {
-      this.alerts = [];
       this.content = {};
     },
     updateSeconds: function () {
       this.seconds = Math.floor(Date.now() / 1000)
-    },
-    setAlerts: function (alerts) {
-      this.alerts = alerts
     },
     hideSplashScreen: function () {
       this.$store.commit('setShowSplashScreen', false)
