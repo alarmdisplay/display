@@ -50,6 +50,10 @@ export default function (app: Application): typeof Model {
     models.content_slot.belongsTo(models.view, {
       as: 'view'
     });
+    models.content_slot.hasMany(models.content_slot_options, {
+      foreignKey: { allowNull: false },
+      as: 'options'
+    });
   };
 
   return ContentSlot;

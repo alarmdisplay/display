@@ -1,18 +1,7 @@
 import * as authentication from '@feathersjs/authentication';
-// @ts-ignore
-import { shallowPopulate } from 'feathers-shallow-populate';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const { authenticate } = authentication.hooks;
-
-const populateOptions = {
-  include: {
-    service: 'api/v1/content-slot-options',
-    nameAs: 'options',
-    keyHere: 'id',
-    keyThere: 'contentSlotId',
-  }
-};
 
 export default {
   before: {
@@ -26,7 +15,7 @@ export default {
   },
 
   after: {
-    all: [ shallowPopulate(populateOptions) ],
+    all: [],
     find: [],
     get: [],
     create: [],

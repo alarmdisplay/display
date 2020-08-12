@@ -6,6 +6,7 @@ import apiKeys from './api-keys/api-keys.service';
 import views from './views/views.service';
 import contentSlots from './content-slots/content-slots.service';
 import locations from './locations/locations.service';
+import contentSlotOptions from './content-slot-options/content-slot-options.service';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 export default function (app: Application): void {
@@ -16,4 +17,5 @@ export default function (app: Application): void {
   app.configure(views);
   app.configure(contentSlots);
   app.configure(locations);
+  app.configure(contentSlotOptions);
 }
