@@ -5,6 +5,7 @@ import feathersClient, { FeathersVuex } from '@/feathers-client'
 import displays from './services/displays'
 import contentSlots from './services/content-slots'
 import incidents from './services/incidents'
+import locations from './services/locations'
 import views from "./services/views";
 import socket, { createSocketPlugin } from "./socket";
 
@@ -34,6 +35,7 @@ export default new Vuex.Store({
     contentSlots,
     displays,
     incidents,
+    locations,
     views
   ]
 })
