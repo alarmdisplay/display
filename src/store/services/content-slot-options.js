@@ -1,34 +1,24 @@
 import feathersClient, { makeServicePlugin, BaseModel } from '../../feathers-client'
 
-class ContentSlot extends BaseModel {
+class ContentSlotOption extends BaseModel {
   constructor(data, options) {
     super(data, options)
   }
 
-  static modelName = 'ContentSlot'
+  static modelName = 'ContentSlotOption'
 
   static instanceDefaults() {
     return {
-      component: 'Clock',
-      columnStart: 1,
-      columnEnd: 1,
-      rowStart: 2,
-      rowEnd: 2
+      key: '',
+      value: '',
+      contentSlotId: undefined
     }
-  }
-
-  static setupInstance(data, { models }) {
-    if (data.options && Array.isArray(data.options)) {
-      data.options = data.options.map(option => new models.api.ContentSlotOption(option))
-    }
-
-    return data
   }
 }
 
-const servicePath = 'api/v1/content-slots'
+const servicePath = 'api/v1/content-slot-options'
 const servicePlugin = makeServicePlugin({
-  Model: ContentSlot,
+  Model: ContentSlotOption,
   service: feathersClient.service(servicePath),
   servicePath
 })

@@ -10,7 +10,7 @@
 
             let childComponents = [];
             for (let cc of this.getChildComponents) {
-                childComponents.push(createElement(cc.name, {attrs: {style: cc.style}, props: {instanceId: cc.instanceId, options: cc.options}}));
+                childComponents.push(createElement(cc.name, {attrs: {style: cc.style}, props: {instanceId: cc.instanceId}}));
             }
 
             return createElement('div', {
@@ -47,7 +47,6 @@
                     components.push({
                         instanceId: contentSlot.id,
                         name: contentSlot.component,
-                        options: contentSlot.options || {},
                         style: `grid-column-start: ${contentSlot.columnStart}; grid-row-start: ${contentSlot.rowStart}; grid-column-end: ${contentSlot.columnEnd}; grid-row-end: ${contentSlot.rowEnd}`
                     });
                 }

@@ -1,7 +1,7 @@
 <template>
     <div :class="alertClass">
         <div class="clock-container">
-            <Clock :instance-id="0" :options="{showDate: false}"/>
+            <Clock :instance-id="0" :show-date="false"/>
         </div>
         <div class="info">
             <p class="title">{{ alert.reason || 'Einsatz' }}</p>

@@ -5,11 +5,21 @@
 </template>
 
 <script>
+    import {makeFindMixin} from "feathers-vuex";
+
+    /**
+     * Possible options:
+     * - areaCode: An ISO 3166-2 code for one of the 16 german states, 'DE' for entire Germany, or (only with
+     *   mapType = area) 'Bodensee' for the Bodensee region
+     * - mapType: Can be 'simple' for a map of a single state or entire Germany, or 'area' for a map of one or
+     *   more states including more detail about the warnings
+     */
+
     export default {
         name: "DWDWarningMap",
         computed: {
             areaCode: function () {
-                return this.options.areaCode || 'DE';
+                return this.options.find(option => option.key === 'areaCode').value || 'DE';
             },
             baseUrl: function () {
                 switch (this.mapType) {
@@ -25,7 +35,10 @@
                 return `${this.baseUrl}?${this.cacheBustingQuery}`;
             },
             mapType: function () {
-                return this.options.mapType || 'area';
+                return this.options.find(option => option.key === 'mapType').value || 'area';
+            },
+            optionsParams() {
+              return { query: { contentSlotId: this.instanceId } }
             },
             schilderCode: function () {
 
@@ -102,6 +115,15 @@
                 cacheBustingQuery: Date.now()
             }
         },
+        mixins: [
+          makeFindMixin({
+            service: 'content-slot-options',
+            name: 'options',
+            params: 'optionsParams',
+            local: true,
+            qid: 'dwdOptions'
+          })
+        ],
         mounted: function() {
             // update the query part of the URL every 10 minutes, so it gets reloaded
             setInterval(() => {
@@ -109,14 +131,7 @@
             }, 600000);
         },
         props: {
-            /**
-             * Possible options:
-             * - areaCode: An ISO 3166-2 code for one of the 16 german states, 'DE' for entire Germany, or (only with
-             *   mapType = area) 'Bodensee' for the Bodensee region
-             * - mapType: Can be 'simple' for a map of a single state or entire Germany, or 'area' for a map of one or
-             *   more states including more detail about the warnings
-             */
-            options: Object
+            instanceId: Number
         }
     }
 </script>

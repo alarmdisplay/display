@@ -1,7 +1,7 @@
 <template>
     <div v-bind:id="elementId" class="gridview-component">
         <div class="announcement-list">
-            <p class="header">{{ this.options.title || 'Ankündigungen' }}</p>
+            <p class="header">Ankündigungen</p>
             <ul v-if="activeAnnouncements.length > 0">
                 <Item v-for="announcement in activeAnnouncements" v-bind:key="announcement.id"
                       v-bind:announcement="announcement"/>
@@ -57,8 +57,7 @@
             }
         },
         props: {
-            instanceId: Number,
-            options: Object
+            instanceId: Number
         }
     }
 </script>
