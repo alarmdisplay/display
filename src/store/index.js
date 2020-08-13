@@ -9,6 +9,7 @@ import contentSlots from './services/content-slots'
 import displays from './services/displays'
 import incidents from './services/incidents'
 import locations from './services/locations'
+import users from './services/users'
 import views from './services/views'
 
 Vue.use(Vuex)
@@ -29,6 +30,7 @@ export default new Vuex.Store({
     displays,
     incidents,
     locations,
+    users,
     views
   ]
 })

@@ -8,7 +8,7 @@ const socket = io({ transports: ['websocket'] })
 
 const feathersClient = feathers()
   .configure(socketio(socket))
-  .configure(auth({ storage: window.localStorage }))
+  .configure(auth({ storage: window.localStorage, storageKey: 'display-console-jwt' }))
 
 export default feathersClient
 
