@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 import favicon from 'serve-favicon';
 import compress from 'compression';
 import helmet from 'helmet';
@@ -33,6 +34,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
 // Host the public folder
 app.use('/', express.static(app.get('public')));
+
+if (fs.existsSync('ext-display')) {
+  app.use('/display', express.static('ext-display'));
+} else {
+  logger.warn('The static files for the display frontend could not be found, the path /display will not work');
+}
 
 // Set up Plugins and providers
 app.configure(express.rest());
