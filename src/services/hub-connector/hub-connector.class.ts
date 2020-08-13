@@ -1,5 +1,6 @@
 import { SetupMethod } from '@feathersjs/feathers';
 import { Application } from '../../declarations';
+import io from 'socket.io-client';
 import logger from '../../logger';
 
 interface ServiceOptions {}
@@ -35,6 +36,21 @@ export class HubConnector implements SetupMethod {
       return;
     }
 
-    logger.info('Connecting to Hub at %s...', hubUrl);
+    logger.info('Connecting to Hub at %s...', hubUrl.toString());
+    const socket = io(hubUrl.toString(), {
+      transportOptions: {
+        polling: {
+          extraHeaders: {
+            'x-api-key': hubApiKey
+          }
+        }
+      }
+    });
+    socket.on('connect', () => {
+      logger.info('Connected to Hub');
+    });
+    socket.on('disconnect', (reason: Error) => {
+      logger.error('Disconnected from Hub:', reason);
+    });
   }
 }
