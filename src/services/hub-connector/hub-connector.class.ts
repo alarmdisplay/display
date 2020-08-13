@@ -2,6 +2,7 @@ import { SetupMethod } from '@feathersjs/feathers';
 import { Application } from '../../declarations';
 import io from 'socket.io-client';
 import logger from '../../logger';
+import IncidentsWatcher from './services/incidents.class';
 
 interface ServiceOptions {}
 
@@ -14,7 +15,7 @@ export class HubConnector implements SetupMethod {
     this.app = app;
   }
 
-  setup(app: Application, path: string): void {
+  setup(app: Application): void {
     const hubHost = app.get('hub_host');
     const hubApiKey = app.get('hub_api_key');
 
@@ -52,5 +53,8 @@ export class HubConnector implements SetupMethod {
     socket.on('disconnect', (reason: Error) => {
       logger.error('Disconnected from Hub:', reason);
     });
+
+    // Start watching services on the Hub
+    new IncidentsWatcher(app, socket);
   }
 }
