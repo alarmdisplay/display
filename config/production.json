@@ -1,4 +1,6 @@
 {
   "host": "display-backend-app.feathersjs.com",
-  "port": "PORT"
+  "port": "PORT",
+  "hub_host": "HUB_HOST",
+  "hub_api_key": "HUB_API_KEY"
 }
