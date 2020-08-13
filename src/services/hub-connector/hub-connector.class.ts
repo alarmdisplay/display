@@ -3,6 +3,7 @@ import { Application } from '../../declarations';
 import io from 'socket.io-client';
 import logger from '../../logger';
 import IncidentsWatcher from './services/incidents.class';
+import LocationsWatcher from './services/locations.class';
 
 interface ServiceOptions {}
 
@@ -56,5 +57,6 @@ export class HubConnector implements SetupMethod {
 
     // Start watching services on the Hub
     new IncidentsWatcher(app, socket);
+    new LocationsWatcher(app, socket);
   }
 }
