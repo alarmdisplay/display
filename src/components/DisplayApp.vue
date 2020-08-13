@@ -17,6 +17,13 @@
      */
     const MAX_AGE_INCIDENTS_MS = 60 * 60 * 1000
 
+    /**
+     * Incidents marked as Test, will only be show for this long
+     *
+     * @type {number}
+     */
+    const TEST_DURATION_MS = 60 * 1000
+
     const fallbackView = {
       columns: 3,
       rows: 3,
@@ -41,7 +48,8 @@
         computed: {
             activeAlerts() {
                 return this.incidents.filter(incident => {
-                  return (Math.floor(incident.time.valueOf() / 1000) + 30) > this.$root.$data.seconds;
+                  const timeVisible = incident.status === 'Test' ? TEST_DURATION_MS : MAX_AGE_INCIDENTS_MS
+                  return (Math.floor(incident.time.valueOf() + timeVisible) / 1000) > this.$root.$data.seconds;
                 })
             },
             idleViews() {
