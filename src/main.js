@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
 import Vuex from 'vuex'
-import VueRouter from 'vue-router'
 
+import router from './router'
 import axios from 'axios'
 import moment from 'moment'
 import VueMoment from 'vue-moment'
@@ -12,17 +12,6 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faArrowsAlt, faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faExpandAlt, faHome, faPencilAlt, faPlusCircle, faSpinner, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-// Import components
-import AnnouncementCreateForm from '@/components/content/announcements/CreateForm'
-import AnnouncementEditForm from '@/components/content/announcements/EditForm'
-import AnnouncementList from '@/components/content/announcements/List'
-import DisplayCreateForm from '@/components/displays/DisplayCreateForm'
-import DisplayEditForm from '@/components/displays/DisplayEditForm'
-import DisplayList from '@/components/displays/DisplayList'
-import Overview from '@/components/Overview'
-import ViewEditForm from '@/components/views/ViewEditForm'
-import ViewList from '@/components/views/ViewList'
-
 // Configure Font Awesome
 library.add(faArrowsAlt, faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faExpandAlt, faHome, faPencilAlt, faPlusCircle, faSpinner, faTimes, faTrashAlt)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
@@ -30,7 +19,6 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 require('moment/locale/de')
 
 Vue.use(Vuex)
-Vue.use(VueRouter)
 Vue.use(VueMoment, { moment })
 
 Vue.config.productionTip = false
@@ -127,24 +115,6 @@ const store = new Vuex.Store({
         .then(() => context.dispatch('fetchTheViews', update.displayId))
     }
   }
-})
-
-// Set up the Vue Router
-const routes = [
-  { path: '/', component: Overview },
-  { path: '/announcements', component: AnnouncementList },
-  { path: '/announcements/new', component: AnnouncementCreateForm },
-  { path: '/announcements/:id', component: AnnouncementEditForm, props: true },
-  { path: '/displays', component: DisplayList },
-  { path: '/displays/new', component: DisplayCreateForm },
-  { path: '/displays/:id', component: DisplayEditForm, props: true },
-  { path: '/displays/:display_id/views', component: ViewList, props: true },
-  { path: '/displays/:display_id/views/:view_id', component: ViewEditForm, props: true }
-]
-
-const router = new VueRouter({
-  routes: routes,
-  linkActiveClass: 'w3-blue'
 })
 
 // Set up the Vue root instance
