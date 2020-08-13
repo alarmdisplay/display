@@ -1,11 +1,16 @@
+/* eslint-disable import/first */
 import Vue from 'vue'
-import App from './App.vue'
-import Vuex from 'vuex'
+import VueCompositionApi from '@vue/composition-api'
+Vue.use(VueCompositionApi)
 
+import App from './App.vue'
 import router from './router'
 import store from './store'
+
 import moment from 'moment'
 import VueMoment from 'vue-moment'
+require('moment/locale/de')
+Vue.use(VueMoment, { moment })
 
 // Import Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -15,11 +20,6 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 // Configure Font Awesome
 library.add(faArrowsAlt, faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faExpandAlt, faHome, faPencilAlt, faPlusCircle, faSpinner, faTimes, faTrashAlt)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
-
-require('moment/locale/de')
-
-Vue.use(Vuex)
-Vue.use(VueMoment, { moment })
 
 Vue.config.productionTip = false
 

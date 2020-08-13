@@ -39,10 +39,6 @@ export default {
       mySidebar.style.display = 'none'
       overlayBg.style.display = 'none'
     }
-  },
-  mounted () {
-    this.$store.dispatch('fetchTheDisplays')
-      .then(() => this.$store.dispatch('fetchTheAnnouncements'))
   }
 }
 </script>
