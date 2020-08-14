@@ -1,9 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Overview from '@/components/Overview'
-import AnnouncementList from '@/components/content/announcements/List'
-import AnnouncementCreateForm from '@/components/content/announcements/CreateForm'
-import AnnouncementEditForm from '@/components/content/announcements/EditForm'
+import AnnouncementList from '@/views/content/AnnouncementList'
+import AnnouncementForm from '@/views/content/AnnouncementForm'
 import DisplayForm from '@/views/displays/DisplayForm'
 import DisplayList from '@/views/displays/DisplayList'
 import ViewList from '@/components/views/ViewList'
@@ -18,16 +17,13 @@ const routes = [
   },
   {
     path: '/announcements',
+    name: 'announcement-list',
     component: AnnouncementList
   },
   {
-    path: '/announcements/new',
-    component: AnnouncementCreateForm
-  },
-  {
     path: '/announcements/:id',
-    component: AnnouncementEditForm,
-    props: true
+    name: 'announcement-form',
+    component: AnnouncementForm
   },
   {
     path: '/displays',
@@ -37,8 +33,7 @@ const routes = [
   {
     path: '/displays/:id',
     name: 'display-form',
-    component: DisplayForm,
-    props: true
+    component: DisplayForm
   },
   {
     path: '/displays/:display_id/views',

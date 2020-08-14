@@ -28,7 +28,7 @@
 <script>
 import DisplayCard from '@/components/displays/DisplayCard'
 export default {
-  name: 'WatchedFolderList',
+  name: 'DisplayList',
   components: { DisplayCard }
 }
 </script>
