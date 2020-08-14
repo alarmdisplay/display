@@ -14,11 +14,11 @@ Vue.use(VueMoment, { moment })
 
 // Import Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faArrowsAlt, faBars, faBullhorn, faChevronLeft, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faEnvelope, faExpandAlt, faHome, faLock, faPencilAlt, faPlus, faSpinner, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { faArrowsAlt, faBars, faBullhorn, faChevronLeft, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faEnvelope, faExpandAlt, faHome, faInfoCircle, faKey, faLock, faPencilAlt, faPlus, faQuestionCircle, faSignOutAlt, faSpinner, faTimes, faTrashAlt, faUser, faWrench } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 // Configure Font Awesome
-library.add(faArrowsAlt, faBars, faBullhorn, faChevronLeft, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faEnvelope, faExpandAlt, faHome, faLock, faPencilAlt, faPlus, faSpinner, faTimes, faTrashAlt)
+library.add(faArrowsAlt, faBars, faBullhorn, faChevronLeft, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faEnvelope, faExpandAlt, faHome, faInfoCircle, faKey, faLock, faPencilAlt, faPlus, faQuestionCircle, faSignOutAlt, faSpinner, faTimes, faTrashAlt, faUser, faWrench)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.config.productionTip = false
