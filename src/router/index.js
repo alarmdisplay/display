@@ -4,9 +4,8 @@ import Overview from '@/components/Overview'
 import AnnouncementList from '@/components/content/announcements/List'
 import AnnouncementCreateForm from '@/components/content/announcements/CreateForm'
 import AnnouncementEditForm from '@/components/content/announcements/EditForm'
-import DisplayList from '@/components/displays/DisplayList'
-import DisplayCreateForm from '@/components/displays/DisplayCreateForm'
-import DisplayEditForm from '@/components/displays/DisplayEditForm'
+import DisplayForm from '@/views/displays/DisplayForm'
+import DisplayList from '@/views/displays/DisplayList'
 import ViewList from '@/components/views/ViewList'
 import ViewEditForm from '@/components/views/ViewEditForm'
 
@@ -32,15 +31,13 @@ const routes = [
   },
   {
     path: '/displays',
+    name: 'display-list',
     component: DisplayList
   },
   {
-    path: '/displays/new',
-    component: DisplayCreateForm
-  },
-  {
     path: '/displays/:id',
-    component: DisplayEditForm,
+    name: 'display-form',
+    component: DisplayForm,
     props: true
   },
   {

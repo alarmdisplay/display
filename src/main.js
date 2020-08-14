@@ -14,11 +14,11 @@ Vue.use(VueMoment, { moment })
 
 // Import Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faArrowsAlt, faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faEnvelope, faExpandAlt, faHome, faLock, faPencilAlt, faPlusCircle, faSpinner, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { faArrowsAlt, faBars, faBullhorn, faChevronLeft, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faEnvelope, faExpandAlt, faHome, faLock, faPencilAlt, faPlus, faSpinner, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 // Configure Font Awesome
-library.add(faArrowsAlt, faBars, faBullhorn, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faEnvelope, faExpandAlt, faHome, faLock, faPencilAlt, faPlusCircle, faSpinner, faTimes, faTrashAlt)
+library.add(faArrowsAlt, faBars, faBullhorn, faChevronLeft, faClock, faCloudShowersHeavy, faColumns, faCube, faCubes, faDesktop, faEnvelope, faExpandAlt, faHome, faLock, faPencilAlt, faPlus, faSpinner, faTimes, faTrashAlt)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.config.productionTip = false

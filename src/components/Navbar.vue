@@ -15,7 +15,7 @@
                     <span>Home</span>
                 </router-link>
 
-                <router-link class="navbar-item is-tab" to="/displays">
+                <router-link class="navbar-item is-tab" :to="{ name: 'display-list' }">
                     <span class="icon"><font-awesome-icon icon="desktop"/></span>
                     <span>Displays</span>
                 </router-link>
