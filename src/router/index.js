@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Overview from '@/components/Overview'
+import About from '@/views/About'
 import AnnouncementList from '@/views/content/AnnouncementList'
 import AnnouncementForm from '@/views/content/AnnouncementForm'
 import DisplayForm from '@/views/displays/DisplayForm'
@@ -14,6 +15,11 @@ const routes = [
   {
     path: '/',
     component: Overview
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: About
   },
   {
     path: '/announcements',
