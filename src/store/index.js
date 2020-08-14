@@ -4,6 +4,7 @@ import { FeathersVuex } from '@/feathers-client'
 import auth from './store.auth'
 
 import announcements from './services/announcements'
+import apiKeys from './services/api-keys'
 import contentSlotOptions from './services/content-slot-options'
 import contentSlots from './services/content-slots'
 import displays from './services/displays'
@@ -25,6 +26,7 @@ export default new Vuex.Store({
   plugins: [
     auth,
     announcements,
+    apiKeys,
     contentSlotOptions,
     contentSlots,
     displays,

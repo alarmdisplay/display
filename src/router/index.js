@@ -4,8 +4,12 @@ import Overview from '@/components/Overview'
 import About from '@/views/About'
 import AnnouncementList from '@/views/content/AnnouncementList'
 import AnnouncementForm from '@/views/content/AnnouncementForm'
+import ApiKeyForm from '@/views/admin/ApiKeyForm'
+import ApiKeyList from '@/views/admin/ApiKeyList'
 import DisplayForm from '@/views/displays/DisplayForm'
 import DisplayList from '@/views/displays/DisplayList'
+import UserForm from '@/views/admin/UserForm'
+import UserList from '@/views/admin/UserList'
 import ViewList from '@/components/views/ViewList'
 import ViewEditForm from '@/components/views/ViewEditForm'
 
@@ -50,6 +54,26 @@ const routes = [
     path: '/displays/:display_id/views/:view_id',
     component: ViewEditForm,
     props: true
+  },
+  {
+    path: '/admin/users',
+    name: 'user-list',
+    component: UserList
+  },
+  {
+    path: '/admin/users/:id',
+    name: 'user-form',
+    component: UserForm
+  },
+  {
+    path: '/admin/api-keys',
+    name: 'api-key-list',
+    component: ApiKeyList
+  },
+  {
+    path: '/admin/api-keys/:id',
+    name: 'api-key-form',
+    component: ApiKeyForm
   }
 ]
 
