@@ -1,5 +1,6 @@
 import {HookContext} from '@feathersjs/feathers';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function allowApiKey(options = {}) {
   return async (context: HookContext): Promise<HookContext> => {
     const { params } = context;

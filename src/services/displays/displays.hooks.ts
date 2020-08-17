@@ -1,6 +1,5 @@
 import * as authentication from '@feathersjs/authentication';
 import { allowApiKey } from '../../hooks/allowApiKey';
-// @ts-ignore
 import { shallowPopulate } from 'feathers-shallow-populate';
 // Don't remove this comment. It's needed to format import lines nicely.
 
