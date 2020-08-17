@@ -22,6 +22,7 @@ declare module '../../declarations' {
     detail: string
     locality: string
     incidentId?: number
+    hubLocationId?: number
   }
 }
 

@@ -15,4 +15,4 @@ RUN npm install --only=production --no-audit
 # run as unprivileged user
 USER node:node
 
-CMD ["node", "src/index.js"]
+CMD ["node", "lib/index.js"]

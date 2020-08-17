@@ -4,6 +4,9 @@ import { allowApiKey } from '../../hooks/allowApiKey';
 
 const { authenticate } = authentication.hooks;
 
+// TODO make sure that incidents that are mirrored from the Hub do not get modified
+// TODO make sure that local incidents cannot be assigned a hubIncidentId
+
 export default {
   before: {
     all: [ allowApiKey(), authenticate('jwt', 'api-key') ],

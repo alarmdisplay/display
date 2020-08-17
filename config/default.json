@@ -28,5 +28,7 @@
     }
   },
   "mysql": "mysql://root:@localhost:3306/display_backend",
-  "db_prefix": "display"
+  "db_prefix": "display",
+  "hub_host": "",
+  "hub_api_key": ""
 }

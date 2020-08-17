@@ -53,7 +53,7 @@ export default {
 function enforceNameOnly(context: HookContext): HookContext {
   // Make sure a name was submitted
   if (!context.data.name || context.data.name === '') {
-    throw new BadRequest('A name for the token must be provided')
+    throw new BadRequest('A name for the token must be provided');
   }
 
   // Restrict the submitted data to only the name

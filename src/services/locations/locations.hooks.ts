@@ -3,6 +3,9 @@ import * as authentication from '@feathersjs/authentication';
 
 const { authenticate } = authentication.hooks;
 
+// TODO make sure that locations that are mirrored from the Hub do not get modified
+// TODO make sure that local locations cannot be assigned a hubLocationId
+
 export default {
   before: {
     all: [ authenticate('jwt') ],

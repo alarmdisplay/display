@@ -23,13 +23,15 @@ declare module '../../declarations' {
     description: string
     status: 'Actual'|'Exercise'|'Test'
     category: 'Geo'|'Met'|'Safety'|'Security'|'Rescue'|'Fire'|'Health'|'Env'|'Transport'|'Infra'|'CBRNE'|'Other'
+    hubIncidentId?: number
   }
 }
 
 export default function (app: Application): void {
   const options = {
     Model: createModel(app),
-    paginate: app.get('paginate')
+    paginate: app.get('paginate'),
+    multi: ['remove']
   };
 
   // Initialize our service with any options it requires

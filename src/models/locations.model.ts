@@ -41,6 +41,10 @@ export default function (app: Application): typeof Model {
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: ''
+    },
+    hubLocationId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     hooks: {
