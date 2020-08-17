@@ -4,8 +4,8 @@ node_js:
   - 12
   - 10
 
-services:
-  - mariadb
+addons:
+  mariadb: '10.0'
 
 branches:
   except:
