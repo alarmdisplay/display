@@ -23,6 +23,7 @@
           </button>
         </div>
       </article>
+      <p class="has-text-right"><small>Stand: {{ announcement.updatedAt | moment('LL') }}</small></p>
     </div>
   </div>
 </template>
