@@ -18,7 +18,7 @@
         <div class="media-right">
           <div class="field is-grouped">
             <p class="control">
-              <button class="button is-outlined" title="Konto bearbeiten" @click="$router.push({ path: `${display.id}/views`, append: true })">
+              <button class="button is-outlined" title="Ansichten bearbeiten" @click="$router.push({ name: 'view-list', params: { display_id: `${display.id}` } })">
                 <span class="icon">
                     <font-awesome-icon icon="columns"/>
                 </span>
@@ -26,7 +26,7 @@
               </button>
             </p>
             <p class="control">
-              <button class="button is-small is-danger is-outlined" title="Display entfernen" @click="display.remove()">
+              <button class="button is-danger is-outlined" title="Display entfernen" @click="display.remove()">
             <span class="icon">
               <font-awesome-icon icon="trash-alt"/>
             </span>
