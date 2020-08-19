@@ -5,8 +5,6 @@
 </template>
 
 <script>
-    import {makeFindMixin} from "feathers-vuex";
-
     /**
      * Possible options:
      * - areaCode: An ISO 3166-2 code for one of the 16 german states, 'DE' for entire Germany, or (only with
@@ -19,7 +17,12 @@
         name: "DWDWarningMap",
         computed: {
             areaCode: function () {
-                return this.options.find(option => option.key === 'areaCode').value || 'DE';
+              let option = this.options.find(option => option.key === 'areaCode');
+              if (!option) {
+                return 'DE'
+              }
+
+              return option.value;
             },
             baseUrl: function () {
                 switch (this.mapType) {
@@ -35,10 +38,12 @@
                 return `${this.baseUrl}?${this.cacheBustingQuery}`;
             },
             mapType: function () {
-                return this.options.find(option => option.key === 'mapType').value || 'area';
-            },
-            optionsParams() {
-              return { query: { contentSlotId: this.instanceId } }
+              let option = this.options.find(option => option.key === 'mapType');
+              if (!option) {
+                return 'area'
+              }
+
+              return option.value;
             },
             schilderCode: function () {
 
@@ -115,15 +120,6 @@
                 cacheBustingQuery: Date.now()
             }
         },
-        mixins: [
-          makeFindMixin({
-            service: 'content-slot-options',
-            name: 'options',
-            params: 'optionsParams',
-            local: true,
-            qid: 'dwdOptions'
-          })
-        ],
         mounted: function() {
             // update the query part of the URL every 10 minutes, so it gets reloaded
             setInterval(() => {
@@ -131,7 +127,11 @@
             }, 600000);
         },
         props: {
-            instanceId: Number
+            instanceId: Number,
+            options: {
+              type: Array,
+              defaultValue: []
+            }
         }
     }
 </script>

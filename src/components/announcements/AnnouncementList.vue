@@ -1,7 +1,7 @@
 <template>
     <div class="gridview-component">
         <div class="announcement-list">
-            <p class="header">Ankündigungen</p>
+            <p class="header">{{ title }}</p>
             <ul v-if="activeAnnouncements.length > 0">
                 <Item v-for="announcement in activeAnnouncements" v-bind:key="announcement.id"
                       v-bind:announcement="announcement"/>
@@ -34,6 +34,14 @@
             },
             announcementsParams() {
                 return { query: {} }
+            },
+            title () {
+              const option = this.options.find(option => option.key === 'title');
+              if (!option) {
+                return 'Ankündigungen'
+              }
+
+              return option.value;
             }
         },
         mixins: [
@@ -44,7 +52,8 @@
             })
         ],
         props: {
-            instanceId: Number
+            instanceId: Number,
+            options: Array
         }
     }
 </script>
