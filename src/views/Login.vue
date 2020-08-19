@@ -7,6 +7,9 @@
             <p class="subtitle">
                 Bitte einloggen
             </p>
+
+            <ErrorMessage :form-error="loginError"/>
+
             <form @submit.prevent="login">
                 <div class="field">
                     <label class="label" for="email">
@@ -43,10 +46,15 @@
 </template>
 
 <script>
+import ErrorMessage from '@/components/ErrorMessage'
 export default {
   name: 'Login',
+  components: {
+    ErrorMessage
+  },
   data () {
     return {
+      loginError: null,
       email: '',
       password: ''
     }
@@ -54,6 +62,7 @@ export default {
   methods: {
     login: function () {
       this.$store.dispatch('auth/authenticate', { email: this.email, password: this.password, strategy: 'local' })
+        .catch(reason => { this.loginError = reason })
     }
   }
 }
