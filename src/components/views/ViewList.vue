@@ -3,33 +3,22 @@
       <div class="container">
         <h1 class="title">Ansichten f&uuml;r Display {{ displayId || '??' }}</h1>
 
-        <div v-if="error" class="error">
-          <strong>{{ error.title || 'Fehler' }}</strong>
-          <p>{{ error.message }}</p>
-        </div>
-
-        <div v-if="loading">
-          <p>
-            <font-awesome-icon icon="spinner" spin/>
-            Daten werden abgerufen ...
-          </p>
-        </div>
-
         <div v-if="views.length">
           <h2 class="subtitle">Ruhemodus</h2>
           <div class="content">
             Sofern kein Alarm vorliegt, befindet sich das Display im Ruhemodus.
           </div>
+          <div class="buttons">
+            <button type="button" class="button has-icons-left" @click="addView()">
+              <span class="icon">
+              <font-awesome-icon icon="plus"/>
+              </span>
+              <span>Ansicht hinzufügen</span>
+            </button>
+          </div>
           <div class="columns">
             <div class="column is-one-third" v-for="view in idleScreenViews" :key="view.id">
-              <ViewListItem :view="view"/>
-            </div>
-            <div class="column is-one-third">
-              <button type="button" class="button" @click="addView()">
-                <font-awesome-icon icon="plus" size="2x"/>
-                <br>
-                Ansicht hinzufügen
-              </button>
+              <ViewListItem :view="view" :removable="views.length > 1"/>
             </div>
           </div>
           <div class="content">
@@ -38,7 +27,7 @@
 
           <h2 class="subtitle">Alarmbildschirm</h2>
           <div class="content">
-            Für den Alarmbildschirm besteht noch keine Möglichkeit zur Konfiguration.
+            Für den Alarmbildschirm besteht aktuell noch keine Möglichkeit zur Konfiguration.
           </div>
         </div>
         </div>
@@ -65,12 +54,6 @@ export default {
   },
   components: {
     ViewListItem
-  },
-  data: function () {
-    return {
-      error: null,
-      loading: false
-    }
   },
   methods: {
     addView () {
