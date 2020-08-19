@@ -1,9 +1,9 @@
 <template>
-    <div class="w3-card view">
-        <div class="w3-container preview-container">
+    <div class="card view">
+        <div class="card-content preview-container">
             <ViewPreview :view-data="view"/>
         </div>
-        <router-link :to="`/displays/${view.displayId}/views/${view.id}`" tag="button" class="w3-button w3-block">
+        <router-link :to="`/displays/${view.displayId}/views/${view.id}`" tag="button" class="button">
             <font-awesome-icon icon="pencil-alt"/> Bearbeiten
         </router-link>
     </div>

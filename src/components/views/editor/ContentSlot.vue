@@ -4,7 +4,7 @@
             <font-awesome-icon icon="arrows-alt" />
         </div>
         <div class="content">
-            <font-awesome-icon :icon="getIcon(contentSlot.componentType)" size="lg"/><br>
+            <font-awesome-icon :icon="getIcon(contentSlot.component)" size="lg"/><br>
         </div>
         <div class="icon resize-handle" draggable="true" @dragstart="startResize" @dragend="onDragEnd" title="Ziehen, um die Größe der Komponente zu verändern">
             <font-awesome-icon icon="expand-alt" rotation="90" />

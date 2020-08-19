@@ -47,8 +47,7 @@ const routes = [
   },
   {
     path: '/displays/:display_id/views',
-    component: ViewList,
-    props: true
+    component: ViewList
   },
   {
     path: '/displays/:display_id/views/:view_id',

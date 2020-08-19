@@ -16,11 +16,23 @@
           </div>
         </div>
         <div class="media-right">
-          <button class="button is-small is-danger is-outlined" title="Display entfernen" @click="display.remove()">
+          <div class="field is-grouped">
+            <p class="control">
+              <button class="button is-outlined" title="Konto bearbeiten" @click="$router.push({ path: `${display.id}/views`, append: true })">
+                <span class="icon">
+                    <font-awesome-icon icon="columns"/>
+                </span>
+                <span>Ansichten</span>
+              </button>
+            </p>
+            <p class="control">
+              <button class="button is-small is-danger is-outlined" title="Display entfernen" @click="display.remove()">
             <span class="icon">
               <font-awesome-icon icon="trash-alt"/>
             </span>
-          </button>
+              </button>
+            </p>
+          </div>
         </div>
       </article>
     </div>

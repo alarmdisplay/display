@@ -1,87 +1,115 @@
 <template>
-    <div>
-        <header class="w3-container">
-            <h2>Ansicht bearbeiten</h2>
-        </header>
-        <div class="w3-container">
-            <div v-if="error" class="error">
-                <strong>{{ error.title || 'Fehler' }}</strong>
-                <p>{{ error.message }}</p>
-            </div>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Ansicht bearbeiten</h1>
 
-            <div v-if="loading">
-                <p>
-                    <font-awesome-icon icon="spinner" spin /> Daten werden abgerufen ...
-                </p>
-            </div>
-
-            <div v-if="viewData">
-                <form class="w3-container" @submit.prevent="saveChanges">
-                    <div class="w3-row w3-margin-bottom">
-                        <div class="w3-twothird preview-container">
-                            <GridEditor :view-data="viewData" @content-slot-moved="onContentSlotMoved" @content-slot-resized="onContentSlotResized" @content-slot-removed="removeContentSlot"/>
-                        </div>
-                        <div class="w3-third w3-padding w3-right">
-                            <fieldset>
-                                <legend>Raster</legend>
-                                <label for="input-columns">Spalten:</label>
-                                <input id="input-columns" type="number" min="1" class="w3-input w3-border" v-model.number="viewData.columns">
-                                <label for="input-rows">Zeilen:</label>
-                                <input id="input-rows" type="number" min="1" class="w3-input w3-border" v-model.number="viewData.rows">
-                            </fieldset>
-                            <p>
-                                Die Komponenten können auf einem Raster angeordnet werden, wobei sie mehrere Spalten und/oder Zeilen überspannen können.
-                            </p>
-                        </div>
-                    </div>
-
-                    <fieldset>
-                        <legend>Komponente hinzufügen</legend>
-                        <label for="select-component-to-add">Verf&uuml;gbare Komponenten: </label>
-                        <select id="select-component-to-add">
-                            <option value="">Komponente wählen</option>
-                            <option v-for="componentType in availableComponentTypes" :key="`add-${componentType}`" :value="componentType">{{ getComponentName(componentType) }}</option>
-                        </select>
-                        <button type="button" @click="addContentSlot" class="w3-btn w3-gray w3-margin-left">Hinzuf&uuml;gen</button>
-                    </fieldset>
-
-                    <div class="w3-row">
-                        <div class="w3-third w3-padding">
-                            <button type="button" class="w3-btn w3-block w3-gray" @click="maybeCancel">Abbrechen</button>
-                        </div>
-                        <div class="w3-third w3-padding">
-                            <button type="button" class="w3-btn w3-block w3-red" @click="deleteView">Löschen</button>
-                        </div>
-                        <div class="w3-third w3-padding">
-                            <button type="submit" class="w3-btn w3-block w3-green" :disabled="!saveButtonEnabled">Speichern</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <BackButton/>
+          </div>
         </div>
+        <div class="level-right">
+          <div class="level-item">
+            <button type="button" class="button is-success" @click="saveChanges" :disabled="!saveButtonEnabled">Speichern</button>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="error" class="message is-danger">
+        <div class="message-body">
+          <strong>{{ error.title || 'Fehler' }}</strong>
+          <p>{{ error.message }}</p>
+        </div>
+      </div>
+
+      <div v-if="loading">
+        <p>
+          <font-awesome-icon icon="spinner" spin/>
+          Daten werden abgerufen ...
+        </p>
+      </div>
+
+      <div class="columns" v-if="view">
+        <div class="column is-two-thirds">
+          <div class="preview-container">
+            <GridEditor :view-data="view" @content-slot-moved="onContentSlotMoved" @content-slot-resized="onContentSlotResized" @content-slot-removed="removeContentSlot"/>
+          </div>
+        </div>
+
+        <div class="column is-one-third">
+          <div class="panel">
+            <div class="panel-heading">Raster</div>
+            <div class="panel-block">
+              <p>
+                Die Komponenten können auf einem Raster angeordnet werden, wobei die Anzahl der Spalten und Zeilen die kleinstmögliche Größe einer Komponente bestimmen. Je mehr Spalten und Zeilen es gibt, desto feiner kann das Layout bestimmt werden. Komponenten können sich über mehrere Zeilen und/oder Spalten erstrecken.
+              </p>
+            </div>
+            <div class="panel-block">
+              <p class="control">
+                <label class="label" for="input-columns">Spalten:</label>
+                <input id="input-columns" type="number" min="1" class="input" v-model.number="view.columns">
+              </p>
+            </div>
+            <div class="panel-block">
+              <p class="control">
+                <label class="label" for="input-rows">Zeilen:</label>
+                <input id="input-rows" type="number" min="1" class="input" v-model.number="view.rows">
+              </p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-heading">Komponente hinzufügen</div>
+            <div class="panel-block">
+              <div class="control">
+                <label class="label is-hidden" for="select-component-to-add">Verf&uuml;gbare Komponenten:</label>
+                <div class="select">
+                  <select id="select-component-to-add">
+                    <option value="">Komponente wählen</option>
+                    <option v-for="componentType in availableComponentTypes" :key="`add-${componentType}`"
+                            :value="componentType">{{ getComponentName(componentType) }}
+                    </option>
+                  </select>
+                </div>
+                <button type="button" @click="addContentSlot" class="button">Hinzuf&uuml;gen</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
+  </section>
 </template>
 
 <script>
-import axios from 'axios'
 import GridEditor from '@/components/views/editor/GridEditor'
+import BackButton from '@/components/BackButton'
 
 export default {
   name: 'ViewEditForm',
   data: function () {
     return {
       availableComponentTypes: ['AnnouncementList', 'DWDWarningMap', 'Clock'],
-      viewData: null,
       error: null,
       loading: false,
       saveButtonEnabled: false
     }
   },
-  components: {
-    GridEditor
+  computed: {
+    viewId () {
+      return parseInt(this.$route.params.view_id)
+    },
+    view () {
+      const { View } = this.$FeathersVuex.api
+      // Get the Display for the given ID or create a new one if the ID is 'new'
+      return this.id === 'new' ? new View() : View.getFromStore(this.viewId)
+    }
   },
-  created: function () {
-    this.fetchData()
+  components: {
+    BackButton,
+    GridEditor
   },
   methods: {
     addContentSlot: function () {
@@ -103,25 +131,6 @@ export default {
       this.$store.dispatch('deleteView', { displayId: this.display_id, viewId: this.view_id })
         .then(() => {
           this.$router.replace(`/displays/${this.display_id}/views`)
-        })
-    },
-    fetchData: function () {
-      this.viewData = null
-      this.loading = true
-      this.error = ''
-      axios.get(`/api/v1/displays/${this.display_id}/views/${this.view_id}`)
-        .then(response => {
-          this.viewData = response.data
-          this.saveButtonEnabled = true
-        })
-        .catch(error => {
-          this.error = {
-            title: 'Die Daten konnten nicht abgerufen werden',
-            message: error.message
-          }
-        })
-        .finally(() => {
-          this.loading = false
         })
     },
     getComponentName: function (componentType) {
@@ -175,23 +184,25 @@ export default {
       this.viewData.contentSlots = this.viewData.contentSlots.filter(contentSlot => contentSlot.id !== id)
     },
     saveChanges: function () {
-      this.saveButtonEnabled = false
-      this.$store.dispatch('updateView', { displayId: this.display_id, viewId: this.view_id, data: this.viewData })
-        .then(() => {
-          this.$router.replace(`/displays/${this.display_id}/views`)
-        })
-        .catch(error => {
-          this.error = {
-            title: 'Die Daten konnten nicht gespeichert werden',
-            message: error.message
-          }
-          this.saveButtonEnabled = true
-        })
+      // TODO
     }
   },
-  props: ['display_id', 'view_id'],
   watch: {
-    $route: 'fetchData'
+    viewId: {
+      handler (value) {
+        if (value === 'new') {
+          return
+        }
+        const { View } = this.$FeathersVuex.api
+        const existingRecord = View.getFromStore(value)
+
+        // If the record was not in the store, we have to fetch it from the server
+        if (!existingRecord) {
+          View.get(value)
+        }
+      },
+      immediate: true // Run this handler when the component is created
+    }
   }
 }
 </script>

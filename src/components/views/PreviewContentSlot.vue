@@ -1,7 +1,7 @@
 <template>
     <div class="preview-content-slot" :style="gridItemStyle">
         <div class="content">
-            <font-awesome-icon :icon="getIcon(contentSlot.componentType)"/>
+            <font-awesome-icon :icon="getIcon(contentSlot.component)"/>
         </div>
     </div>
 </template>
