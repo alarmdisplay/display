@@ -31,7 +31,7 @@
   "scripts": {
     "test": "npm run compile && npm run jest",
     "lint": "eslint src/. test/. --config .eslintrc.json --ext .ts --fix",
-    "dev": "ts-node-dev --no-notify src/",
+    "dev": "ts-node-dev --no-notify --rs src/",
     "start": "npm run compile && node lib/",
     "jest": "jest  --forceExit",
     "compile": "shx rm -rf lib/ && tsc"
