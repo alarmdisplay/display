@@ -1,7 +1,7 @@
 <template>
     <div class="editor">
-        <div ref="grid" class="grid" :style="`grid-template-columns: repeat(${viewData.columns}, 1fr); grid-template-rows: repeat(${viewData.rows}, 1fr);`">
-            <ContentSlot v-for="contentSlot in viewData.contentSlots" :key="contentSlot.id" :content-slot="contentSlot" @action-started="onActionStarted" @drag-ended="onDragEnded" @remove="onRemoveContentSlot"/>
+        <div ref="grid" class="grid" :style="`grid-template-columns: repeat(${columns}, 1fr); grid-template-rows: repeat(${rows}, 1fr);`">
+            <ContentSlot v-for="contentSlot in contentSlots" :key="contentSlot.id" :content-slot="contentSlot" @action-started="onActionStarted" @drag-ended="onDragEnded" @remove="onRemoveContentSlot"/>
             <div v-show="targetIndicator" ref="target-indicator" class="target-indicator" :style="targetIndicatorStyle"></div>
             <div v-show="action !== null" class="drop-zone" @drop="onDrop($event)" @dragenter="onDragEnter($event)" @dragover="onDragOver($event)" @dragleave="onDragLeave($event)"></div>
         </div>
@@ -20,10 +20,10 @@ export default {
   },
   computed: {
     columnWidth: function () {
-      return this.$refs.grid.clientWidth / this.viewData.columns
+      return this.$refs.grid.clientWidth / this.columns
     },
     rowHeight: function () {
-      return this.$refs.grid.clientHeight / this.viewData.rows
+      return this.$refs.grid.clientHeight / this.rows
     },
     targetIndicatorStyle: function () {
       if (!this.targetIndicator) {
@@ -37,8 +37,8 @@ export default {
       let style = `left: ${left}px; top: ${top}px; width: ${width}px; height: ${height}px`
 
       // If the content slot was dropped at the current position, it would be partially outside the grid
-      if (this.targetIndicator.columnStart + this.targetIndicator.columns > this.viewData.columns + 1 ||
-        this.targetIndicator.rowStart + this.targetIndicator.rows > this.viewData.rows + 1) {
+      if (this.targetIndicator.columnStart + this.targetIndicator.columns > this.columns + 1 ||
+        this.targetIndicator.rowStart + this.targetIndicator.rows > this.rows + 1) {
         style += '; border-color: red'
       }
 
@@ -94,7 +94,11 @@ export default {
     },
     onDrop: function (event) {
       // Get the content slot object by the ID we stored at the beginning of the action
-      const contentSlot = this.viewData.contentSlots.find(contentSlot => contentSlot.id === this.actionId)
+      let contentSlot = this.contentSlots.find(contentSlot => contentSlot.id === this.actionId)
+      if (!contentSlot) {
+        contentSlot = this.contentSlots.find(contentSlot => contentSlot.__id === this.actionId)
+      }
+
       if (!contentSlot) {
         return
       }
@@ -105,25 +109,41 @@ export default {
       const y = event.clientY - clientRect.top
 
       // Calculate in which column and row the item has been dropped
-      const columnWidth = clientRect.width / this.viewData.columns
-      const rowHeight = clientRect.height / this.viewData.rows
+      const columnWidth = clientRect.width / this.columns
+      const rowHeight = clientRect.height / this.rows
       const column = Math.floor(x / columnWidth) + 1
       const row = Math.floor(y / rowHeight) + 1
 
       // If the content slot would be partially outside the grid, do not accept the drop
-      if (this.action === 'move' && (column + (contentSlot.columnEnd - contentSlot.columnStart) > this.viewData.columns + 1 ||
-        row + (contentSlot.rowEnd - contentSlot.rowStart) > this.viewData.rows + 1)) {
+      if (this.action === 'move' && (column + (contentSlot.columnEnd - contentSlot.columnStart) > this.columns + 1 ||
+        row + (contentSlot.rowEnd - contentSlot.rowStart) > this.rows + 1)) {
         return
       }
 
       if (this.action === 'move' && (contentSlot.columnStart !== column || contentSlot.rowStart !== row)) {
-        this.$emit('content-slot-moved', { id: contentSlot.id, newColumn: column, newRow: row })
+        const columnDifference = column - contentSlot.columnStart
+        const rowDifference = row - contentSlot.rowStart
+        contentSlot.columnStart = column
+        contentSlot.rowStart = row
+        contentSlot.columnEnd += columnDifference
+        contentSlot.rowEnd += rowDifference
       } else if (this.action === 'resize' && (contentSlot.columnEnd !== column + 1 || contentSlot.rowEnd !== row + 1)) {
-        this.$emit('content-slot-resized', { id: contentSlot.id, newColumn: column + 1, newRow: row + 1 })
+        const newColumn = column + 1
+        const newRow = row + 1
+
+        // Only accept a resize, if the new values make sense (i.e. the end values are greater than the start values)
+        if (newColumn >= contentSlot.columnStart + 1 && newRow >= contentSlot.rowStart + 1) {
+          contentSlot.columnEnd = newColumn
+          contentSlot.rowEnd = newRow
+        }
       }
     },
     onActionStarted: function (action, contentSlotId) {
-      const contentSlot = this.viewData.contentSlots.find(contentSlot => contentSlot.id === contentSlotId)
+      let contentSlot = this.contentSlots.find(contentSlot => contentSlot.id === contentSlotId)
+      if (!contentSlot) {
+        contentSlot = this.contentSlots.find(contentSlot => contentSlot.__id === contentSlotId)
+      }
+
       if (!contentSlot) {
         return
       }
@@ -142,7 +162,18 @@ export default {
     }
   },
   props: {
-    viewData: Object
+    contentSlots: {
+      type: Array,
+      required: true
+    },
+    columns: {
+      type: Number,
+      required: true
+    },
+    rows: {
+      type: Number,
+      required: true
+    }
   }
 }
 </script>

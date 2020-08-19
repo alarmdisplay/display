@@ -11,7 +11,7 @@ import DisplayList from '@/views/displays/DisplayList'
 import UserForm from '@/views/admin/UserForm'
 import UserList from '@/views/admin/UserList'
 import ViewList from '@/components/views/ViewList'
-import ViewEditForm from '@/components/views/ViewEditForm'
+import ViewForm from '@/views/displays/ViewForm'
 
 Vue.use(VueRouter)
 
@@ -47,12 +47,13 @@ const routes = [
   },
   {
     path: '/displays/:display_id/views',
+    name: 'view-list',
     component: ViewList
   },
   {
     path: '/displays/:display_id/views/:view_id',
-    component: ViewEditForm,
-    props: true
+    name: 'view-form',
+    component: ViewForm
   },
   {
     path: '/admin/users',

@@ -14,9 +14,10 @@ class ContentSlot extends BaseModel {
   }
 
   static setupInstance (data, { models }) {
-    if (data.options && Array.isArray(data.options)) {
-      data.options = data.options.map(option => new models.api.ContentSlotOption(option))
+    if (!data.options || !Array.isArray(data.options)) {
+      data.options = []
     }
+    data.options = data.options.map(option => new models.api.ContentSlotOption(option))
 
     return data
   }
@@ -44,8 +45,8 @@ feathersClient.service(servicePath).hooks({
     all: [],
     find: [],
     get: [],
-    create: [],
-    update: [],
+    create: [(context) => console.log('content-slot created', context.result)],
+    update: [(context) => console.log('content-slot updated', context.result)],
     patch: [],
     remove: []
   },

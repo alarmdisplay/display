@@ -33,8 +33,7 @@
             </div>
           </div>
           <div class="content">
-            Wenn mehr als eine Anzeige konfiguriert ist, werden die Ansichten im Wechsel angezeigt.
-            Jede Ansicht wird dabei für 1 Minute angezeigt.
+            Wenn mehr als eine Anzeige konfiguriert ist, werden die Ansichten im Wechsel angezeigt, jeweils für eine Minute.
           </div>
 
           <h2 class="subtitle">Alarmbildschirm</h2>

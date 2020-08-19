@@ -9,7 +9,7 @@
         <div class="icon resize-handle" draggable="true" @dragstart="startResize" @dragend="onDragEnd" title="Ziehen, um die Größe der Komponente zu verändern">
             <font-awesome-icon icon="expand-alt" rotation="90" />
         </div>
-        <button type="button" class="icon remove-icon" @click.stop.prevent="$emit('remove', contentSlot.id)" title="Komponente entfernen">
+        <button type="button" class="icon remove-icon" @click.stop.prevent="$emit('remove', contentSlot.id || this.contentSlot.__id)" title="Komponente entfernen">
             <font-awesome-icon icon="trash-alt"/>
         </button>
     </div>
@@ -40,10 +40,10 @@ export default {
       this.$emit('drag-ended')
     },
     startMove: function () {
-      this.$emit('action-started', 'move', this.contentSlot.id)
+      this.$emit('action-started', 'move', this.contentSlot.id || this.contentSlot.__id)
     },
     startResize: function () {
-      this.$emit('action-started', 'resize', this.contentSlot.id)
+      this.$emit('action-started', 'resize', this.contentSlot.id || this.contentSlot.__id)
     }
   },
   props: {
