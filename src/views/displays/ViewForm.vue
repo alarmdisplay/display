@@ -60,10 +60,7 @@ export default {
       this.formError = null
       save()
         .then(() => {
-          console.log('content slots:', contentSlots)
-          console.log('original content slots:', this.viewToEdit.contentSlots)
           const contentSlotIdsToSave = contentSlots.filter(contentSlot => contentSlot.id !== undefined).map(contentSlot => contentSlot.id)
-          console.log('Saving the Content Slots', contentSlotIdsToSave)
 
           const removedContentSlots = this.viewToEdit.contentSlots.filter(contentSlot => {
             if (contentSlot.__isTemp) {
@@ -72,7 +69,6 @@ export default {
 
             return !contentSlotIdsToSave.includes(contentSlot.id)
           })
-          console.log('removed', removedContentSlots)
           removedContentSlots.forEach(contentSlot => contentSlot.remove())
 
           // Save the remaining content slots
