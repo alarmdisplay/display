@@ -45,8 +45,8 @@ feathersClient.service(servicePath).hooks({
     all: [],
     find: [],
     get: [],
-    create: [(context) => console.log('content-slot created', context.result)],
-    update: [(context) => console.log('content-slot updated', context.result)],
+    create: [],
+    update: [],
     patch: [],
     remove: []
   },
