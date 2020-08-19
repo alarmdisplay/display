@@ -1,17 +1,22 @@
 <template>
     <div class="content-slot" :style="gridItemStyle">
-        <div class="icon drag-handle" draggable="true" @dragstart="startMove" @dragend="onDragEnd" title="Ziehen, um die Komponente zu verschieben">
+        <div class="slot-icon drag-handle" draggable="true" @dragstart="startMove" @dragend="onDragEnd" title="Ziehen, um die Komponente zu verschieben">
             <font-awesome-icon icon="arrows-alt" />
         </div>
         <div class="content">
-            <font-awesome-icon :icon="getIcon(contentSlot.component)" size="lg"/><br>
+          <div class="has-text-centered">
+            <span class="icon">
+              <font-awesome-icon :icon="getIcon(contentSlot.component)" size="lg"/>
+            </span>
+            <p>{{ getComponentName(contentSlot.component) }}</p>
+          </div>
         </div>
-        <div class="icon resize-handle" draggable="true" @dragstart="startResize" @dragend="onDragEnd" title="Ziehen, um die Größe der Komponente zu verändern">
+        <div class="slot-icon resize-handle" draggable="true" @dragstart="startResize" @dragend="onDragEnd" title="Ziehen, um die Größe der Komponente zu verändern">
             <font-awesome-icon icon="expand-alt" rotation="90" />
         </div>
-        <button type="button" class="icon remove-icon" @click.stop.prevent="$emit('remove', contentSlot.id || this.contentSlot.__id)" title="Komponente entfernen">
+        <div class="slot-icon remove-icon" @click.stop.prevent="$emit('remove', contentSlot.id || this.contentSlot.__id)" title="Komponente entfernen">
             <font-awesome-icon icon="trash-alt"/>
-        </button>
+        </div>
     </div>
 </template>
 
@@ -24,6 +29,18 @@ export default {
     }
   },
   methods: {
+    getComponentName: function (componentType) {
+      switch (componentType) {
+        case 'AnnouncementList':
+          return 'Ankündigungen'
+        case 'Clock':
+          return 'Uhr'
+        case 'DWDWarningMap':
+          return 'DWD-Warnkarte'
+        default:
+          return componentType
+      }
+    },
     getIcon: function (componentType) {
       switch (componentType) {
         case 'AnnouncementList':
@@ -68,7 +85,7 @@ export default {
     width: 100%;
 }
 
-.icon {
+.slot-icon {
     visibility: hidden;
     position: absolute;
     height: 1.6em;
@@ -78,11 +95,11 @@ export default {
     z-index: 2;
 }
 
-.content-slot:hover .icon {
+.content-slot:hover .slot-icon {
     visibility: visible;
 }
 
-.icon:hover {
+.slot-icon:hover {
     background-color: rgba(0, 0, 0, 0.3);
 }
 

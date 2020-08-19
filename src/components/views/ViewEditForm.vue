@@ -92,7 +92,7 @@ export default {
         case 'DWDWarningMap':
           return 'DWD-Warnkarte'
         default:
-          return this.componentObject.type
+          return componentType
       }
     },
     getIcon: function (componentType) {
