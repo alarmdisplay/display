@@ -13,7 +13,11 @@
               <button class="delete" aria-label="close" @click.prevent="closeOptionsModal"></button>
             </header>
             <section class="modal-card-body">
-              <DWDWarningMapOptions v-if="selectedContentSlot && selectedContentSlot.component === 'DWDWarningMap'" :options="selectedContentSlot.options"/>
+              <p v-if="selectedContentSlot === null">
+                Keine Komponente ausgewählt
+              </p>
+              <AnnouncementListOptions v-else-if="selectedContentSlot.component === 'AnnouncementList'" :options="selectedContentSlot.options"/>
+              <DWDWarningMapOptions v-else-if="selectedContentSlot.component === 'DWDWarningMap'" :options="selectedContentSlot.options"/>
               <p v-else>
                 Für diese Komponente gibt es keine Optionen
               </p>
@@ -25,6 +29,7 @@
 
 <script>
 import ContentSlot from '@/components/views/editor/ContentSlot'
+import AnnouncementListOptions from '@/components/views/editor/AnnouncementListOptions'
 import DWDWarningMapOptions from '@/components/views/editor/DWDWarningMapOptions'
 
 const margin = 7
@@ -32,6 +37,7 @@ const margin = 7
 export default {
   name: 'GridEditor',
   components: {
+    AnnouncementListOptions,
     DWDWarningMapOptions,
     ContentSlot
   },
