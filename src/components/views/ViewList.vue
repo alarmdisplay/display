@@ -3,6 +3,10 @@
       <div class="container">
         <h1 class="title">Ansichten f&uuml;r Display {{ displayId || '??' }}</h1>
 
+        <div class="buttons is-left">
+          <BackButton :path="{ name: 'display-list' }"/>
+        </div>
+
         <div v-if="views.length">
           <h2 class="subtitle">Ruhemodus</h2>
           <div class="content">
@@ -36,6 +40,7 @@
 
 <script>
 import { makeFindMixin } from 'feathers-vuex'
+import BackButton from '@/components/BackButton'
 import ViewListItem from '@/components/views/ViewListItem'
 
 export default {
@@ -49,6 +54,7 @@ export default {
     }
   },
   components: {
+    BackButton,
     ViewListItem
   },
   methods: {

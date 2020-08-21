@@ -1,5 +1,5 @@
 <template>
-    <button type="button" class="button" @click="$router.go(-1)">
+    <button type="button" class="button" @click="path ? $router.push(path) : $router.go(-1)">
             <span class="icon">
                 <font-awesome-icon icon="chevron-left"/>
             </span>
@@ -7,7 +7,12 @@
     </button>
 </template>
 <script>
+import { RawLocation } from 'vue-router'
+
 export default {
-  name: 'BackButton'
+  name: 'BackButton',
+  props: {
+    path: RawLocation
+  }
 }
 </script>
