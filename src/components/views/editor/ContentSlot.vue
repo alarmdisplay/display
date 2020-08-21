@@ -8,13 +8,20 @@
             <span class="icon">
               <font-awesome-icon :icon="getIcon(contentSlot.component)" size="lg"/>
             </span>
-            <p>{{ getComponentName(contentSlot.component) }}</p>
+            <p v-if="componentTypesWithOptions.includes(contentSlot.component)">
+              <a href="#" @click.prevent="$emit('selected', contentSlot)">
+                {{ getComponentName(contentSlot.component) }}
+              </a>
+            </p>
+            <p class="" v-else>
+              {{ getComponentName(contentSlot.component) }}
+            </p>
           </div>
         </div>
         <div class="slot-icon resize-handle" draggable="true" @dragstart="startResize" @dragend="onDragEnd" title="Ziehen, um die Größe der Komponente zu verändern">
             <font-awesome-icon icon="expand-alt" rotation="90" />
         </div>
-        <div class="slot-icon remove-icon" @click.stop.prevent="$emit('remove', contentSlot.id || this.contentSlot.__id)" title="Komponente entfernen">
+        <div class="slot-icon remove-icon" @click.stop.prevent="$emit('remove', contentSlot.id || contentSlot.__id)" title="Komponente entfernen">
             <font-awesome-icon icon="trash-alt"/>
         </div>
     </div>
@@ -26,6 +33,11 @@ export default {
   computed: {
     gridItemStyle: function () {
       return `grid-column-start: ${this.contentSlot.columnStart}; grid-row-start: ${this.contentSlot.rowStart}; grid-column-end: ${this.contentSlot.columnEnd}; grid-row-end: ${this.contentSlot.rowEnd}`
+    }
+  },
+  data () {
+    return {
+      componentTypesWithOptions: ['DWDWarningMap', 'AnnouncementList']
     }
   },
   methods: {
@@ -121,5 +133,9 @@ export default {
     cursor: pointer;
     padding: 0;
     border: 0;
+}
+
+.selected-content-slot .content {
+  background-color: #00bcd4;
 }
 </style>

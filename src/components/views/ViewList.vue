@@ -17,7 +17,7 @@
             </button>
           </div>
           <div class="columns">
-            <div class="column is-one-third" v-for="view in idleScreenViews" :key="view.id">
+            <div class="column is-one-third" v-for="view in views" :key="view.id">
               <ViewListItem :view="view" :removable="views.length > 1"/>
             </div>
           </div>
@@ -41,10 +41,6 @@ import ViewListItem from '@/components/views/ViewListItem'
 export default {
   name: 'ViewList',
   computed: {
-    idleScreenViews: function () {
-      // return this.views.filter(view => view.screenType === 'idle')
-      return this.views
-    },
     displayId () {
       return parseInt(this.$route.params.display_id)
     },

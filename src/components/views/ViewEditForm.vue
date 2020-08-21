@@ -2,7 +2,7 @@
   <div class="columns" v-if="item">
     <div class="column is-two-thirds">
       <div class="preview-container">
-        <GridEditor :columns="item.columns" :rows="item.rows" :content-slots="contentSlots" @content-slot-removed="removeContentSlot"/>
+        <GridEditor :columns="item.columns" :rows="item.rows" :content-slots="item.contentSlots" @content-slot-removed="removeContentSlot"/>
       </div>
     </div>
 
@@ -58,8 +58,7 @@ export default {
   name: 'ViewEditForm',
   data: function () {
     return {
-      availableComponentTypes: ['AnnouncementList', 'DWDWarningMap', 'Clock'],
-      contentSlots: []
+      availableComponentTypes: ['AnnouncementList', 'DWDWarningMap', 'Clock']
     }
   },
   components: {
@@ -81,7 +80,7 @@ export default {
       contentSlot.rowEnd = 2
       contentSlot.viewId = this.item.id
 
-      this.contentSlots.push(contentSlot)
+      this.item.contentSlots.push(contentSlot)
     },
     getComponentName: function (componentType) {
       switch (componentType) {
@@ -111,7 +110,9 @@ export default {
       return this.item.rows > 1 && this.item.columns > 1
     },
     removeContentSlot: function (id) {
-      this.contentSlots = this.contentSlots.filter(contentSlot => contentSlot.id !== id)
+      this.item.contentSlots = this.item.contentSlots.filter(contentSlot => {
+        return (contentSlot.id && contentSlot.id !== id) || (contentSlot.__isTemp && contentSlot.__id !== id)
+      })
     }
   },
   props: {
@@ -123,15 +124,12 @@ export default {
   setup (props, context) {
     function saveChanges () {
       if (this.isValid()) {
-        context.emit('save', this.contentSlots)
+        context.emit('save')
       } else {
         // TODO show validation result
       }
     }
     return { saveChanges }
-  },
-  created () {
-    this.contentSlots = this.item.contentSlots.map(contentSlot => contentSlot.clone())
   }
 }
 </script>

@@ -1,21 +1,42 @@
 <template>
     <div class="editor">
         <div ref="grid" class="grid" :style="`grid-template-columns: repeat(${columns}, 1fr); grid-template-rows: repeat(${rows}, 1fr);`">
-            <ContentSlot v-for="contentSlot in contentSlots" :key="contentSlot.id" :content-slot="contentSlot" @action-started="onActionStarted" @drag-ended="onDragEnded" @remove="onRemoveContentSlot"/>
+            <ContentSlot :class="selectedContentSlot === contentSlot ? 'selected-content-slot' : ''" v-for="contentSlot in contentSlots" :key="contentSlot.id" :content-slot="contentSlot" @action-started="onActionStarted" @drag-ended="onDragEnded" @remove="onRemoveContentSlot" @selected="onContentSlotSelected(contentSlot)"/>
             <div v-show="targetIndicator" ref="target-indicator" class="target-indicator" :style="targetIndicatorStyle"></div>
             <div v-show="action !== null" class="drop-zone" @drop="onDrop($event)" @dragenter="onDragEnter($event)" @dragover="onDragOver($event)" @dragleave="onDragLeave($event)"></div>
+        </div>
+        <div :class="['modal', (showOptionsModal ? 'is-active' : '')]">
+          <div class="modal-background"></div>
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Optionen</p>
+              <button class="delete" aria-label="close" @click.prevent="closeOptionsModal"></button>
+            </header>
+            <section class="modal-card-body">
+              <DWDWarningMapOptions v-if="selectedContentSlot && selectedContentSlot.component === 'DWDWarningMap'" :options="selectedContentSlot.options"/>
+              <p v-else>
+                Für diese Komponente gibt es keine Optionen
+              </p>
+            </section>
+            <footer class="modal-card-foot">
+              <button type="button" class="button" @click.prevent="closeOptionsModal">Abbrechen</button>
+              <button type="button" class="button is-success" @click.prevent="onApplyOptions">Übernehmen</button>
+            </footer>
+          </div>
         </div>
     </div>
 </template>
 
 <script>
 import ContentSlot from '@/components/views/editor/ContentSlot'
+import DWDWarningMapOptions from '@/components/views/editor/DWDWarningMapOptions'
 
 const margin = 7
 
 export default {
   name: 'GridEditor',
   components: {
+    DWDWarningMapOptions,
     ContentSlot
   },
   computed: {
@@ -48,10 +69,28 @@ export default {
   data: function () {
     return {
       action: null,
+      optionCopies: [],
+      selectedContentSlot: null,
+      showOptionsModal: false,
       targetIndicator: null
     }
   },
   methods: {
+    closeOptionsModal () {
+      this.showOptionsModal = false
+      this.optionCopies = []
+      this.selectedContentSlot = null
+    },
+    onApplyOptions () {
+      console.log(this.selectedContentSlot)
+      // Determine the changes
+      this.closeOptionsModal()
+    },
+    onContentSlotSelected (contentSlot) {
+      this.selectedContentSlot = contentSlot
+      // this.optionCopies = contentSlot.options.map(option => option.clone())
+      this.showOptionsModal = true
+    },
     onDragEnded: function () {
       this.action = null
       this.targetIndicator = null
