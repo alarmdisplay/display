@@ -134,8 +134,4 @@ export default {
     padding: 0;
     border: 0;
 }
-
-.selected-content-slot .content {
-  background-color: #00bcd4;
-}
 </style>
