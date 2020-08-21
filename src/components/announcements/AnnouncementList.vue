@@ -37,7 +37,7 @@
             },
             title () {
               const option = this.options.find(option => option.key === 'title');
-              if (!option) {
+              if (!option || option.value === '') {
                 return 'Ankündigungen'
               }
 
