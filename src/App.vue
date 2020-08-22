@@ -1,65 +1,33 @@
 <template>
   <div id="app">
-    <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
-      <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" v-on:click="toggleSidebar"><font-awesome-icon icon="bars" /> Menu</button>
-      <span class="w3-bar-item w3-right">Display Console</span>
-    </div>
-    <Sidebar></Sidebar>
-    <!-- Overlay effect when opening sidebar on small screens -->
-    <div class="w3-overlay w3-hide-large w3-animate-opacity" v-on:click="hideSidebar" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
-    <div class="w3-main">
-      <router-view></router-view>
-    </div>
+    <Navbar v-if="loggedIn"/>
+    <router-view v-if="loggedIn"/>
+    <Login v-else/>
   </div>
 </template>
 
 <script>
-import Sidebar from '@/components/Sidebar'
+import 'bulma/css/bulma.css'
+import Navbar from './components/Navbar'
+import Login from './views/Login'
 
 export default {
   name: 'App',
   components: {
-    Sidebar
+    Login,
+    Navbar
   },
-  methods: {
-    toggleSidebar: function () {
-      const mySidebar = document.getElementById('mySidebar')
-      const overlayBg = document.getElementById('myOverlay')
-      if (mySidebar.style.display === 'block') {
-        mySidebar.style.display = 'none'
-        overlayBg.style.display = 'none'
-      } else {
-        mySidebar.style.display = 'block'
-        overlayBg.style.display = 'block'
-      }
-    },
-    hideSidebar: function () {
-      const mySidebar = document.getElementById('mySidebar')
-      const overlayBg = document.getElementById('myOverlay')
-      mySidebar.style.display = 'none'
-      overlayBg.style.display = 'none'
+  computed: {
+    loggedIn: function () {
+      return this.$store.getters['auth/isAuthenticated']
     }
   },
-  mounted () {
-    this.$store.dispatch('fetchTheDisplays')
-      .then(() => this.$store.dispatch('fetchTheAnnouncements'))
+  created () {
+    // Check if we have a valid authentication token
+    this.$store.dispatch('auth/authenticate')
   }
 }
 </script>
 
 <style>
-  .w3-main {
-    margin-left: 300px;
-    margin-top: 43px;
-  }
-
-  .w3-main header {
-    padding-top: 22px;
-  }
-
-  .error {
-    background-color: rgba(255, 0, 0, 0.5);
-    border: 1px solid red;
-    padding: 1em;
-  }
 </style>

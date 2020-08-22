@@ -1,17 +1,29 @@
 <template>
     <div class="content-slot" :style="gridItemStyle">
-        <div class="icon drag-handle" draggable="true" @dragstart="startMove" @dragend="onDragEnd" title="Ziehen, um die Komponente zu verschieben">
+        <div class="slot-icon drag-handle" draggable="true" @dragstart="startMove" @dragend="onDragEnd" title="Ziehen, um die Komponente zu verschieben">
             <font-awesome-icon icon="arrows-alt" />
         </div>
         <div class="content">
-            <font-awesome-icon :icon="getIcon(contentSlot.componentType)" size="lg"/><br>
+          <div class="has-text-centered">
+            <span class="icon">
+              <font-awesome-icon :icon="getIcon(contentSlot.component)" size="lg"/>
+            </span>
+            <p v-if="componentTypesWithOptions.includes(contentSlot.component)">
+              <a href="#" @click.prevent="$emit('selected', contentSlot)">
+                {{ getComponentName(contentSlot.component) }}
+              </a>
+            </p>
+            <p class="" v-else>
+              {{ getComponentName(contentSlot.component) }}
+            </p>
+          </div>
         </div>
-        <div class="icon resize-handle" draggable="true" @dragstart="startResize" @dragend="onDragEnd" title="Ziehen, um die Größe der Komponente zu verändern">
+        <div class="slot-icon resize-handle" draggable="true" @dragstart="startResize" @dragend="onDragEnd" title="Ziehen, um die Größe der Komponente zu verändern">
             <font-awesome-icon icon="expand-alt" rotation="90" />
         </div>
-        <button type="button" class="icon remove-icon" @click.stop.prevent="$emit('remove', contentSlot.id)" title="Komponente entfernen">
+        <div class="slot-icon remove-icon" @click.stop.prevent="$emit('remove', contentSlot.id || contentSlot.__id)" title="Komponente entfernen">
             <font-awesome-icon icon="trash-alt"/>
-        </button>
+        </div>
     </div>
 </template>
 
@@ -23,7 +35,24 @@ export default {
       return `grid-column-start: ${this.contentSlot.columnStart}; grid-row-start: ${this.contentSlot.rowStart}; grid-column-end: ${this.contentSlot.columnEnd}; grid-row-end: ${this.contentSlot.rowEnd}`
     }
   },
+  data () {
+    return {
+      componentTypesWithOptions: ['DWDWarningMap', 'AnnouncementList']
+    }
+  },
   methods: {
+    getComponentName: function (componentType) {
+      switch (componentType) {
+        case 'AnnouncementList':
+          return 'Ankündigungen'
+        case 'Clock':
+          return 'Uhr'
+        case 'DWDWarningMap':
+          return 'DWD-Warnkarte'
+        default:
+          return componentType
+      }
+    },
     getIcon: function (componentType) {
       switch (componentType) {
         case 'AnnouncementList':
@@ -40,10 +69,10 @@ export default {
       this.$emit('drag-ended')
     },
     startMove: function () {
-      this.$emit('action-started', 'move', this.contentSlot.id)
+      this.$emit('action-started', 'move', this.contentSlot.id || this.contentSlot.__id)
     },
     startResize: function () {
-      this.$emit('action-started', 'resize', this.contentSlot.id)
+      this.$emit('action-started', 'resize', this.contentSlot.id || this.contentSlot.__id)
     }
   },
   props: {
@@ -68,7 +97,7 @@ export default {
     width: 100%;
 }
 
-.icon {
+.slot-icon {
     visibility: hidden;
     position: absolute;
     height: 1.6em;
@@ -78,11 +107,11 @@ export default {
     z-index: 2;
 }
 
-.content-slot:hover .icon {
+.content-slot:hover .slot-icon {
     visibility: visible;
 }
 
-.icon:hover {
+.slot-icon:hover {
     background-color: rgba(0, 0, 0, 0.3);
 }
 
