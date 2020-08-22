@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <SplashScreen v-if="showSplashScreen === true"/>
-    <DisplayApp v-else-if="showApp === true" :the-display-id="displayId"/>
+    <DisplayApp v-else-if="displayId" :the-display-id="displayId"/>
     <DisplaySetup v-else/>
   </div>
 </template>
@@ -10,6 +10,7 @@
 import DisplayApp from "@/components/DisplayApp";
 import DisplaySetup from "@/components/DisplaySetup";
 import SplashScreen from "@/components/SplashScreen";
+import feathersClient from "@/feathers-client";
 
 export default {
   name: 'App',
@@ -22,9 +23,6 @@ export default {
     displayId: function () {
       return this.$store.state.ownDisplayId
     },
-    showApp: function () {
-      return !this.showSplashScreen && this.$store.state.socket.connected && this.displayId !== undefined
-    },
     showSplashScreen() {
       return this.$store.state.showSplashScreen
     }
@@ -33,7 +31,18 @@ export default {
     this.$store.subscribe(mutation => {
       if (mutation.type === 'socket/setConnected' && mutation.payload === true) {
         this.$store.dispatch('displays/get', 'self')
-          .catch(reason => console.error('Error while asking the backend about our identity', reason))
+          .catch(reason => {
+            console.error('Error while trying to get own Display ID:', reason);
+            feathersClient.io.emit('create', 'api/v1/key-requests', {}, (error, result) => {
+              if (error) {
+                console.error('Could not request API key:', error)
+                return
+              }
+
+              console.log('Requested API key, request ID is', result.requestId)
+              this.$store.commit('socket/setKeyRequestId', result.requestId)
+            })
+          })
       }
     })
   }

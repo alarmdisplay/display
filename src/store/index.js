@@ -7,6 +7,7 @@ import displays from './services/displays'
 import contentSlotOptions from './services/content-slot-options'
 import contentSlots from './services/content-slots'
 import incidents from './services/incidents'
+import keyRequests from './services/key-requests'
 import locations from './services/locations'
 import views from "./services/views";
 import socket, { createSocketPlugin } from "./socket";
@@ -39,6 +40,7 @@ export default new Vuex.Store({
     contentSlots,
     displays,
     incidents,
+    keyRequests,
     locations,
     views
   ]
