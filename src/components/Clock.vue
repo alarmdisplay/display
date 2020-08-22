@@ -55,5 +55,6 @@
 
     .date {
         font-size: 2.5em;
+        margin-top: -0.1em;
     }
 </style>
