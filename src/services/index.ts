@@ -9,6 +9,7 @@ import locations from './locations/locations.service';
 import contentSlotOptions from './content-slot-options/content-slot-options.service';
 import announcements from './announcements/announcements.service';
 import hubConnector from './hub-connector/hub-connector.service';
+import keyRequests from './key-requests/key-requests.service';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 export default function (app: Application): void {
@@ -22,4 +23,5 @@ export default function (app: Application): void {
   app.configure(contentSlotOptions);
   app.configure(announcements);
   app.configure(hubConnector);
+  app.configure(keyRequests);
 }

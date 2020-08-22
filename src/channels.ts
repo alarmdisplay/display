@@ -1,8 +1,45 @@
 import '@feathersjs/transport-commons';
 import { HookContext } from '@feathersjs/feathers';
-import { Application } from './declarations';
+import { Application, KeyRequestData } from './declarations';
 import { ApiKeyStrategy } from './auth-strategies/api-key.strategy';
 import logger from './logger';
+
+const pendingConnections = new Map<any, string>();
+
+/**
+ * Generate a random string of a certain length consisting of digits and uppercase letters.
+ *
+ * @param length The desired number of characters of the generated string.
+ *
+ * @return {string}
+ */
+function generateIdentifier (length: number) {
+  if (!length || length < 0) {
+    return '';
+  }
+
+  const availableCharacters = 'ABCDEFGHKLMNPRSTUVWXYZ123456789';
+  let identifier = '';
+  for (let i = 0; i < length; i++) {
+    const index = Math.floor(Math.random() * availableCharacters.length);
+    identifier += availableCharacters[index];
+  }
+
+  return identifier;
+}
+
+/**
+ * Returns the unique identifier that pending connections are given.
+ *
+ * @param connection
+ *
+ * @return {string | undefined} The identifier, or undefined if the connection is unknown
+ */
+function getIdentifierForConnection (connection: any): string | undefined {
+  return pendingConnections.get(connection);
+}
+
+export { getIdentifierForConnection };
 
 export default function(app: Application): void {
   if(typeof app.channel !== 'function') {
@@ -25,10 +62,19 @@ export default function(app: Application): void {
 
         if (authResult['api-key']) {
           app.channel('authenticated').join(connection);
+          const display = authResult.display;
+          if (display) {
+            logger.info('Display %s connected', display.name);
+            app.channel(`displays/${display.id}`).join(connection);
+          }
           return;
         }
       } catch (e) {
         logger.warn('Socket connected, API key not accepted:', e.message || e);
+        // Create a unique identifier for this connection, that can be sent back upon a key request
+        const identifier = generateIdentifier(6);
+        pendingConnections.set(connection, identifier);
+        app.channel(`connections/${identifier}`).join(connection);
       }
     }
 
@@ -40,26 +86,21 @@ export default function(app: Application): void {
     // connection can be undefined if there is no
     // real-time connection, e.g. when logging in via REST
     if(connection) {
-      // Obtain the logged in user from the connection
-      // const user = connection.user;
-
       // The connection is no longer anonymous, remove it
       app.channel('anonymous').leave(connection);
 
       // Add it to the authenticated user channel
       app.channel('authenticated').join(connection);
+    }
+  });
 
-      // Channels can be named anything and joined on any condition
-
-      // E.g. to send real-time events only to admins use
-      // if(user.isAdmin) { app.channel('admins').join(connection); }
-
-      // If the user has joined e.g. chat rooms
-      // if(Array.isArray(user.rooms)) user.rooms.forEach(room => app.channel(`rooms/${room.id}`).join(connection));
-
-      // Easily organize users by email and userid for things like messaging
-      // app.channel(`emails/${user.email}`).join(connection);
-      // app.channel(`userIds/${user.id}`).join(connection);
+  app.on('disconnect', async (connection: any): Promise<void> => {
+    // If this was a pending connection, clean up
+    if (pendingConnections.has(connection)) {
+      const clientId = pendingConnections.get(connection);
+      // Remove any key request, that came through this connection
+      await app.service('api/v1/key-requests').remove(null, { query: { requestId: clientId } });
+      pendingConnections.delete(connection);
     }
   });
 
@@ -68,21 +109,17 @@ export default function(app: Application): void {
     // Here you can add event publishers to channels set up in `channels.js`
     // To publish only for a specific event use `app.publish(eventname, () => {})`
 
-    console.log('Publishing all events to all authenticated users. See `channels.js` and https://docs.feathersjs.com/api/channels.html for more information.'); // eslint-disable-line
+    logger.debug('Publishing all events to all authenticated users. See `channels.js` and https://docs.feathersjs.com/api/channels.html for more information.'); // eslint-disable-line
 
     // e.g. to publish all service events to all authenticated users use
     return app.channel('authenticated');
   });
 
-  // Here you can also add service specific event publishers
-  // e.g. the publish the `users` service `created` event to the `admins` channel
-  // app.service('users').publish('created', () => app.channel('admins'));
-
-  // With the userid and email organization from above you can easily select involved users
-  // app.service('messages').publish(() => {
-  //   return [
-  //     app.channel(`userIds/${data.createdBy}`),
-  //     app.channel(`emails/${data.recipientEmail}`)
-  //   ];
-  // });
+  // Send all events about key requests also to the affected connection
+  app.service('api/v1/key-requests').publish((data: KeyRequestData) => {
+    return [
+      app.channel('authenticated'),
+      app.channel(`connections/${data.requestId}`)
+    ];
+  });
 }

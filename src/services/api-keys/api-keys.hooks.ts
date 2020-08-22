@@ -57,7 +57,14 @@ function enforceNameOnly(context: HookContext): HookContext {
   }
 
   // Restrict the submitted data to only the name
-  context.data = { name: context.data.name };
+  const newData: any = { name: context.data.name };
+
+  // When the API key is created by an internal call, the displayId is also acceptable
+  if (context.method === 'create' && !context.params.provider && context.data.displayId) {
+    newData.displayId = context.data.displayId;
+  }
+
+  context.data = newData;
 
   return context;
 }
