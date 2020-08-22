@@ -7,13 +7,15 @@ While it maintains a [Socket.IO](https://socket.io/) connection with the Display
 ## Development
 In order to run a development version on your local system, you need a [Node.js](https://nodejs.org/) environment and a MariaDB instance.
 Clone the repository and run `npm install` inside the project folder to install all the dependencies.
-Then create a `.env` file based on `.env.example` and adapt it to your local setup.
+Create a file called `development.json` in the `config/` folder, which lets you override single properties of `config/default.json`.
+At minimum, you will need the `mysql` property to set up the database connection.
 
 Start the development server by running `npm run dev`, it will automatically restart when files have changed.
-Now you can access the server on http://localhost:3000 (may be a different port if you changed it in the `.env` file).
+Now you can access the server on http://localhost:3031.
+
+### Libraries and frameworks
+This project uses the following libraries or frameworks, please refer to their documentation as well.
+- [FeathersJS](https://feathersjs.com/)
 
 ## Deployment
 At the moment, this project is not ready for deployment outside of a development environment.
-
-## API
-The server offers an OpenAPI specification under `/api-docs.json` that can be used with tools like [Swagger UI](https://swagger.io/tools/swagger-ui/).
