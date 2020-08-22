@@ -7,7 +7,7 @@
           <BackButton :path="{ name: 'display-list' }"/>
         </div>
 
-        <div v-if="views.length">
+        <div>
           <h2 class="subtitle">Ruhemodus</h2>
           <div class="content">
             Sofern kein Alarm vorliegt, befindet sich das Display im Ruhemodus.
@@ -20,13 +20,13 @@
               <span>Ansicht hinzufügen</span>
             </button>
           </div>
-          <div class="columns">
+          <div v-if="views.length" class="columns">
             <div class="column is-one-third" v-for="view in views" :key="view.id">
               <ViewListItem :view="view" :removable="views.length > 1"/>
             </div>
           </div>
           <div class="content">
-            Wenn mehr als eine Anzeige konfiguriert ist, werden die Ansichten im Wechsel angezeigt, jeweils für eine Minute.
+            Wenn mehr als eine Ansicht konfiguriert ist, werden die Ansichten im Wechsel angezeigt, jeweils für eine Minute.
           </div>
 
           <h2 class="subtitle">Alarmbildschirm</h2>
