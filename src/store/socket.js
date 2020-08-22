@@ -52,5 +52,13 @@ export function createSocketPlugin (socket) {
                 location.reload()
             }
         })
+
+        // If 'our' display is deleted on the backend, reload the app to restart the onboarding
+        socket.on('api/v1/displays removed', (data) => {
+            let ownDisplayId = store.state.ownDisplayId;
+            if (ownDisplayId && ownDisplayId === data.id) {
+                location.reload()
+            }
+        })
     }
 }
