@@ -19,14 +19,29 @@ function preventEmptyPassword (context: HookContext): HookContext {
   return context;
 }
 
+/**
+ * Require the request to be authenticated, except when creating the first user
+ *
+ * @param context
+ */
+async function maybeAuthenticate(this: any, context: HookContext): Promise<HookContext> {
+  const existingUsers = await context.service.find({ query: { $limit: 0 } });
+
+  if (existingUsers.total > 0) {
+    return authenticate('jwt').call(this, context);
+  }
+
+  return context;
+}
+
 export default {
   before: {
     all: [],
     find: [ authenticate('jwt') ],
     get: [ authenticate('jwt') ],
-    create: [ preventEmptyPassword, hashPassword('password') ],
-    update: [ preventEmptyPassword, hashPassword('password'),  authenticate('jwt') ],
-    patch: [ preventEmptyPassword, hashPassword('password'),  authenticate('jwt') ],
+    create: [ maybeAuthenticate, preventEmptyPassword, hashPassword('password') ],
+    update: [ authenticate('jwt'), preventEmptyPassword, hashPassword('password') ],
+    patch: [ authenticate('jwt'), preventEmptyPassword, hashPassword('password') ],
     remove: [ authenticate('jwt') ]
   },
 
