@@ -35,10 +35,18 @@ app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
 // Host the public folder
 app.use('/', express.static(app.get('public')));
 
+// Serve the Display frontend statically
 if (fs.existsSync('ext-display')) {
   app.use('/display', express.static('ext-display'));
-} else {
+} else if (process.env.NODE_ENV === 'production') {
   logger.warn('The static files for the display frontend could not be found, the path /display will not work');
+}
+
+// Serve the Console UI statically
+if (fs.existsSync('ext-console')) {
+  app.use('/console', express.static('ext-console'));
+} else if (process.env.NODE_ENV === 'production') {
+  logger.warn('The static files for the console UI could not be found, the path /console will not work');
 }
 
 // Set up Plugins and providers
