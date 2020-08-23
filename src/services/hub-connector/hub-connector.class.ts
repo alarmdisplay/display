@@ -54,6 +54,12 @@ export class HubConnector implements SetupMethod {
     socket.on('disconnect', (reason: Error) => {
       logger.error('Disconnected from Hub:', reason);
     });
+    socket.on('connect_error', (reason: Error) => {
+      logger.error('Error connecting to Hub:', reason.message);
+    });
+    socket.on('connect_timeout', (reason: Error) => {
+      logger.error('Timeout connecting to Hub:', reason);
+    });
 
     // Start watching services on the Hub
     new IncidentsWatcher(app, socket);
