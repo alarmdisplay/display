@@ -29,6 +29,8 @@
         </div>
       </FeathersVuexFind>
 
+      <hr>
+      <h2 class="subtitle">Konfigurierte Displays</h2>
       <FeathersVuexFind service="displays" :query="{ $sort: { name: 1 }, $limit: 50 }" qid="displayList" watch="query">
         <div slot-scope="{ items: displays }">
           <ul v-if="displays.length">

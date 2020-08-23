@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Overview from '@/components/Overview'
+import Overview from '@/views/Overview'
 import About from '@/views/About'
 import AnnouncementList from '@/views/content/AnnouncementList'
 import AnnouncementForm from '@/views/content/AnnouncementForm'
