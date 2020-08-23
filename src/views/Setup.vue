@@ -87,6 +87,7 @@ export default {
     createUser: function () {
       this.$store.dispatch('users/create', { email: this.email, password: this.password })
         .then(() => this.$store.dispatch('auth/authenticate', { email: this.email, password: this.password, strategy: 'local' }))
+        .then(() => this.$store.commit('setShowSetup', false))
         .catch(reason => {
           this.createError = reason
           if (this.createError.message === 'Not authenticated') {
