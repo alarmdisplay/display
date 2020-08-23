@@ -5,7 +5,8 @@ class ApiKey extends BaseModel {
 
   static instanceDefaults () {
     return {
-      name: ''
+      name: '',
+      displayId: null
     }
   }
 }
