@@ -2,7 +2,7 @@
     <li :class="getListItemClass()">
         <div class="date">{{ theDate }}</div>
         <span class="title" v-if="announcement.title !== ''">{{ announcement.title }}</span>
-        <span class="text">{{ announcement.text }}</span>
+        <span class="text">{{ announcement.body }}</span>
     </li>
 </template>
 
