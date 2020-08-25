@@ -16,11 +16,23 @@
           </div>
         </div>
         <div class="media-right">
-          <button class="button is-small is-danger is-outlined" title="Ankündigung entfernen" @click="announcement.remove()">
-            <span class="icon">
-              <font-awesome-icon icon="trash-alt"/>
-            </span>
-          </button>
+          <div class="field is-grouped">
+            <p class="control">
+              <button class="button is-outlined" title="Ankündigung bearbeiten" @click="$router.push({ name: 'announcement-form', params: { id: `${announcement.id}` } })">
+                  <span class="icon">
+                      <font-awesome-icon icon="edit"/>
+                  </span>
+                <span>Bearbeiten</span>
+              </button>
+            </p>
+            <p class="control">
+              <button class="button is-danger is-outlined" title="Ankündigung entfernen" @click="announcement.remove()">
+                <span class="icon">
+                  <font-awesome-icon icon="trash-alt"/>
+                </span>
+              </button>
+            </p>
+          </div>
         </div>
       </article>
       <p class="has-text-right"><small>Stand: {{ announcement.updatedAt | moment('LL') }}</small></p>
