@@ -12,6 +12,11 @@
           <div class="content">
             Sofern kein Alarm vorliegt, befindet sich das Display im Ruhemodus.
           </div>
+          <div v-if="views.length" class="columns is-multiline">
+            <div class="column is-one-third" v-for="view in views" :key="view.id">
+              <ViewListItem :view="view" :removable="views.length > 1"/>
+            </div>
+          </div>
           <div class="buttons">
             <button type="button" class="button has-icons-left" @click="addView()">
               <span class="icon">
@@ -19,11 +24,6 @@
               </span>
               <span>Ansicht hinzufügen</span>
             </button>
-          </div>
-          <div v-if="views.length" class="columns">
-            <div class="column is-one-third" v-for="view in views" :key="view.id">
-              <ViewListItem :view="view" :removable="views.length > 1"/>
-            </div>
           </div>
           <div class="content">
             Wenn mehr als eine Ansicht konfiguriert ist, werden die Ansichten im Wechsel angezeigt, jeweils für eine Minute.
