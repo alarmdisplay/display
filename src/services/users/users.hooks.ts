@@ -39,9 +39,9 @@ export default {
     all: [],
     find: [ authenticate('jwt') ],
     get: [ authenticate('jwt') ],
-    create: [ maybeAuthenticate, preventEmptyPassword, hashPassword('password') ],
-    update: [ authenticate('jwt'), preventEmptyPassword, hashPassword('password') ],
-    patch: [ authenticate('jwt'), preventEmptyPassword, hashPassword('password') ],
+    create: [ preventEmptyPassword, hashPassword('password'), maybeAuthenticate ],
+    update: [ preventEmptyPassword, hashPassword('password'), authenticate('jwt') ],
+    patch: [ preventEmptyPassword, hashPassword('password'), authenticate('jwt') ],
     remove: [ authenticate('jwt') ]
   },
 
