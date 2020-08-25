@@ -2,10 +2,10 @@
   <section class="section">
     <div class="container">
       <h1 class="title">
-        Display Console
+        Alarmanzeige
       </h1>
       <p class="subtitle">
-        Bitte einloggen
+        Console
       </p>
 
       <ErrorMessage :form-error="loginError"/>

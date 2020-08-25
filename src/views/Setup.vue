@@ -2,7 +2,7 @@
   <section class="section">
     <div class="container">
       <h1 class="title">
-        Display Console
+        Alarmanzeige
       </h1>
       <h2 class="subtitle">Erste Einrichtung</h2>
 
@@ -25,7 +25,7 @@
             </div>
             <div class="message-body">
               Bevor du loslegen kannst, musst du ein Konto anlegen.
-              Nur das erste Konto kann über diesen Weg angelegt werden, alle weiteren Konten legst du in der Console an.
+              Nur das erste Konto kann hier angelegt werden, alle weiteren Konten legst du nach dem Login an.
             </div>
           </div>
         </div>
