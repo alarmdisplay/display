@@ -7,7 +7,6 @@ class User extends BaseModel {
     return {
       email: '',
       name: '',
-      password: '',
       get displayName () {
         return this.name || this.email
       }
