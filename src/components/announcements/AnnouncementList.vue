@@ -1,7 +1,7 @@
 <template>
-    <div v-bind:id="elementId" class="gridview-component">
+    <div class="gridview-component">
         <div class="announcement-list">
-            <p class="header">{{ this.options.title || 'Ankündigungen' }}</p>
+            <p class="header">{{ title }}</p>
             <ul v-if="activeAnnouncements.length > 0">
                 <Item v-for="announcement in activeAnnouncements" v-bind:key="announcement.id"
                       v-bind:announcement="announcement"/>
@@ -18,47 +18,42 @@
 
 <script>
     import Item from "@/components/announcements/Item";
+    import {makeFindMixin} from "feathers-vuex";
     export default {
         name: "AnnouncementList",
         components: {
             Item
         },
         computed: {
-            announcements: function () {
-                let content = this.$root.$data.content[this.instanceId];
-                if (!Array.isArray(content)) {
-                    return []
-                }
-
-                return content.map(item => {
-                    return {
-                        id: item.id,
-                        title: item.title,
-                        text: item.text,
-                        important: item.important,
-                        validFrom: item.validFrom ? new Date(item.validFrom) : null,
-                        validTo: item.validTo ? new Date(item.validTo) : null,
-                        createdAt: item.createdAt ? new Date(item.createdAt) : null,
-                        updatedAt: item.updatedAt ? new Date(item.updatedAt) : null
-                    }
-                })
-            },
             activeAnnouncements: function () {
                 // Return all announcements that are currently valid or do not have validity information
                 return this.announcements.filter(announcement => {
                     return (!announcement.validFrom || Math.floor(announcement.validFrom.valueOf() / 1000) <= this.$root.$data.seconds) &&
                         (!announcement.validTo || Math.floor(announcement.validTo.valueOf() / 1000) >= this.$root.$data.seconds)
                 })
+            },
+            announcementsParams() {
+                return { query: {} }
+            },
+            title () {
+              const option = this.options.find(option => option.key === 'title');
+              if (!option || option.value === '') {
+                return 'Ankündigungen'
+              }
+
+              return option.value;
             }
         },
-        data() {
-            return {
-                elementId: `announcement-list-${this.instanceId}`,
-            }
-        },
+        mixins: [
+            makeFindMixin({
+                service: 'announcements',
+                name: 'announcements',
+                params: 'announcementsParams'
+            })
+        ],
         props: {
             instanceId: Number,
-            options: Object
+            options: Array
         }
     }
 </script>

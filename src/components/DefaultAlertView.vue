@@ -1,14 +1,14 @@
 <template>
     <div :class="alertClass">
         <div class="clock-container">
-            <Clock :instance-id="0" :options="{showDate: false}"/>
+            <Clock :instance-id="0" :show-date="false"/>
         </div>
         <div class="info">
-            <p class="title">{{ alert.title || 'Einsatz' }}</p>
+            <p class="title">{{ alert.reason || 'Einsatz' }}</p>
             <span class="badge badge-test">TEST</span>
             <span v-if="alert.keyword" class="badge badge-category">{{ alert.keyword }}</span>
             <span class="badge badge-elapsed-time"><font-awesome-icon icon="stopwatch"/> {{ elapsedTime }}</span>
-            <p class="address">{{ alert.location || 'Keine Ortsangabe' }}</p>
+            <p class="address">{{ locationText || 'Keine Ortsangabe' }}</p>
             <p class="description">{{ alert.description || 'Keine Bemerkung' }}</p>
         </div>
     </div>
@@ -16,6 +16,7 @@
 
 <script>
     import Clock from "@/components/Clock";
+    import {makeFindMixin} from "feathers-vuex";
 
     export default {
         name: "DefaultAlertView",
@@ -34,8 +35,33 @@
             elapsedTime: function () {
                 let elapsedSeconds = this.$root.$data.seconds - Math.floor(this.alert.time.valueOf() / 1000);
                 return textForSeconds(elapsedSeconds);
+            },
+            locationsParams() {
+                return {
+                  query: {
+                    incidentId: this.alert.id,
+                    $sort: {
+                      createdAt: -1
+                    },
+                    $limit: 1
+                  }
+                }
+            },
+            locationText() {
+              if (this.locations.length) {
+                return this.locations[0].rawText
+              }
+
+              return ''
             }
         },
+      mixins: [
+        makeFindMixin({
+          service: 'locations',
+          name: 'locations',
+          params: 'locationsParams'
+        })
+      ],
         props: {
             alert: Object
         }
@@ -101,18 +127,8 @@
     }
 
     .badge-category {
-        background-color: orange;
-    }
-
-    .alert.category-Fire .badge-category {
-        background-color: red;
-        color: white;
-    }
-
-    .alert.category-Health .badge-category {
-        background-color: white;
-        border: 0.1em solid red;
-        color: red;
+      background-color: red;
+      color: white;
     }
 
     .badge-test {

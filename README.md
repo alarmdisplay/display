@@ -9,8 +9,15 @@ Clone the repository and run `npm install` inside the project folder to install 
 
 Start the development server by running `npm run serve`, it will automatically restart when files have changed.
 Now you can access the server on http://localhost:8080 (may be a different port on your system, check the console output).
-If you run a development server of [Display Backend](https://github.com/alarmdisplay/display-backend) on http://localhost:3000, the requests are automatically proxied there.
+If you run a development server of [Display Backend](https://github.com/alarmdisplay/display-backend) on http://localhost:3031, the requests are automatically proxied there.
 This allows for parallel development of the frontend and the backend.
+
+### Libraries and frameworks
+This project uses the following libraries or frameworks, please refer to their documentation as well.
+- [Vue.js](https://vuejs.org/)
+- [Vuex](https://vuex.vuejs.org/)
+- [FeathersVuex](https://vuex.feathersjs.com/)
+- [Font Awesome](https://fontawesome.com/)
 
 ## Deployment
 Run `npm run build`, which compiles and minifies the app for production.

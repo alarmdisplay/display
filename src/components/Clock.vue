@@ -8,22 +8,10 @@
 <script>
     export default {
         name: 'Clock',
-        computed: {
-            dateFormat: function () {
-                return Object.prototype.hasOwnProperty.call(this.options, 'dateFormat') ? this.options.dateFormat : 'll'
-            },
-            showDate: function () {
-                return Object.prototype.hasOwnProperty.call(this.options, 'showDate') ? this.options.showDate : true
-            },
-            showTime: function () {
-                return Object.prototype.hasOwnProperty.call(this.options, 'showTime') ? this.options.showTime : true
-            },
-            timeFormat: function () {
-                return Object.prototype.hasOwnProperty.call(this.options, 'timeFormat') ? this.options.timeFormat : 'LT'
-            }
-        },
         data() {
             return {
+                dateFormat: 'll',
+                timeFormat: 'LT',
                 time: '',
                 date: ''
             }
@@ -39,10 +27,14 @@
         },
         props: {
             instanceId: Number,
-            options: Object
-        },
-        watch: {
-            options: 'updateTime'
+            showDate: {
+              type: Boolean,
+              default: true
+            },
+            showTime: {
+              type: Boolean,
+              default: true
+            }
         }
     }
 </script>
@@ -63,5 +55,6 @@
 
     .date {
         font-size: 2.5em;
+        margin-top: -0.1em;
     }
 </style>

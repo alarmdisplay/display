@@ -5,11 +5,24 @@
 </template>
 
 <script>
+    /**
+     * Possible options:
+     * - areaCode: An ISO 3166-2 code for one of the 16 german states, 'DE' for entire Germany, or (only with
+     *   mapType = area) 'Bodensee' for the Bodensee region
+     * - mapType: Can be 'simple' for a map of a single state or entire Germany, or 'area' for a map of one or
+     *   more states including more detail about the warnings
+     */
+
     export default {
         name: "DWDWarningMap",
         computed: {
             areaCode: function () {
-                return this.options.areaCode || 'DE';
+              let option = this.options.find(option => option.key === 'areaCode');
+              if (!option) {
+                return 'DE'
+              }
+
+              return option.value;
             },
             baseUrl: function () {
                 switch (this.mapType) {
@@ -25,7 +38,12 @@
                 return `${this.baseUrl}?${this.cacheBustingQuery}`;
             },
             mapType: function () {
-                return this.options.mapType || 'area';
+              let option = this.options.find(option => option.key === 'mapType');
+              if (!option) {
+                return 'area'
+              }
+
+              return option.value;
             },
             schilderCode: function () {
 
@@ -109,14 +127,11 @@
             }, 600000);
         },
         props: {
-            /**
-             * Possible options:
-             * - areaCode: An ISO 3166-2 code for one of the 16 german states, 'DE' for entire Germany, or (only with
-             *   mapType = area) 'Bodensee' for the Bodensee region
-             * - mapType: Can be 'simple' for a map of a single state or entire Germany, or 'area' for a map of one or
-             *   more states including more detail about the warnings
-             */
-            options: Object
+            instanceId: Number,
+            options: {
+              type: Array,
+              defaultValue: []
+            }
         }
     }
 </script>

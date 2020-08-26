@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <SplashScreen v-if="showSplashScreen === true"/>
-    <DisplayApp v-else-if="authenticated === true" v-bind:views="views" :alerts="alerts"/>
-    <DisplaySetup v-else v-bind:display-identifier="displayId"/>
+    <DisplayApp v-else-if="displayId" :the-display-id="displayId"/>
+    <DisplaySetup v-else/>
   </div>
 </template>
 
@@ -10,6 +10,7 @@
 import DisplayApp from "@/components/DisplayApp";
 import DisplaySetup from "@/components/DisplaySetup";
 import SplashScreen from "@/components/SplashScreen";
+import feathersClient from "@/feathers-client";
 
 export default {
   name: 'App',
@@ -18,12 +19,32 @@ export default {
     DisplaySetup,
     SplashScreen
   },
-  props: {
-    alerts: Array,
-    authenticated: Boolean,
-    displayId: String,
-    showSplashScreen: Boolean,
-    views: Array
+  computed: {
+    displayId: function () {
+      return this.$store.state.ownDisplayId
+    },
+    showSplashScreen() {
+      return this.$store.state.showSplashScreen
+    }
+  },
+  mounted() {
+    this.$store.subscribe(mutation => {
+      if (mutation.type === 'socket/setConnected' && mutation.payload === true) {
+        this.$store.dispatch('displays/get', 'self')
+          .catch(reason => {
+            console.error('Error while trying to get own Display ID:', reason);
+            feathersClient.io.emit('create', 'api/v1/key-requests', {}, (error, result) => {
+              if (error) {
+                console.error('Could not request API key:', error)
+                return
+              }
+
+              console.log('Requested API key, request ID is', result.requestId)
+              this.$store.commit('socket/setKeyRequestId', result.requestId)
+            })
+          })
+      }
+    })
   }
 }
 </script>
