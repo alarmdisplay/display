@@ -1,11 +1,24 @@
 <template>
-    <div class="w3-card view">
-        <div class="w3-container preview-container">
-            <ViewPreview :view-data="view"/>
+    <div class="card">
+        <div class="card-image">
+          <figure class="image is-16by9">
+            <ViewPreview :view-data="view" class="has-ratio"/>
+          </figure>
         </div>
-        <router-link :to="`/displays/${view.displayId}/views/${view.id}`" tag="button" class="w3-button w3-block">
-            <font-awesome-icon icon="pencil-alt"/> Bearbeiten
-        </router-link>
+        <footer class="card-footer">
+          <a class="card-footer-item has-text-danger is-disabled" v-if="removable" href="#" @click.prevent="view.remove()">
+            <span class="icon">
+              <font-awesome-icon icon="trash-alt"/>
+            </span>
+            <span>Löschen</span>
+          </a>
+          <router-link :to="`/displays/${view.displayId}/views/${view.id}`" class="card-footer-item">
+            <span class="icon">
+              <font-awesome-icon icon="pencil-alt"/>
+            </span>
+            <span>Bearbeiten</span>
+          </router-link>
+        </footer>
     </div>
 </template>
 
@@ -17,26 +30,11 @@ export default {
     ViewPreview
   },
   props: {
-    view: Object
+    view: Object,
+    removable: Boolean
   }
 }
 </script>
 
 <style scoped>
-.view {
-    width: 25em;
-    height: 20em;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    margin-right: 2em;
-}
-
-.preview-container {
-    height: 66%;
-}
-
-.preview {
-    border: 1px solid #9e9e9e;
-}
 </style>
