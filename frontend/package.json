@@ -1,0 +1,60 @@
+{
+  "name": "display-vue",
+  "version": "1.0.0-beta.2",
+  "private": false,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alarmdisplay/display-frontend-vue.git"
+  },
+  "keywords": [],
+  "author": "Andreas Brain",
+  "license": "AGPL-3.0-only",
+  "dependencies": {
+    "@feathersjs/feathers": "^4.5.8",
+    "@feathersjs/socketio-client": "^4.5.8",
+    "@fortawesome/fontawesome-svg-core": "^1.2.30",
+    "@fortawesome/free-solid-svg-icons": "^5.14.0",
+    "@fortawesome/vue-fontawesome": "^0.1.10",
+    "@vue/composition-api": "^0.6.7",
+    "core-js": "^3.6.5",
+    "feathers-vuex": "^3.11.5",
+    "moment": "^2.27.0",
+    "socket.io-client": "^2.3.0",
+    "vue": "^2.6.12",
+    "vue-moment": "^4.1.0",
+    "vue-toast-notification": "0.0.3",
+    "vuex": "^3.5.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.5.4",
+    "@vue/cli-plugin-eslint": "^4.5.4",
+    "@vue/cli-service": "^4.5.4",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "vue-template-compiler": "^2.6.12"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
+}
