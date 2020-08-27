@@ -1,0 +1,14 @@
+version: "2"
+plugins:
+  eslint:
+    enabled: true
+    channel: "eslint-6"
+exclude_patterns:
+  - ".idea/"
+  - ".*.json"
+  - ".*.yml"
+  - ".*ignore"
+  - "node_modules/"
+  - "__tests__/"
+  - "*.js"
+  - "*.json"

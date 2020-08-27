@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "outDir": "./lib",
+    "rootDir": "./src",
+    "strict": true,
+    "typeRoots" : ["./node_modules/@types", "./typings"],
+    "esModuleInterop": true
+  },
+  "exclude": [
+    "test"
+  ]
+}
