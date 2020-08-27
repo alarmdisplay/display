@@ -26,9 +26,8 @@ jobs:
     - name: "Frontend"
       stage: lint
       script: ./scripts/lint-frontend.sh
-    - name: "Server"
-      stage: test
-      script: ./scripts/test-server.sh
+
+script: ./scripts/test-server.sh
 
 notifications:
   email:
