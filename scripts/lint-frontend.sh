@@ -2,5 +2,5 @@
 set -ev
 
 cd frontend
-npm run ci
+npm ci
 npm run lint

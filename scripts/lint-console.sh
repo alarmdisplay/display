@@ -2,5 +2,5 @@
 set -ev
 
 cd console
-npm run ci
+npm ci
 npm run lint

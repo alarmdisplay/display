@@ -2,5 +2,5 @@
 set -ev
 
 cd server
-npm run ci
+npm ci
 npm run lint
