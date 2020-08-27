@@ -12,7 +12,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Editor directories and files
-.idea
+.idea/workspace.xml
 .vscode
 *.suo
 *.ntvs*
