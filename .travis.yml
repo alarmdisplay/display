@@ -27,7 +27,6 @@ jobs:
       stage: lint
       script: ./scripts/lint-frontend.sh
 
-install: npm ci
 script: ./scripts/test-server.sh
 
 notifications:
