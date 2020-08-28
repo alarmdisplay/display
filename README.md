@@ -1,4 +1,4 @@
-# Display
+# Alarmdisplay Display
 
 This repository contains all code for the Display: Server, Console UI and Frontend.
 
