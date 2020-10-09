@@ -108,7 +108,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # Others
-lib/
-data/
-config/development.json
-ext-display
+/lib/
+/config/local-*.json
+/ext-display
