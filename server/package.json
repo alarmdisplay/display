@@ -33,7 +33,7 @@
     "lint": "eslint src/. test/. --config .eslintrc.json --ext .ts --fix",
     "dev": "ts-node-dev --no-notify --rs src/",
     "start": "npm run compile && node lib/",
-    "jest": "jest  --forceExit",
+    "jest": "NODE_ENV=test jest  --forceExit",
     "compile": "shx rm -rf lib/ && tsc"
   },
   "standard": {
