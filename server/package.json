@@ -65,6 +65,7 @@
     "sequelize": "^6.3.5",
     "serve-favicon": "^2.5.0",
     "socket.io-client": "^2.3.1",
+    "umzug": "^2.3.0",
     "uuid": "^8.3.1"
   },
   "devDependencies": {
@@ -77,6 +78,7 @@
     "@types/jsonwebtoken": "^8.5.0",
     "@types/serve-favicon": "^2.5.0",
     "@types/socket.io-client": "^1.4.34",
+    "@types/umzug": "^2.3.0",
     "@types/uuid": "^8.3.0",
     "@types/validator": "^10.11.3",
     "@typescript-eslint/eslint-plugin": "^3.10.1",

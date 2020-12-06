@@ -1,5 +1,7 @@
-import { Sequelize } from 'sequelize';
-import { Application } from './declarations';
+import {Sequelize} from 'sequelize';
+import {Application} from './declarations';
+import Umzug from 'umzug';
+import * as path from 'path';
 
 export default function (app: Application): void {
   const connectionString = app.get('mysql');
@@ -25,8 +27,23 @@ export default function (app: Application): void {
       }
     });
 
-    // Sync to the database
-    app.set('sequelizeSync', sequelize.sync());
+    // Initialize Umzug, used for database migrations
+    const umzug = new Umzug({
+      migrations: {
+        // indicates the folder containing the migration .js files
+        path: path.join(__dirname, './migrations'),
+        // inject sequelize's QueryInterface in the migrations
+        params: [
+          sequelize.getQueryInterface(),
+          app
+        ]
+      },
+      storage: 'sequelize',
+      storageOptions: { sequelize }
+    });
+
+    // Migrate and sync to the database
+    app.set('sequelizeSync', umzug.up());
 
     return result;
   };
