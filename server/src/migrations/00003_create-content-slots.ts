@@ -54,6 +54,11 @@ export default {
       }
     });
 
+    await query.addIndex(tableName, {
+      name: 'viewId',
+      fields: ['viewId']
+    });
+
     await query.addConstraint(tableName, {
       name: `${tableName}_ibfk_1`,
       type: 'foreign key',

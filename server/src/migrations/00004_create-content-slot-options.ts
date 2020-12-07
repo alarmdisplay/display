@@ -42,6 +42,11 @@ export default {
       }
     });
 
+    await query.addIndex(tableName, {
+      name: 'contentSlotId',
+      fields: ['contentSlotId']
+    });
+
     await query.addConstraint(tableName, {
       name: `${tableName}_ibfk_1`,
       type: 'foreign key',
