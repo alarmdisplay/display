@@ -85,7 +85,7 @@ export default {
       type: 'foreign key',
       fields: ['incidentId'],
       references: { table: [app.get('db_prefix'), 'incidents'].join('_'), field: 'id' },
-      onDelete: 'CASCADE',
+      onDelete: 'SET NULL',
       onUpdate: 'CASCADE'
     });
   },
