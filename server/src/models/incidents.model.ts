@@ -71,7 +71,10 @@ export default function (app: Application): typeof Model {
   });
 
   (Incident as any).associate = function (models: any): void {
-    models.incident.hasOne(models.locations);
+    models.incident.hasOne(models.locations, {
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    });
   };
 
   return Incident;
