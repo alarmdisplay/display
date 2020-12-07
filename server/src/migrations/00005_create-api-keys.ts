@@ -4,6 +4,15 @@ import {Application} from '../declarations';
 export default {
   async up(query: QueryInterface, app: Application): Promise<void> {
     const tableName = [app.get('db_prefix'), 'api_keys'].join('_');
+
+    try {
+      await query.describeTable(tableName);
+      // Exit early if the table exists
+      return;
+    } catch (e) {
+      // The table does not exist, so we just continue
+    }
+
     await query.createTable(tableName, {
       id: {
         type: Sequelize.INTEGER,
@@ -33,7 +42,9 @@ export default {
         allowNull: false
       }
     });
+
     await query.addConstraint(tableName, {
+      name: `${tableName}_ibfk_1`,
       type: 'foreign key',
       fields: ['displayId'],
       references: { table: [app.get('db_prefix'), 'displays'].join('_'), field: 'id' },
