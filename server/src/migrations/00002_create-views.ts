@@ -4,7 +4,7 @@ import {Application} from '../declarations';
 export default {
   async up(query: QueryInterface, app: Application): Promise<void> {
     const tableName = [app.get('db_prefix'), 'views'].join('_');
-    return query.createTable(tableName, {
+    await query.createTable(tableName, {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -39,15 +39,16 @@ export default {
         type: Sequelize.DATE,
         allowNull: false
       }
-    }).then(() => query.addConstraint(tableName, {
+    });
+    await query.addConstraint(tableName, {
       type: 'foreign key',
       fields: ['displayId'],
       references: { table: [app.get('db_prefix'), 'displays'].join('_'), field: 'id' },
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE'
-    }));
+    });
   },
   async down(query: QueryInterface, app: Application): Promise<void> {
-    return query.dropTable([app.get('db_prefix'), 'views'].join('_'));
+    await query.dropTable([app.get('db_prefix'), 'views'].join('_'));
   }
 };
