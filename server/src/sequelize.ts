@@ -2,6 +2,7 @@ import {Sequelize} from 'sequelize';
 import {Application} from './declarations';
 import Umzug from 'umzug';
 import * as path from 'path';
+import logger from "./logger";
 
 export default function (app: Application): void {
   const connectionString = app.get('mysql');
@@ -15,6 +16,11 @@ export default function (app: Application): void {
   const oldSetup = app.setup;
 
   app.set('sequelizeClient', sequelize);
+
+  // Set up a global Promise to check if the database is ready
+  app.set('databaseReady', new Promise(resolve => {
+    app.set('databaseReadyResolve', resolve);
+  }));
 
   app.setup = function (...args): Application {
     const result = oldSetup.apply(this, args);
@@ -43,7 +49,13 @@ export default function (app: Application): void {
     });
 
     // Migrate and sync to the database
-    app.set('sequelizeSync', umzug.up());
+    app.set('sequelizeSync', umzug.up().then(() => {
+      logger.info('Database migration successful');
+      // Resolve the databaseReady Promise
+      app.get('databaseReadyResolve')();
+    }).catch((reason: Error) => {
+      logger.error('Database migration failed:', reason.message);
+    }));
 
     return result;
   };
