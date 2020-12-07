@@ -39,7 +39,7 @@ export default {
       },
       displayId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       }
     });
 

@@ -71,7 +71,7 @@ export default {
       },
       incidentId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       }
     });
 
