@@ -14,7 +14,7 @@ describe('authentication', () => {
     beforeAll(async () => {
       try {
         // Wait for the database to be migrated / synced
-        await app.get('sequelizeSync');
+        await app.get('databaseReady');
 
         await app.service('users').create(userInfo);
       } catch (error) {
