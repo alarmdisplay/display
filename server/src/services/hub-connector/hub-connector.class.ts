@@ -25,7 +25,7 @@ export class HubConnector implements SetupMethod {
       return;
     }
 
-    let hubUrl;
+    let hubUrl: URL;
     try {
       hubUrl = new URL(hubHost);
     } catch (e) {
@@ -38,31 +38,33 @@ export class HubConnector implements SetupMethod {
       return;
     }
 
-    logger.info('Connecting to Hub at %s...', hubUrl.toString());
-    const socket = io(hubUrl.toString(), {
-      transportOptions: {
-        polling: {
-          extraHeaders: {
-            'x-api-key': hubApiKey
+    (app.get('databaseReady') as Promise<void>).then(() => {
+      logger.info('Connecting to Hub at %s...', hubUrl.toString());
+      const socket = io(hubUrl.toString(), {
+        transportOptions: {
+          polling: {
+            extraHeaders: {
+              'x-api-key': hubApiKey
+            }
           }
         }
-      }
-    });
-    socket.on('connect', () => {
-      logger.info('Connected to Hub');
-    });
-    socket.on('disconnect', (reason: Error) => {
-      logger.error('Disconnected from Hub:', reason);
-    });
-    socket.on('connect_error', (reason: Error) => {
-      logger.error('Error connecting to Hub:', reason.message);
-    });
-    socket.on('connect_timeout', (reason: Error) => {
-      logger.error('Timeout connecting to Hub:', reason);
-    });
+      });
+      socket.on('connect', () => {
+        logger.info('Connected to Hub');
+      });
+      socket.on('disconnect', (reason: Error) => {
+        logger.error('Disconnected from Hub:', reason);
+      });
+      socket.on('connect_error', (reason: Error) => {
+        logger.error('Error connecting to Hub:', reason.message);
+      });
+      socket.on('connect_timeout', (reason: Error) => {
+        logger.error('Timeout connecting to Hub:', reason);
+      });
 
-    // Start watching services on the Hub
-    new IncidentsWatcher(app, socket);
-    new LocationsWatcher(app, socket);
+      // Start watching services on the Hub
+      new IncidentsWatcher(app, socket);
+      new LocationsWatcher(app, socket);
+    });
   }
 }
