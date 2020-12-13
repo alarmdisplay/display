@@ -17,11 +17,6 @@ export default function (app: Application): void {
 
   app.set('sequelizeClient', sequelize);
 
-  // Set up a global Promise to check if the database is ready
-  app.set('databaseReady', new Promise(resolve => {
-    app.set('databaseReadyResolve', resolve);
-  }));
-
   app.setup = function (...args): Application {
     const result = oldSetup.apply(this, args);
 

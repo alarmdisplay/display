@@ -50,6 +50,11 @@ if (fs.existsSync('ext-console')) {
   logger.warn('The static files for the console UI could not be found, the path /console will not work');
 }
 
+// Set up a global Promise to check if the database is ready
+app.set('databaseReady', new Promise(resolve => {
+  app.set('databaseReadyResolve', resolve);
+}));
+
 // Set up Plugins and providers
 app.configure(express.rest());
 app.configure(socketio());
