@@ -33,6 +33,16 @@ export function createSocketPlugin (socket) {
         socket.on('disconnect', () => {
             store.commit('socket/setConnected', false)
         })
+        socket.on('connect_error', (err) => {
+            console.error('Socket connect error', err)
+            store.commit('socket/setConnected', false)
+        })
+        socket.on('connect_timeout', (timeout) => {
+            console.error('Socket connect timeout', timeout)
+        })
+        socket.on('error', (err) => {
+            console.error('Socket error', err)
+        })
         socket.on('api/v1/key-requests patched', (data) => {
             let keyRequestId = store.state.socket.keyRequestId;
             if (!keyRequestId) {
