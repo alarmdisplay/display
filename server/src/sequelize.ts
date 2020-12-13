@@ -2,7 +2,7 @@ import {Sequelize} from 'sequelize';
 import {Application} from './declarations';
 import Umzug from 'umzug';
 import * as path from 'path';
-import logger from "./logger";
+import logger from './logger';
 
 export default function (app: Application): void {
   const connectionString = app.get('mysql');
