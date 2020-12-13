@@ -8,6 +8,7 @@ import cors from 'cors';
 import feathers from '@feathersjs/feathers';
 import configuration from '@feathersjs/configuration';
 import express from '@feathersjs/express';
+import {Request} from 'express';
 import socketio from '@feathersjs/socketio';
 
 
@@ -27,7 +28,7 @@ const app: Application = express(feathers());
 app.configure(configuration());
 // Enable security, CORS, compression, favicon and body parsing
 app.use(helmet());
-app.use(cors());
+app.use(cors<Request>());
 app.use(compress());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
