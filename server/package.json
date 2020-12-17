@@ -30,7 +30,8 @@
   },
   "scripts": {
     "test": "npm run compile && npm run jest",
-    "lint": "eslint src/. test/. --config .eslintrc.json --ext .ts --fix",
+    "lint": "eslint src/. test/. --config .eslintrc.json --ext .ts",
+    "lint:fix": "eslint src/. test/. --config .eslintrc.json --ext .ts --fix",
     "dev": "ts-node-dev --no-notify --rs src/",
     "start": "npm run compile && node lib/",
     "jest": "NODE_ENV=test jest  --forceExit",
