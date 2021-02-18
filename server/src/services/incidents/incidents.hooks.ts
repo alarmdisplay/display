@@ -41,9 +41,11 @@ export default {
 };
 
 async function includeAssociations(context: HookContext): Promise<HookContext> {
-  const LocationService = context.app.service('api/v1/locations');
-  context.params.sequelize = {
-    include: [{ model: LocationService.Model }]
-  };
+  if (context.data.location) {
+    const LocationService = context.app.service('api/v1/locations');
+    context.params.sequelize = {
+      include: [{ model: LocationService.Model }]
+    };
+  }
   return context;
 }

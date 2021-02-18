@@ -1,7 +1,7 @@
 import logger from '../../../logger';
 import { Application, LocationData, IncidentData } from '../../../declarations';
 
-interface RemoteLocationData {
+export interface RemoteLocationData {
   id: number
   rawText: string,
   latitude?: number,
