@@ -40,7 +40,12 @@ export default class LocationsWatcher {
     };
 
     if (data.incidentId) {
-      newData.incidentId = await this.translateIncidentId(data.incidentId);
+      const incidentId = await this.translateIncidentId(data.incidentId);
+      if (!incidentId) {
+        // Bail, if this location is for an incident, we don't know yet. It will be created once the incident is synced.
+        return;
+      }
+      newData.incidentId = incidentId;
     }
 
     const newLocation = await this.app.service('api/v1/locations').create(newData) as LocationData;
