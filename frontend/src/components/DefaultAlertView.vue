@@ -155,6 +155,7 @@
 
     .address {
         font-size: 3em;
+        white-space: pre;
     }
 
     .description {
