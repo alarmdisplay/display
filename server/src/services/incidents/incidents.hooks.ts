@@ -1,5 +1,6 @@
 import * as authentication from '@feathersjs/authentication';
 import { allowApiKey } from '../../hooks/allowApiKey';
+import { HookContext } from '@feathersjs/feathers';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const { authenticate } = authentication.hooks;
@@ -12,7 +13,7 @@ export default {
     all: [ allowApiKey(), authenticate('jwt', 'api-key') ],
     find: [],
     get: [],
-    create: [],
+    create: [ includeAssociations ],
     update: [],
     patch: [],
     remove: []
@@ -38,3 +39,11 @@ export default {
     remove: []
   }
 };
+
+async function includeAssociations(context: HookContext): Promise<HookContext> {
+  const LocationService = context.app.service('api/v1/locations');
+  context.params.sequelize = {
+    include: [{ model: LocationService.Model }]
+  };
+  return context;
+}

@@ -18,6 +18,7 @@ declare module '../../declarations' {
     ref: string
     caller_name: string
     caller_number: string
+    location?: LocationData
     reason: string
     keyword: string
     description: string
