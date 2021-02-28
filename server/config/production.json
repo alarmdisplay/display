@@ -1,6 +1,2 @@
 {
-  "port": "PORT",
-  "mysql": "MYSQL_URI",
-  "hub_host": "HUB_HOST",
-  "hub_api_key": "HUB_API_KEY"
 }

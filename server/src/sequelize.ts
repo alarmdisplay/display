@@ -6,6 +6,12 @@ import logger from './logger';
 
 export default function (app: Application): void {
   const connectionString = app.get('mysql');
+  if (!connectionString || connectionString === '') {
+    throw new Error('The config \'mysql\' has not been set');
+  }
+  if (connectionString === 'MYSQL_URI') {
+    throw new Error('The environment variable MYSQL_URI has not been set');
+  }
   const sequelize = new Sequelize(connectionString, {
     dialect: 'mysql',
     logging: false,
