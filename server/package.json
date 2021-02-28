@@ -1,7 +1,6 @@
 {
-  "name": "display-backend",
-  "version": "1.0.0-beta.2",
-  "description": "Data source and configuration store for displays",
+  "name": "@alarmdisplay/display",
+  "description": "Display component of the Alarmdisplay project",
   "homepage": "https://alarmdisplay.org",
   "private": true,
   "main": "src",
@@ -25,7 +24,7 @@
     "config": "config/"
   },
   "engines": {
-    "node": "^14.0.0",
+    "node": ">= 10.0.0",
     "npm": ">= 3.0.0"
   },
   "scripts": {
