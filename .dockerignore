@@ -1,2 +1,2 @@
-*
-!build/
+**/node_modules/
+server/config/local*.json
