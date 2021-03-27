@@ -4,9 +4,9 @@ This web application offers a user interface to manage the [Display Server](../s
 
 ## Development
 In order to run a development version on your local system, you need a [Node.js](https://nodejs.org/) environment.
-Clone the repository and run `npm install` inside the project folder to install all the dependencies.
+Clone the repository and run `npm install` in this folder to install all the dependencies.
 
-Start the development server by running `npm run serve`, it will automatically restart when files have changed.
+Start the development server by running `npm run serve`, it will automatically reload when files have changed.
 Now you can access the server on http://localhost:8080 (may be a different port on your system, check the console output).
 If you run a development Display Server on http://localhost:3031, the requests are automatically proxied there.
 This allows for parallel development of the Console and the backend.
@@ -19,7 +19,7 @@ This project uses the following libraries or frameworks, please refer to their d
 - [FeathersVuex](https://vuex.feathersjs.com/)
 - [Font Awesome](https://fontawesome.com/)
 
-## Deployment
+## Build & Deploy
 Run `npm run build`, which compiles and minifies the app for production.
 You find the result of the build process in a folder called `dist`.
 This folder only contains HTML, CSS, and JS files, which means they can be hosted as static files.
