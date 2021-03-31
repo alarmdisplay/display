@@ -1,7 +1,8 @@
 # Alarmdisplay Display
 
-This repository contains all code for the Display: Server, Console UI and Frontend.
+This component takes care of displaying incident data in case of an emergency, and shows general information otherwise. The incidents can be created via API, or synced over from a [Hub](https://github.com/alarmdisplay/hub) instance.
 
+This repository contains backend and frontend code.
 For more info on how to run those parts, check out the README in the respective sub folder.
 
 ## Build
