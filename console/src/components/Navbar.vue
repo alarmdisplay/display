@@ -66,7 +66,7 @@
                     </a>
 
                     <div class="navbar-dropdown">
-                        <a class="navbar-item" @click="$store.dispatch('auth/logout')">
+                        <a class="navbar-item" @click="logout">
                             <span class="icon"><font-awesome-icon icon="sign-out-alt"/></span>
                             <span>Logout</span>
                         </a>
@@ -91,6 +91,13 @@ export default {
     }
   },
   methods: {
+    logout () {
+      this.$store.dispatch('auth/logout')
+        .then(() => {
+          // Reload the page to clear the data store
+          window.location.reload()
+        })
+    },
     toggleMenu: function () {
       this.$refs.hamburger.classList.toggle('is-active')
       this.$refs.navbarmenu.classList.toggle('is-active')

@@ -32,5 +32,15 @@ export function createSocketPlugin (socket) {
       // Clear all key requests, because the server only stores them in memory and IDs could be reused after a restart
       store.commit('key-requests/clearAll')
     })
+    socket.on('connect_error', (err) => {
+      console.error('Socket connect error', err)
+      store.commit('socket/setConnected', false)
+    })
+    socket.on('connect_timeout', (timeout) => {
+      console.error('Socket connect timeout', timeout)
+    })
+    socket.on('error', (err) => {
+      console.error('Socket error', err)
+    })
   }
 }
