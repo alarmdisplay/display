@@ -1,7 +1,10 @@
 <template>
   <div id="app">
-    <div v-show="!socketIsConnected" class="has-background-danger has-text-white has-text-weight-bold has-text-centered p-1">
-      <span class="icon-text">
+    <div v-if="showConnectionBanner" :class="['has-text-white', 'has-text-weight-bold', 'has-text-centered', 'p-1', socketIsConnected ? 'has-background-success' : 'has-background-danger']">
+      <span v-if="socketIsConnected">
+          Verbunden
+      </span>
+      <span v-else class="icon-text">
         <span class="icon"><font-awesome-icon icon="spinner" spin/></span>
         <span>Keine Verbindung zum Server &hellip;</span>
       </span>
@@ -42,6 +45,28 @@ export default {
     this.$store.dispatch('auth/authenticate').catch(() => {
       // No need to worry. This just means the session expired or there was no token in the first place.
     })
+  },
+  data () {
+    return {
+      hideConnectionBannerTimeout: null,
+      showConnectionBanner: false,
+      showConnectionBannerTimeout: null
+    }
+  },
+  watch: {
+    socketIsConnected (connected) {
+      clearTimeout(this.hideConnectionBannerTimeout)
+      clearTimeout(this.showConnectionBannerTimeout)
+      if (connected && this.showConnectionBanner) {
+        this.hideConnectionBannerTimeout = setTimeout(() => {
+          this.showConnectionBanner = false
+        }, 1500)
+      } else if (!connected && !this.showConnectionBanner) {
+        this.showConnectionBannerTimeout = setTimeout(() => {
+          this.showConnectionBanner = true
+        }, 500)
+      }
+    }
   }
 }
 </script>
