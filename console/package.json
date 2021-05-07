@@ -19,6 +19,7 @@
     "axios": "^0.21.1",
     "bulma": "^0.9.1",
     "core-js": "^3.6.5",
+    "feathers-hooks-common": "^5.0.5",
     "feathers-vuex": "^3.13.0",
     "moment": "^2.29.1",
     "simple-vue2-datetimepicker": "^2.3.1",
