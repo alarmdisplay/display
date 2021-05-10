@@ -4,7 +4,7 @@
             <Clock :instance-id="0" :show-date="false"/>
         </div>
         <div class="info">
-            <p class="title">{{ alert.reason || 'Einsatz' }}</p>
+            <p class="title">{{ titleText }}</p>
             <span class="badge badge-test">TEST</span>
             <span v-if="alert.keyword" class="badge badge-category">{{ alert.keyword }}</span>
             <span class="badge badge-elapsed-time"><font-awesome-icon icon="stopwatch"/> {{ elapsedTime }}</span>
@@ -53,7 +53,11 @@
               }
 
               return ''
-            }
+            },
+            titleText () {
+                let reason = this.alert.reason || 'Einsatzgrund unbekannt'
+                return (this.alert.status === 'Exercise' ? `Übung: ${reason}` : reason)
+          }
         },
       mixins: [
         makeFindMixin({
