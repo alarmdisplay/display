@@ -168,5 +168,6 @@
         border: 1px solid black;
         background-color: aliceblue;
         padding: 0.4em;
+        white-space: pre-line;
     }
 </style>
