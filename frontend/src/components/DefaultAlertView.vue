@@ -49,7 +49,13 @@
             },
             locationText() {
               if (this.locations.length) {
-                return this.locations[0].rawText
+                let location = this.locations[0]
+                let line1 = `${location.street} ${location.number}`.trim()
+                if (line1 !== '' && location.detail) {
+                  line1 += ` (${location.detail})`
+                }
+                let string = `${line1}\n${location.locality}`.trim()
+                return /^[\s\n]*$/.test(string) ? location.rawText : string
               }
 
               return ''
