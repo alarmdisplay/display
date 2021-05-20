@@ -36,7 +36,6 @@ class Incident extends BaseModel {
     }
 
     // Replace the nested location with a getter
-    delete data.location
     Object.defineProperty(data, 'location', {
       get: function () {
         let locations = models.api.Location.findInStore({
@@ -49,7 +48,9 @@ class Incident extends BaseModel {
           }
         })
         return locations.data.length ? locations.data[0] : undefined
-      }
+      },
+      configurable: true,
+      enumerable: true
     })
 
     return data
