@@ -1,12 +1,23 @@
 import * as authentication from '@feathersjs/authentication';
 import { allowApiKey } from '../../hooks/allowApiKey';
 import { HookContext } from '@feathersjs/feathers';
+import { shallowPopulate } from 'feathers-shallow-populate';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const { authenticate } = authentication.hooks;
 
 // TODO make sure that incidents that are mirrored from the Hub do not get modified
 // TODO make sure that local incidents cannot be assigned a hubIncidentId
+
+const populateOptions = {
+  include: {
+    service: 'api/v1/locations',
+    nameAs: 'location',
+    keyHere: 'id',
+    keyThere: 'incidentId',
+    asArray: false
+  }
+};
 
 export default {
   before: {
@@ -20,7 +31,7 @@ export default {
   },
 
   after: {
-    all: [],
+    all: [ shallowPopulate(populateOptions) ],
     find: [],
     get: [],
     create: [],
