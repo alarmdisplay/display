@@ -43,6 +43,19 @@ export default {
             console.log('Requested API key, request ID is', result.requestId)
             this.$store.commit('socket/setKeyRequestId', result.requestId)
           })
+          return
+        }
+
+        // If we got here, the display successfully (re)connected
+        if (this.$store.state.socket.lastDisconnect) {
+          // We have been connected before, query any incidents updated since the disconnect (plus 30 seconds safety)
+          await this.$store.dispatch('incidents/find', {
+            query: {
+              updatedAt: {
+                $gt: this.$store.state.socket.lastDisconnect - 30000
+              }
+            }
+          })
         }
       }
     })

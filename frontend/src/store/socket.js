@@ -1,7 +1,9 @@
 // initial state
 const state = () => ({
     connected: false,
-    keyRequestId: null
+    keyRequestId: null,
+    lastConnect: null,
+    lastDisconnect: null,
 })
 
 const getters = {}
@@ -10,6 +12,13 @@ const actions = {}
 
 const mutations = {
     setConnected (state, connected) {
+        if (connected && !state.connected) {
+            // Record the time of (re)connection
+            state.lastConnect = new Date()
+        } else if (!connected && state.connected) {
+            // Record the time when the connection was lost
+            state.lastDisconnect = new Date()
+        }
         state.connected = connected === true
     },
     setKeyRequestId (state, value) {
