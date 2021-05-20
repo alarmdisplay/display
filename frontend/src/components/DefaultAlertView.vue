@@ -1,5 +1,5 @@
 <template>
-    <div :class="alertClass">
+    <div :class="['alert', { test: alert.status === 'Test' }]">
         <div class="clock-container">
             <Clock :instance-id="0" :show-date="false"/>
         </div>
@@ -23,14 +23,6 @@
             Clock
         },
         computed: {
-            alertClass: function () {
-                let classes = ['alert']
-                classes.push(`category-${this.alert.category}`)
-                if (this.alert.status === 'Test') {
-                    classes.push('test')
-                }
-                return classes.join(' ')
-            },
             elapsedTime: function () {
                 let elapsedSeconds = this.$root.$data.seconds - Math.floor(this.alert.time.valueOf() / 1000);
                 return textForSeconds(elapsedSeconds);
