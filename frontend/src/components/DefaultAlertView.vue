@@ -16,7 +16,6 @@
 
 <script>
     import Clock from "@/components/Clock";
-    import {makeFindMixin} from "feathers-vuex";
 
     export default {
         name: "DefaultAlertView",
@@ -36,20 +35,9 @@
                 let elapsedSeconds = this.$root.$data.seconds - Math.floor(this.alert.time.valueOf() / 1000);
                 return textForSeconds(elapsedSeconds);
             },
-            locationsParams() {
-                return {
-                  query: {
-                    incidentId: this.alert.id,
-                    $sort: {
-                      createdAt: -1
-                    },
-                    $limit: 1
-                  }
-                }
-            },
             locationText() {
-              if (this.locations.length) {
-                let location = this.locations[0]
+              if (this.alert.location) {
+                let location = this.alert.location
                 let line1 = `${location.street} ${location.number}`.trim()
                 if (line1 !== '' && location.detail) {
                   line1 += ` (${location.detail})`
@@ -65,13 +53,6 @@
                 return (this.alert.status === 'Exercise' ? `Übung: ${reason}` : reason)
           }
         },
-      mixins: [
-        makeFindMixin({
-          service: 'locations',
-          name: 'locations',
-          params: 'locationsParams'
-        })
-      ],
         props: {
             alert: Object
         }

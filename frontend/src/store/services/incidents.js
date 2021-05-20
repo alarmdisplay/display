@@ -32,8 +32,25 @@ class Incident extends BaseModel {
 
     // Add nested location object to storage
     if (data.location) {
-      data.location = new models.api.Location(data.location)
+      new models.api.Location(data.location)
     }
+
+    // Replace the nested location with a getter
+    delete data.location
+    Object.defineProperty(data, 'location', {
+      get: function () {
+        let locations = models.api.Location.findInStore({
+          query: {
+            incidentId: data.id,
+            $sort: {
+              updatedAt: -1
+            },
+            $limit: 1
+          }
+        })
+        return locations.data.length ? locations.data[0] : undefined
+      }
+    })
 
     return data
   }
