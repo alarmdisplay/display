@@ -72,4 +72,7 @@ export default {
 </script>
 
 <style>
+table th, table th:not([align]) {
+    text-align: start !important;
+}
 </style>
