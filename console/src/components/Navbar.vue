@@ -10,9 +10,9 @@
 
         <div ref="navbarmenu" class="navbar-menu">
             <div class="navbar-start">
-                <router-link class="navbar-item" to="/">
+                <router-link class="navbar-item is-tab" to="/" exact>
                     <span class="icon"><font-awesome-icon icon="home"/></span>
-                    <span>Home</span>
+                    <span>&Uuml;bersicht</span>
                 </router-link>
 
                 <router-link class="navbar-item is-tab" :to="{ name: 'display-list' }">
