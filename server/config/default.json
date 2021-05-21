@@ -27,6 +27,9 @@
       "passwordField": "password"
     }
   },
+  "logging": {
+    "level": "info"
+  },
   "mysql": "",
   "db_prefix": "display",
   "hub_host": "",

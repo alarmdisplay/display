@@ -26,6 +26,9 @@ const app: Application = express(feathers());
 
 // Load app configuration
 app.configure(configuration());
+logger.level = app.get('logging').level;
+logger.info('Logging level is \'%s\'', logger.level);
+
 // Enable security, CORS, compression, favicon and body parsing
 app.use(helmet());
 app.use(cors<Request>());
