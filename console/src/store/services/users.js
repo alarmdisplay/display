@@ -6,11 +6,12 @@ class User extends BaseModel {
   static instanceDefaults () {
     return {
       email: '',
-      name: '',
-      get displayName () {
-        return this.name || this.email
-      }
+      name: ''
     }
+  }
+
+  get displayName () {
+    return this.name || this.email
   }
 }
 
