@@ -11,7 +11,7 @@
           <span class="icon">
             <font-awesome-icon icon="chevron-left"/>
           </span>
-          <span>Zurück zum Login</span>
+          <span>Zurück zur Anmeldung</span>
         </button>
       </div>
 

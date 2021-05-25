@@ -38,7 +38,7 @@
             <div class="field">
               <p class="control">
                 <button :class="['button', 'is-success', { 'is-loading': isLoginPending }]" :disabled="isLoginDisabled">
-                  Einloggen
+                  Anmelden
                 </button>
               </p>
             </div>
@@ -50,7 +50,7 @@
               <p>Neu hier?</p>
             </div>
             <div class="message-body">
-              Wenn du das System gerade neu aufgesetzt hast, musst du erst ein Konto anlegen, um dich einloggen zu können.
+              Wenn du das System gerade neu aufgesetzt hast, musst du erst ein Konto anlegen, um dich anmelden zu können.
               <div class="buttons is-right">
                 <button type="button" class="button" @click="$store.commit('setShowSetup', true)">
                   <span>Konto anlegen</span>
