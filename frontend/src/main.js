@@ -7,8 +7,6 @@ import store from './store'
 
 import moment from 'moment'
 import VueMoment from 'vue-moment';
-import VueToast from 'vue-toast-notification';
-import 'vue-toast-notification/dist/index.css';
 
 // Import Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -20,9 +18,7 @@ library.add(faBullhorn, faClock, faStopwatch)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 require('moment/locale/de');
-
 Vue.use(VueMoment, { moment });
-Vue.use(VueToast);
 
 Vue.config.productionTip = false;
 
