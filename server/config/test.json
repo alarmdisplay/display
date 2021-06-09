@@ -1,1 +1,4 @@
-{}
+{
+  "mysql": "mysql://root:@localhost:3306/display_backend",
+  "db_prefix": "test"
+}

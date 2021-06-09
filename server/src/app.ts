@@ -8,6 +8,7 @@ import cors from 'cors';
 import feathers from '@feathersjs/feathers';
 import configuration from '@feathersjs/configuration';
 import express from '@feathersjs/express';
+import {Request} from 'express';
 import socketio from '@feathersjs/socketio';
 
 
@@ -25,9 +26,12 @@ const app: Application = express(feathers());
 
 // Load app configuration
 app.configure(configuration());
+logger.level = app.get('logging').level;
+logger.info('Logging level is \'%s\'', logger.level);
+
 // Enable security, CORS, compression, favicon and body parsing
 app.use(helmet());
-app.use(cors());
+app.use(cors<Request>());
 app.use(compress());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -48,6 +52,11 @@ if (fs.existsSync('ext-console')) {
 } else if (process.env.NODE_ENV === 'production') {
   logger.warn('The static files for the console UI could not be found, the path /console will not work');
 }
+
+// Set up a global Promise to check if the database is ready
+app.set('databaseReady', new Promise(resolve => {
+  app.set('databaseReadyResolve', resolve);
+}));
 
 // Set up Plugins and providers
 app.configure(express.rest());

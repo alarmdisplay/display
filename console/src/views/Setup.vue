@@ -2,7 +2,7 @@
   <section class="section">
     <div class="container">
       <h1 class="title">
-        Alarmanzeige
+        Anzeige
       </h1>
       <h2 class="subtitle">Erste Einrichtung</h2>
 
@@ -11,7 +11,7 @@
           <span class="icon">
             <font-awesome-icon icon="chevron-left"/>
           </span>
-          <span>Zurück zum Login</span>
+          <span>Zurück zur Anmeldung</span>
         </button>
       </div>
 

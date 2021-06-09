@@ -9,7 +9,7 @@
 
             <ErrorMessage :form-error="formError"/>
 
-            <FeathersVuexFormWrapper :item="item" watch>
+            <FeathersVuexFormWrapper :item="item" :eager="false">
                 <template v-slot="{ clone, save, reset }">
                     <UserEditor
                         :item="clone"

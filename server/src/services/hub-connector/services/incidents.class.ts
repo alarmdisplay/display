@@ -1,5 +1,6 @@
 import logger from '../../../logger';
-import { Application, IncidentData } from '../../../declarations';
+import { Application, IncidentData, LocationData } from '../../../declarations';
+import { RemoteLocationData } from './locations.class';
 
 interface RemoteIncidentData {
   id: number
@@ -8,6 +9,7 @@ interface RemoteIncidentData {
   ref: string
   caller_name: string
   caller_number: string
+  location?: RemoteLocationData
   reason: string
   keyword: string
   description: string
@@ -29,12 +31,22 @@ export default class IncidentsWatcher {
 
   onCreated = async (data: RemoteIncidentData): Promise<void> => {
     logger.debug('Incident created on Hub', data);
+    let locationData: LocationData|undefined = undefined;
+
+    // Move the ID into the hubLocationId property
+    if (data.location) {
+      locationData = data.location;
+      locationData.hubLocationId = locationData.id;
+      delete locationData.id;
+    }
+
     const newIncident = await this.app.service('api/v1/incidents').create({
       time: new Date(data.time),
       sender: data.sender,
       ref: data.ref,
       caller_name: data.caller_name,
       caller_number: data.caller_number,
+      location: locationData,
       reason: data.reason,
       keyword: data.keyword,
       description: data.description,

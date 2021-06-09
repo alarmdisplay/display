@@ -1,7 +1,9 @@
 // initial state
 const state = () => ({
     connected: false,
-    keyRequestId: null
+    keyRequestId: null,
+    lastConnect: null,
+    lastDisconnect: null,
 })
 
 const getters = {}
@@ -10,6 +12,13 @@ const actions = {}
 
 const mutations = {
     setConnected (state, connected) {
+        if (connected && !state.connected) {
+            // Record the time of (re)connection
+            state.lastConnect = new Date()
+        } else if (!connected && state.connected) {
+            // Record the time when the connection was lost
+            state.lastDisconnect = new Date()
+        }
         state.connected = connected === true
     },
     setKeyRequestId (state, value) {
@@ -32,6 +41,16 @@ export function createSocketPlugin (socket) {
         })
         socket.on('disconnect', () => {
             store.commit('socket/setConnected', false)
+        })
+        socket.on('connect_error', (err) => {
+            console.error('Socket connect error', err)
+            store.commit('socket/setConnected', false)
+        })
+        socket.on('connect_timeout', (timeout) => {
+            console.error('Socket connect timeout', timeout)
+        })
+        socket.on('error', (err) => {
+            console.error('Socket error', err)
         })
         socket.on('api/v1/key-requests patched', (data) => {
             let keyRequestId = store.state.socket.keyRequestId;

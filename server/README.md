@@ -1,17 +1,13 @@
-<<<<<<< HEAD
-# display
-=======
-# Display  Backend
-[![Build Status](https://travis-ci.com/alarmdisplay/display-backend.svg?branch=develop)](https://travis-ci.com/alarmdisplay/display-backend)
+# Display Server
 
-This component is the connection point for all Display units.
-While it maintains a [Socket.IO](https://socket.io/) connection with the Displays to push updates, it also offers a REST API to manage the Displays and their contents.
+The backend provides a REST API as well as WebSocket connections to notify clients about updates.
+In production, it also serves the [Console](../console) and [Display](../frontend) frontends.
 
 ## Development
-In order to run a development version on your local system, you need a [Node.js](https://nodejs.org/) environment and a MariaDB instance.
-Clone the repository and run `npm install` inside the project folder to install all the dependencies.
-Create a file called `development.json` in the `config/` folder, which lets you override single properties of `config/default.json`.
-At minimum, you will need the `mysql` property to set up the database connection.
+In order to run a development version on your local system, you need a [Node.js](https://nodejs.org/) environment, and a MariaDB instance.
+- Clone the repository and run `npm install` in this folder to install all the dependencies.
+- In the `config/` folder, copy the file `development.json` to `local-development.json`.
+- At least set the `mysql` property of `local-development.json` to set up the database connection (e.g. `mysql://user:password@localhost:3306/database`).
 
 Start the development server by running `npm run dev`, it will automatically restart when files have changed.
 Now you can access the server on http://localhost:3031.
@@ -22,4 +18,3 @@ This project uses the following libraries or frameworks, please refer to their d
 
 ## Deployment
 At the moment, this project is not ready for deployment outside of a development environment.
->>>>>>> backend/master

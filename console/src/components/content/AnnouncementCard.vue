@@ -35,7 +35,14 @@
           </div>
         </div>
       </article>
-      <p class="has-text-right"><small>Stand: {{ announcement.updatedAt | moment('LL') }}</small></p>
+      <div class="level">
+        <div class="level-left">
+            <small v-if="announcement.validFrom || announcement.validTo" class="level-item">{{ getValidityInfo() }}</small>
+        </div>
+        <div class="level-right">
+          <small>Stand: {{ announcement.updatedAt | moment('LL') }}</small>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -45,6 +52,18 @@ export default {
   name: 'AnnouncementCard',
   props: {
     announcement: Object
+  },
+  methods: {
+    getValidityInfo: function () {
+      let string = 'Gültig'
+      if (this.announcement.validFrom) {
+        string += ' ab ' + this.$moment(this.announcement.validFrom).format('LLL') + ' Uhr'
+      }
+      if (this.announcement.validTo) {
+        string += ' bis ' + this.$moment(this.announcement.validTo).format('LLL') + ' Uhr'
+      }
+      return string
+    }
   }
 }
 </script>

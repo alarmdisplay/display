@@ -1,6 +1,10 @@
 <template>
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
+            <span class="navbar-item has-text-weight-bold">
+                Anzeige
+            </span>
+
             <a role="button" ref="hamburger" class="navbar-burger burger" aria-label="menu" aria-expanded="false" @click.prevent="toggleMenu">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
@@ -10,9 +14,9 @@
 
         <div ref="navbarmenu" class="navbar-menu">
             <div class="navbar-start">
-                <router-link class="navbar-item" to="/">
+                <router-link class="navbar-item is-tab" to="/" exact>
                     <span class="icon"><font-awesome-icon icon="home"/></span>
-                    <span>Home</span>
+                    <span>&Uuml;bersicht</span>
                 </router-link>
 
                 <router-link class="navbar-item is-tab" :to="{ name: 'display-list' }">
@@ -63,12 +67,20 @@
                     <a class="navbar-link">
                         <span class="icon"><font-awesome-icon icon="user"/></span>
                         <span>{{ displayName }}</span>
+                        <span class="tag is-warning ml-2 has-text-weight-bold" style="width: 6em" v-if="isSessionAboutToExpire">
+                            <span class="icon"><font-awesome-icon icon="stopwatch"/></span>
+                            {{ remainingSecondsForSession | durationAsDigits }}
+                        </span>
                     </a>
 
                     <div class="navbar-dropdown">
-                        <a class="navbar-item" @click="$store.dispatch('auth/logout')">
+                        <div class="navbar-item has-background-warning" v-if="isSessionAboutToExpire" style="white-space: normal">
+                            <p>Die Sitzung läuft in Kürze ab. Sie kann durch Ab- und wieder Anmelden erneuert werden.</p>
+                        </div>
+
+                        <a class="navbar-item" @click="logout">
                             <span class="icon"><font-awesome-icon icon="sign-out-alt"/></span>
-                            <span>Logout</span>
+                            <span>Abmelden</span>
                         </a>
                     </div>
                 </div>
@@ -88,12 +100,39 @@ export default {
       }
 
       return currentUser.displayName || '???'
+    },
+    isSessionAboutToExpire () {
+      // Gets true 15 minutes before session expiration
+      return this.remainingSecondsForSession < 900
+    },
+    remainingSecondsForSession () {
+      const expiresAt = this.$store.getters['auth/expiresAt']
+      if (!expiresAt) {
+        return 0
+      }
+
+      return expiresAt - this.$root.$data.seconds
     }
   },
   methods: {
+    logout () {
+      this.$store.dispatch('auth/logout')
+        .then(() => {
+          // Reload the page to clear the data store
+          window.location.reload()
+        })
+    },
     toggleMenu: function () {
       this.$refs.hamburger.classList.toggle('is-active')
       this.$refs.navbarmenu.classList.toggle('is-active')
+    }
+  },
+  watch: {
+    remainingSecondsForSession (value) {
+      // Automatically log out if the session has expired
+      if (value <= 1) {
+        this.logout()
+      }
     }
   }
 }

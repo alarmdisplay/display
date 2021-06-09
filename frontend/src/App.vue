@@ -28,21 +28,35 @@ export default {
     }
   },
   mounted() {
-    this.$store.subscribe(mutation => {
+    this.$store.subscribe(async mutation => {
       if (mutation.type === 'socket/setConnected' && mutation.payload === true) {
-        this.$store.dispatch('displays/get', 'self')
-          .catch(reason => {
-            console.error('Error while trying to get own Display ID:', reason);
-            feathersClient.io.emit('create', 'api/v1/key-requests', {}, (error, result) => {
-              if (error) {
-                console.error('Could not request API key:', error)
-                return
-              }
+        try {
+          await this.$store.dispatch('displays/get', 'self')
+        } catch (reason) {
+          console.error('Error while trying to get own Display ID:', reason.message);
+          feathersClient.io.emit('create', 'api/v1/key-requests', {}, (error, result) => {
+            if (error) {
+              console.error('Could not request API key:', error)
+              return
+            }
 
-              console.log('Requested API key, request ID is', result.requestId)
-              this.$store.commit('socket/setKeyRequestId', result.requestId)
-            })
+            console.log('Requested API key, request ID is', result.requestId)
+            this.$store.commit('socket/setKeyRequestId', result.requestId)
           })
+          return
+        }
+
+        // If we got here, the display successfully (re)connected
+        if (this.$store.state.socket.lastDisconnect) {
+          // We have been connected before, query any incidents updated since the disconnect (plus 30 seconds safety)
+          await this.$store.dispatch('incidents/find', {
+            query: {
+              updatedAt: {
+                $gt: this.$store.state.socket.lastDisconnect - 30000
+              }
+            }
+          })
+        }
       }
     })
   }

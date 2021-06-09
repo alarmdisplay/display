@@ -1,6 +1,11 @@
 module.exports = {
   devServer: {
-      proxy: 'http://localhost:3031/'
+    proxy: {
+      '^/socket\\.io/': {
+        target: 'http://localhost:3031/',
+        ws: true
+      }
+    }
   },
   publicPath: process.env.NODE_ENV === 'production' ? '/display/' : '/'
 };

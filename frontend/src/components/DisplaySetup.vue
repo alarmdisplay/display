@@ -9,7 +9,7 @@
     <div v-else-if="keyRequestId">
       <p>Die Verbindung mit dem Server wurde erfolgreich hergestellt.</p>
       <p>Als nächstes muss das Display freigeschaltet werden.</p>
-      <p><strong>Bearbeite in der Display Console die Anfrage mit der folgenden ID:</strong></p>
+      <p><strong>Bearbeite in der Anzeige-Console die Anfrage mit der folgenden ID:</strong></p>
       <span class="request-id">{{ keyRequestId }}</span>
     </div>
     <div v-else>

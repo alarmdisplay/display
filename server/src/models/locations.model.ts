@@ -56,10 +56,7 @@ export default function (app: Application): typeof Model {
   });
 
   (locations as any).associate = function (models: any): void {
-    models.locations.belongsTo(models.incident, {
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
-    });
+    models.locations.belongsTo(models.incident);
   };
 
   return locations;

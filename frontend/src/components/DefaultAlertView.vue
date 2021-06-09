@@ -1,10 +1,10 @@
 <template>
-    <div :class="alertClass">
+    <div :class="['alert', { test: alert.status === 'Test' }]">
         <div class="clock-container">
             <Clock :instance-id="0" :show-date="false"/>
         </div>
         <div class="info">
-            <p class="title">{{ alert.reason || 'Einsatz' }}</p>
+            <p class="title">{{ titleText }}</p>
             <span class="badge badge-test">TEST</span>
             <span v-if="alert.keyword" class="badge badge-category">{{ alert.keyword }}</span>
             <span class="badge badge-elapsed-time"><font-awesome-icon icon="stopwatch"/> {{ elapsedTime }}</span>
@@ -16,7 +16,6 @@
 
 <script>
     import Clock from "@/components/Clock";
-    import {makeFindMixin} from "feathers-vuex";
 
     export default {
         name: "DefaultAlertView",
@@ -24,44 +23,28 @@
             Clock
         },
         computed: {
-            alertClass: function () {
-                let classes = ['alert']
-                classes.push(`category-${this.alert.category}`)
-                if (this.alert.status === 'Test') {
-                    classes.push('test')
-                }
-                return classes.join(' ')
-            },
             elapsedTime: function () {
                 let elapsedSeconds = this.$root.$data.seconds - Math.floor(this.alert.time.valueOf() / 1000);
                 return textForSeconds(elapsedSeconds);
             },
-            locationsParams() {
-                return {
-                  query: {
-                    incidentId: this.alert.id,
-                    $sort: {
-                      createdAt: -1
-                    },
-                    $limit: 1
-                  }
-                }
-            },
             locationText() {
-              if (this.locations.length) {
-                return this.locations[0].rawText
+              if (this.alert.location) {
+                let location = this.alert.location
+                let line1 = `${location.street} ${location.number}`.trim()
+                if (line1 !== '' && location.detail) {
+                  line1 += ` (${location.detail})`
+                }
+                let string = `${line1}\n${location.locality}`.trim()
+                return /^[\s\n]*$/.test(string) ? location.rawText : string
               }
 
               return ''
-            }
+            },
+            titleText () {
+                let reason = this.alert.reason || 'Einsatzgrund unbekannt'
+                return (this.alert.status === 'Exercise' ? `Übung: ${reason}` : reason)
+          }
         },
-      mixins: [
-        makeFindMixin({
-          service: 'locations',
-          name: 'locations',
-          params: 'locationsParams'
-        })
-      ],
         props: {
             alert: Object
         }
@@ -155,6 +138,7 @@
 
     .address {
         font-size: 3em;
+        white-space: pre;
     }
 
     .description {
@@ -163,5 +147,6 @@
         border: 1px solid black;
         background-color: aliceblue;
         padding: 0.4em;
+        white-space: pre-line;
     }
 </style>

@@ -1,4 +1,3 @@
-import assert from 'assert';
 import { Server } from 'http';
 import url from 'url';
 import axios from 'axios';
@@ -18,7 +17,7 @@ describe('Feathers application tests (with jest)', () => {
 
   beforeAll(done => {
     server = app.listen(port);
-    server.once('listening', () => done());
+    (app.get('databaseReady') as Promise<void>).then(done);
   });
 
   afterAll(done => {
