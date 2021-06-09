@@ -1,6 +1,10 @@
 <template>
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
+            <span class="navbar-item has-text-weight-bold">
+                Anzeige
+            </span>
+
             <a role="button" ref="hamburger" class="navbar-burger burger" aria-label="menu" aria-expanded="false" @click.prevent="toggleMenu">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
