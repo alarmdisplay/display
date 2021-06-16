@@ -8,7 +8,10 @@
             <span class="badge badge-test">TEST</span>
             <span v-if="alert.keyword" class="badge badge-category">{{ alert.keyword }}</span>
             <span class="badge badge-elapsed-time"><font-awesome-icon icon="stopwatch"/> {{ elapsedTime }}</span>
-            <p class="address">{{ locationText || 'Keine Ortsangabe' }}</p>
+            <div class="address-holder">
+                <p class="address">{{ locationText || 'Keine Ortsangabe' }}</p>
+                <a v-if="$store.state.ownDisplayId === 5 && geoLink" class="button" :href="geoLink">Im Navi zeigen</a>
+            </div>
             <p class="description">{{ alert.description || 'Keine Bemerkung' }}</p>
         </div>
     </div>
@@ -27,6 +30,13 @@
                 let elapsedSeconds = this.$root.$data.seconds - Math.floor(this.alert.time.valueOf() / 1000);
                 return textForSeconds(elapsedSeconds);
             },
+          geoLink () {
+            if (this.alert.location && this.alert.location.latitude && this.alert.location.longitude) {
+              return `geo:${this.alert.location.latitude},${this.alert.location.longitude}`
+            }
+
+            return ''
+          },
             locationText() {
               if (this.alert.location) {
                 let location = this.alert.location
@@ -136,9 +146,24 @@
         }
     }
 
+    .address-holder {
+        display: flex;
+        align-items: center;
+    }
+
     .address {
         font-size: 3em;
         white-space: pre;
+    }
+
+    .button {
+        padding: 0.7em;
+        margin-left: 2em;
+        border-radius: 10px;
+        background-color: #2c3e50;
+        color: white;
+        text-decoration: none;
+        font-size: 1.5em;
     }
 
     .description {
