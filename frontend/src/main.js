@@ -20,6 +20,8 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 require('moment/locale/de');
 Vue.use(VueMoment, { moment });
 
+import 'leaflet/dist/leaflet.css';
+
 Vue.config.productionTip = false;
 
 new Vue({

@@ -10,19 +10,42 @@
                 <span v-if="alert.keyword" class="badge badge-category">{{ alert.keyword }}</span>
                 <span class="badge badge-elapsed-time"><font-awesome-icon icon="stopwatch"/> {{ elapsedTime }}</span>
             </div>
-            <p class="address">{{ locationText || 'Keine Ortsangabe' }}</p>
-            <p class="description">{{ alert.description || 'Keine Bemerkung' }}</p>
+            <div class="details">
+                <div class="address-and-description" :style="{ width: (showMap ? '50%' : '100%') }">
+                    <p class="address">{{ locationText || 'Keine Ortsangabe' }}</p>
+                    <p v-if="alert.description" class="description">{{ alert.description }}</p>
+                </div>
+                <div v-if="showMap" class="map-holder">
+                    <LMap class="map" :zoom="16" :center="[alert.location.latitude, alert.location.longitude]">
+                        <LTileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap-Mitwirkende"></LTileLayer>
+                        <LMarker :lat-lng="[alert.location.latitude, alert.location.longitude]"></LMarker>
+                    </LMap>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
     import Clock from "@/components/Clock";
+    import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
+    import { Icon } from 'leaflet';
+
+    // Fix missing icons due to Webpack
+    delete Icon.Default.prototype._getIconUrl;
+    Icon.Default.mergeOptions({
+      iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+      iconUrl: require('leaflet/dist/images/marker-icon.png'),
+      shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+    });
 
     export default {
         name: "DefaultAlertView",
         components: {
-            Clock
+            Clock,
+            LMap,
+            LMarker,
+            LTileLayer
         },
         computed: {
             elapsedTime: function () {
@@ -41,6 +64,9 @@
               }
 
               return ''
+            },
+            showMap () {
+              return this.alert.location && this.alert.location.latitude && this.alert.location.longitude
             },
             titleText () {
                 let reason = this.alert.reason || 'Einsatzgrund unbekannt'
@@ -146,14 +172,41 @@
     .address {
         font-size: 3em;
         white-space: pre;
+        margin-top: 0;
+        margin-bottom: 0.5em;
     }
 
     .description {
         font-family: "Courier New", monospace;
-        font-size: 2.5em;
+        font-size: 2.3em;
         border: 1px solid black;
         background-color: aliceblue;
         padding: 0.4em;
         white-space: pre-line;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    .details {
+        display: flex;
+        justify-content: space-between;
+        height: 56vh;
+    }
+
+    .address-and-description {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .map-holder {
+        width: 50%;
+        padding-left: 1em;
+    }
+
+    .map {
+        width: 100%;
+        height: 100%;
+        border: 1px solid gray;
     }
 </style>
