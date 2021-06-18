@@ -5,9 +5,11 @@
         </div>
         <div class="info">
             <p class="title">{{ titleText }}</p>
-            <span class="badge badge-test">TEST</span>
-            <span v-if="alert.keyword" class="badge badge-category">{{ alert.keyword }}</span>
-            <span class="badge badge-elapsed-time"><font-awesome-icon icon="stopwatch"/> {{ elapsedTime }}</span>
+            <div class="badges">
+                <span class="badge badge-test">TEST</span>
+                <span v-if="alert.keyword" class="badge badge-category">{{ alert.keyword }}</span>
+                <span class="badge badge-elapsed-time"><font-awesome-icon icon="stopwatch"/> {{ elapsedTime }}</span>
+            </div>
             <p class="address">{{ locationText || 'Keine Ortsangabe' }}</p>
             <p class="description">{{ alert.description || 'Keine Bemerkung' }}</p>
         </div>
@@ -93,12 +95,17 @@
     }
 
     .info {
-        padding: 0 2em;
+        padding: 0;
     }
 
     .title {
         font-size: 4em;
-        padding-right: 4.5em;
+        padding-right: 4em;
+        margin-top: 2vh;
+    }
+
+    .badges {
+        margin-bottom: 3em;
     }
 
     .badge {
