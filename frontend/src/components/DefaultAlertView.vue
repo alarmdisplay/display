@@ -18,7 +18,7 @@
                 <div v-if="showMap" class="map-holder">
                     <LMap class="map" :zoom="16" :center="[alert.location.latitude, alert.location.longitude]">
                         <LTileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap-Mitwirkende"></LTileLayer>
-                        <LMarker :lat-lng="[alert.location.latitude, alert.location.longitude]"></LMarker>
+                        <LCircleMarker :lat-lng="[alert.location.latitude, alert.location.longitude]" color="red"/>
                     </LMap>
                 </div>
             </div>
@@ -28,7 +28,7 @@
 
 <script>
     import Clock from "@/components/Clock";
-    import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
+    import { LCircleMarker, LMap, LTileLayer } from 'vue2-leaflet';
     import { Icon } from 'leaflet';
 
     // Fix missing icons due to Webpack
@@ -43,8 +43,8 @@
         name: "DefaultAlertView",
         components: {
             Clock,
+            LCircleMarker,
             LMap,
-            LMarker,
             LTileLayer
         },
         computed: {
