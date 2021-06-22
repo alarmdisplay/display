@@ -12,6 +12,9 @@ In order to run a development version on your local system, you need a [Node.js]
 Start the development server by running `npm run dev`, it will automatically restart when files have changed.
 Now you can access the server on http://localhost:3031.
 
+Before the first run, and whenever you work on database migration scripts, you'll have to run `npm run start` once.
+Unfortunately, running `npm run dev` does not take the migration scripts into account.
+
 ### Libraries and frameworks
 This project uses the following libraries or frameworks, please refer to their documentation as well.
 - [FeathersJS](https://feathersjs.com/)
