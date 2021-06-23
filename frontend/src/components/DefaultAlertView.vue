@@ -21,8 +21,9 @@
                     <p v-if="alert.description" class="description">{{ alert.description }}</p>
                 </div>
                 <div v-if="showMap" class="map-holder">
-                    <LMap class="map" :zoom="16" :center="[alert.location.latitude, alert.location.longitude]">
+                    <LMap class="map" :bounds="mapBounds" :options="{ zoomSnap: 0.1 }">
                         <LTileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap-Mitwirkende"></LTileLayer>
+                        <LMarker v-if="originCoordinates" :lat-lng="originCoordinates"></LMarker>
                         <LCircleMarker :lat-lng="[alert.location.latitude, alert.location.longitude]" color="red"/>
                     </LMap>
                 </div>
@@ -33,8 +34,8 @@
 
 <script>
     import Clock from "@/components/Clock";
-    import { LCircleMarker, LMap, LTileLayer } from 'vue2-leaflet';
-    import { Icon } from 'leaflet';
+    import { LCircleMarker, LMap, LMarker, LTileLayer } from 'vue2-leaflet';
+    import { Icon, LatLngBounds } from 'leaflet';
 
     // Fix missing icons due to Webpack
     delete Icon.Default.prototype._getIconUrl;
@@ -50,6 +51,7 @@
             Clock,
             LCircleMarker,
             LMap,
+            LMarker,
             LTileLayer
         },
         computed: {
@@ -76,6 +78,18 @@
               }
 
               return ''
+            },
+            mapBounds () {
+              if (!this.showMap) {
+                return ''
+              }
+
+              let latLngBounds = new LatLngBounds([this.originCoordinates, [this.alert.location.latitude, this.alert.location.longitude]])
+
+              return latLngBounds.pad(0.2)
+            },
+            originCoordinates () {
+              return [48.39917, 10.80023]
             },
             showMap () {
               return this.alert.location && this.alert.location.latitude && this.alert.location.longitude
