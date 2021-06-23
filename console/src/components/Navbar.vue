@@ -38,6 +38,10 @@
                     </a>
 
                     <div class="navbar-dropdown">
+                        <router-link tag="a" class="navbar-item" :to="{ name: 'settings' }">
+                            <span class="icon"><font-awesome-icon icon="cog"/></span>
+                            <span>Einstellungen</span>
+                        </router-link>
                         <router-link tag="a" class="navbar-item" to="/admin/users">
                             <span class="icon"><font-awesome-icon icon="user"/></span>
                             <span>Konten</span>
