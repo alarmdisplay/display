@@ -14,6 +14,7 @@ class Setting extends BaseModel {
 const servicePath = 'api/v1/settings'
 const servicePlugin = makeServicePlugin({
   Model: Setting,
+  idField: 'key',
   service: feathersClient.service(servicePath),
   servicePath
 })

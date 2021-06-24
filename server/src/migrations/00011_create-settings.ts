@@ -14,16 +14,10 @@ export default {
     }
 
     await query.createTable(tableName, {
-      id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true
-      },
       key: {
         type: DataTypes.STRING,
-        unique: true,
-        allowNull: false
+        allowNull: false,
+        primaryKey: true
       },
       value: {
         type: DataTypes.JSON,

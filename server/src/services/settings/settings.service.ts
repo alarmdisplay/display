@@ -12,7 +12,6 @@ declare module '../../declarations' {
   }
 
   interface SettingsData {
-    id: number
     key: string
     value: any
   }
@@ -21,6 +20,7 @@ declare module '../../declarations' {
 export default function (app: Application): void {
   const options = {
     Model: createModel(app),
+    id: 'key',
     paginate: app.get('paginate')
   };
 

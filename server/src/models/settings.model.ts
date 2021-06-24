@@ -9,8 +9,8 @@ export default function (app: Application): typeof Model {
   return sequelizeClient.define('setting', {
     key: {
       type: DataTypes.STRING,
-      unique: true,
-      allowNull: false
+      allowNull: false,
+      primaryKey: true
     },
     value: {
       type: DataTypes.JSON,
