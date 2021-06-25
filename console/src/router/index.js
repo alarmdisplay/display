@@ -8,6 +8,7 @@ import ApiKeyForm from '@/views/admin/ApiKeyForm'
 import ApiKeyList from '@/views/admin/ApiKeyList'
 import DisplayForm from '@/views/displays/DisplayForm'
 import DisplayList from '@/views/displays/DisplayList'
+import Settings from '@/views/admin/Settings'
 import UserForm from '@/views/admin/UserForm'
 import UserList from '@/views/admin/UserList'
 import ViewList from '@/components/views/ViewList'
@@ -54,6 +55,11 @@ const routes = [
     path: '/displays/:display_id/views/:view_id',
     name: 'view-form',
     component: ViewForm
+  },
+  {
+    path: '/admin/settings',
+    name: 'settings',
+    component: Settings
   },
   {
     path: '/admin/users',

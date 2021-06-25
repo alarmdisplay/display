@@ -1,5 +1,8 @@
 <template>
-    <article class="message is-danger" v-if="formError">
+    <span v-if="formError && short" class="has-text-danger">
+        {{ messages[0] || 'Fehler' }}
+    </span>
+    <article class="message is-danger" v-else-if="formError">
         <div class="message-header">
             Fehler
         </div>
@@ -29,7 +32,8 @@ export default {
     }
   },
   props: {
-    formError: Object
+    formError: Object,
+    short: Boolean
   }
 }
 </script>
