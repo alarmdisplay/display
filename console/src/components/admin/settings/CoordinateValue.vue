@@ -28,7 +28,7 @@
     <div v-else class="level">
         <div class="level-left">
             <span class="level-item">
-                {{ valueText || 'N/A' }}
+                {{ valueText || 'nicht gesetzt' }}
             </span>
         </div>
         <div class="level-right">
