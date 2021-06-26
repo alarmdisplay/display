@@ -11,6 +11,7 @@
           <h2 class="subtitle">Ruhemodus</h2>
           <div class="content">
             Sofern kein Alarm vorliegt, befindet sich das Display im Ruhemodus.
+            Dort können allgemeine Informationen angezeigt werden.
           </div>
           <div v-if="views.length" class="columns is-multiline">
             <div class="column is-one-third" v-for="view in views" :key="view.id">
@@ -26,7 +27,8 @@
             </button>
           </div>
           <div class="content">
-            Wenn mehr als eine Ansicht konfiguriert ist, werden die Ansichten im Wechsel angezeigt, jeweils für eine Minute.
+            Ist keine Ansicht konfiguriert, werden Uhrzeit und Datum mittig auf dem Bildschirm angezeigt.
+            Ist mehr als eine Ansicht konfiguriert, werden die Ansichten im Wechsel angezeigt, jeweils für eine Minute.
           </div>
 
           <h2 class="subtitle">Alarmbildschirm</h2>
