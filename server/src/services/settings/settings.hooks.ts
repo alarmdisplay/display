@@ -1,7 +1,7 @@
 import * as authentication from '@feathersjs/authentication';
 import { allowApiKey } from '../../hooks/allowApiKey';
 import { HookContext } from '@feathersjs/feathers';
-import { getItems, replaceItems } from 'feathers-hooks-common';
+import { disallow, getItems, replaceItems } from 'feathers-hooks-common';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const { authenticate } = authentication.hooks;
@@ -11,10 +11,10 @@ export default {
     all: [ allowApiKey(), authenticate('jwt', 'api-key') ],
     find: [],
     get: [],
-    create: [],
+    create: [ disallow('external') ],
     update: [],
     patch: [],
-    remove: []
+    remove: [ disallow('external') ]
   },
 
   after: {
