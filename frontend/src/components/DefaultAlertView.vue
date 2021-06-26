@@ -16,8 +16,9 @@
                     <p v-if="alert.description" class="description">{{ alert.description }}</p>
                 </div>
                 <div v-if="showMap" class="map-holder">
-                    <LMap class="map" :zoom="16" :center="[alert.location.latitude, alert.location.longitude]">
+                    <LMap class="map" :bounds="mapBounds" :options="{ zoomSnap: 0.1 }">
                         <LTileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap-Mitwirkende"></LTileLayer>
+                        <LMarker v-if="originCoordinates" :lat-lng="originCoordinates"></LMarker>
                         <LCircleMarker :lat-lng="[alert.location.latitude, alert.location.longitude]" color="red"/>
                     </LMap>
                 </div>
@@ -28,8 +29,8 @@
 
 <script>
     import Clock from "@/components/Clock";
-    import { LCircleMarker, LMap, LTileLayer } from 'vue2-leaflet';
-    import { Icon } from 'leaflet';
+    import { LCircleMarker, LMap, LMarker, LTileLayer } from 'vue2-leaflet';
+    import { Icon, LatLngBounds } from 'leaflet';
 
     // Fix missing icons due to Webpack
     delete Icon.Default.prototype._getIconUrl;
@@ -45,12 +46,16 @@
             Clock,
             LCircleMarker,
             LMap,
+            LMarker,
             LTileLayer
         },
         computed: {
             elapsedTime: function () {
                 let elapsedSeconds = this.$root.$data.seconds - Math.floor(this.alert.time.valueOf() / 1000);
                 return textForSeconds(elapsedSeconds);
+            },
+            originCoordinates () {
+              return this.$store.getters['settings/getLeafletCoords']('station_coordinates');
             },
             locationText() {
               if (this.alert.location) {
@@ -64,6 +69,15 @@
               }
 
               return ''
+            },
+            mapBounds () {
+              if (!this.showMap) {
+                return ''
+              }
+
+              let latLngBounds = new LatLngBounds([this.originCoordinates, [this.alert.location.latitude, this.alert.location.longitude]])
+
+              return latLngBounds.pad(0.2)
             },
             showMap () {
               return this.alert.location && this.alert.location.latitude && this.alert.location.longitude
