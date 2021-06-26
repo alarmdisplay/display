@@ -12,17 +12,20 @@ declare module '../../declarations' {
   }
 
   interface ContentSlotData {
+    id: number
     component: string
     columnStart: number
     columnEnd: number
     rowStart: number
     rowEnd: number
+    viewId: number
   }
 }
 
 export default function (app: Application): void {
   const options = {
     Model: createModel(app),
+    multi: ['remove'],
     paginate: app.get('paginate')
   };
 
