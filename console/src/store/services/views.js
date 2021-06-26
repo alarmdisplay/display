@@ -14,10 +14,24 @@ class View extends BaseModel {
   }
 
   static setupInstance (data, { models }) {
+    // Add nested content slot objects to storage
     if (data.contentSlots && Array.isArray(data.contentSlots)) {
-      console.log('setup view', data)
-      data.contentSlots = data.contentSlots.map(contentSlot => new models.api.ContentSlot(contentSlot))
+      data.contentSlots.forEach(contentSlot => new models.api.ContentSlot(contentSlot))
     }
+
+    // Replace the nested content slots with a getter
+    Object.defineProperty(data, 'contentSlots', {
+      get: function () {
+        const contentSlots = models.api.ContentSlot.findInStore({
+          query: {
+            viewId: data.id
+          }
+        })
+        return contentSlots.data
+      },
+      configurable: true,
+      enumerable: true
+    })
 
     return data
   }

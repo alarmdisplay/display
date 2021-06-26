@@ -16,10 +16,27 @@ class ContentSlot extends BaseModel {
 
   static setupInstance (data, { models }) {
     console.log('setup content slot', data)
+
+    // Add nested view objects to storage
     if (!data.options || !Array.isArray(data.options)) {
       data.options = []
     }
-    data.options = data.options.map(option => new models.api.ContentSlotOption(option))
+    data.options.forEach(option => new models.api.ContentSlotOption(option))
+
+    // Replace the nested views with a getter
+    Object.defineProperty(data, 'options', {
+      get: function () {
+        const options = models.api.ContentSlotOption.findInStore({
+          query: {
+            contentSlotId: data.id
+          }
+        })
+        return options.data
+      },
+      configurable: true,
+      enumerable: true
+    })
+
     console.log('the content slot:', data)
     return data
   }

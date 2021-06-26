@@ -13,9 +13,27 @@ class Display extends BaseModel {
   }
 
   static setupInstance (data, { models }) {
+    // Add nested view objects to storage
     if (data.views && Array.isArray(data.views)) {
-      data.views = data.views.map(view => new models.api.View(view))
+      data.views.forEach(view => new models.api.View(view))
     }
+
+    // Replace the nested views with a getter
+    Object.defineProperty(data, 'views', {
+      get: function () {
+        const views = models.api.View.findInStore({
+          query: {
+            displayId: data.id,
+            $sort: {
+              order: 1
+            }
+          }
+        })
+        return views.data
+      },
+      configurable: true,
+      enumerable: true
+    })
 
     return data
   }
