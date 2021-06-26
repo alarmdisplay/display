@@ -39,14 +39,6 @@ import Clock from "@/components/Clock";
 
               return this.views.filter(view => view.type === 'idle')
             },
-            incidentsParams() {
-              // Only load the most recent incidents from the server
-              return { query: {
-                time: {
-                  $gt: new Date().getTime() - this.incidentDisplayDuration
-                }
-              }}
-            },
             testIncidentDisplayDuration() {
               let minutes = this.$store.getters['settings/getIntegerValue']('incident_test_display_minutes') || 1
               return minutes * 60 * 1000
@@ -58,7 +50,15 @@ import Clock from "@/components/Clock";
         mixins: [ makeFindMixin({
             service: 'incidents',
             name: 'incidents',
-            params: 'incidentsParams'
+            params() {
+              // Only load the most recent incidents from the server
+              return { query: {
+                  time: {
+                    $gt: new Date().getTime() - this.incidentDisplayDuration
+                  }
+                }}
+            },
+            watch: true
         }), makeFindMixin({
             service: 'views',
             name: 'views',

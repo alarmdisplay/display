@@ -19,6 +19,10 @@
                     <th>Anzeigedauer für Probealarme</th>
                     <td><IntegerValue settings-key="incident_test_display_minutes" unit="Minute(n)"/></td>
                 </tr>
+                <tr>
+                    <th>Koordinaten des Standorts</th>
+                    <td><CoordinateValue settings-key="station_coordinates"/></td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -26,11 +30,13 @@
 </template>
 
 <script>
+import CoordinateValue from '@/components/admin/settings/CoordinateValue'
 import IntegerValue from '@/components/admin/settings/IntegerValue'
 
 export default {
   name: 'Settings',
   components: {
+    CoordinateValue,
     IntegerValue
   },
   created () {

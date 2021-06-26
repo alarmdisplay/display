@@ -21,6 +21,23 @@ const servicePlugin = makeServicePlugin({
       const value = getters.getValue(id, params)
       return Number.parseInt(value)
     },
+    getCoordinateValue: (state, getters) => (id, params) => {
+      const value = getters.getValue(id, params)
+      if (!value || !value.latitude || !value.longitude) {
+        return null
+      }
+
+      const coordinateValue = {
+        latitude: Number.parseFloat(value.latitude),
+        longitude: Number.parseFloat(value.longitude)
+      }
+
+      if (Number.isNaN(coordinateValue.latitude) || Number.isNaN(coordinateValue.longitude)) {
+        return null
+      }
+
+      return coordinateValue
+    },
     getValue: (state, getters) => (id, params) => {
       const setting = getters.get(id, params)
       return setting?.value

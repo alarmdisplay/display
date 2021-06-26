@@ -20,6 +20,14 @@ const servicePlugin = makeServicePlugin({
       const value = getters.getValue(id, params)
       return Number.parseInt(value)
     },
+    getLeafletCoords: (state, getters) => (id, params) => {
+      const value = getters.getValue(id, params)
+      if (!value || !value.latitude || !value.longitude) {
+        return null
+      }
+
+      return [value.latitude, value.longitude]
+    },
     getValue: (state, getters) => (id, params) => {
       const setting = getters.get(id, params)
       return setting?.value

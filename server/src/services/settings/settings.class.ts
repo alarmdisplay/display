@@ -11,7 +11,8 @@ export class Settings extends Service<SettingsData> {
   setup(app: Application): void {
     const settingDefaults = new Map([
       ['incident_display_minutes', 60],
-      ['incident_test_display_minutes', 1]
+      ['incident_test_display_minutes', 1],
+      ['station_coordinates', null],
     ]);
 
     (app.get('databaseReady') as Promise<void>).then(async () => {
