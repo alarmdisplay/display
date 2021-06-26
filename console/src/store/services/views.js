@@ -9,6 +9,7 @@ class View extends BaseModel {
       order: 999,
       columns: 3,
       rows: 3,
+      displayId: null,
       contentSlots: []
     }
   }

@@ -15,8 +15,6 @@ class ContentSlot extends BaseModel {
   }
 
   static setupInstance (data, { models }) {
-    console.log('setup content slot', data)
-
     // Add nested view objects to storage
     if (!data.options || !Array.isArray(data.options)) {
       data.options = []
@@ -37,7 +35,6 @@ class ContentSlot extends BaseModel {
       enumerable: true
     })
 
-    console.log('the content slot:', data)
     return data
   }
 
