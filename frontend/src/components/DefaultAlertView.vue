@@ -185,7 +185,7 @@
 
     .address {
         font-size: 3em;
-        white-space: pre;
+        white-space: pre-line;
         margin-top: 0;
         margin-bottom: 0.5em;
     }
