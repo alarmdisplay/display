@@ -11,6 +11,7 @@ import displays from './services/displays'
 import incidents from './services/incidents'
 import keyRequests from './services/key-requests'
 import locations from './services/locations'
+import settings from './services/settings'
 import users from './services/users'
 import views from './services/views'
 import socket, { createSocketPlugin } from '@/store/socket'
@@ -43,6 +44,7 @@ export default new Vuex.Store({
     incidents,
     keyRequests,
     locations,
+    settings,
     users,
     views
   ]

@@ -24,7 +24,7 @@
                     <LMap class="map" :bounds="mapBounds" :options="{ zoomSnap: 0.1 }">
                         <LTileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap-Mitwirkende"></LTileLayer>
                         <LMarker v-if="originCoordinates" :lat-lng="originCoordinates"></LMarker>
-                        <LCircleMarker :lat-lng="[alert.location.latitude, alert.location.longitude]" color="red"/>
+                        <LCircleMarker :lat-lng="[alert.location.latitude, alert.location.longitude]" color="red" weight="8" radius="16" :fill-opacity="0"/>
                     </LMap>
                 </div>
             </div>
@@ -66,6 +66,9 @@
 
             return ''
           },
+            originCoordinates () {
+              return this.$store.getters['settings/getLeafletCoords']('station_coordinates');
+            },
             locationText() {
               if (this.alert.location) {
                 let location = this.alert.location
@@ -87,9 +90,6 @@
               let latLngBounds = new LatLngBounds([this.originCoordinates, [this.alert.location.latitude, this.alert.location.longitude]])
 
               return latLngBounds.pad(0.2)
-            },
-            originCoordinates () {
-              return [48.39917, 10.80023]
             },
             showMap () {
               return this.alert.location && this.alert.location.latitude && this.alert.location.longitude
@@ -202,7 +202,7 @@
 
     .address {
         font-size: 3em;
-        white-space: pre;
+        white-space: pre-line;
         margin-top: 0;
         margin-bottom: 0.5em;
     }

@@ -14,20 +14,6 @@ import AlertScreen from "@/components/AlertScreen";
 import IdleScreen from "@/components/IdleScreen";
 import Clock from "@/components/Clock";
 
-/**
-     * Incidents older that this amount of milliseconds are not loaded from the server
-     *
-     * @type {number}
-     */
-    const MAX_AGE_INCIDENTS_MS = 60 * 60 * 1000
-
-    /**
-     * Incidents marked as Test, will only be show for this long
-     *
-     * @type {number}
-     */
-    const TEST_DURATION_MS = 60 * 1000
-
     export default {
         name: "DisplayApp",
         components: {
@@ -38,9 +24,13 @@ import Clock from "@/components/Clock";
         computed: {
             activeAlerts() {
                 return this.incidents.filter(incident => {
-                  const timeVisible = incident.status === 'Test' ? TEST_DURATION_MS : MAX_AGE_INCIDENTS_MS
+                  const timeVisible = incident.status === 'Test' ? this.testIncidentDisplayDuration : this.incidentDisplayDuration
                   return (Math.floor(incident.time.valueOf() + timeVisible) / 1000) > this.$root.$data.seconds;
                 })
+            },
+            incidentDisplayDuration() {
+              let minutes = this.$store.getters['settings/getIntegerValue']('incident_display_minutes') || 60
+              return minutes * 60 * 1000
             },
             idleViews() {
               if (!this.views) {
@@ -49,13 +39,9 @@ import Clock from "@/components/Clock";
 
               return this.views.filter(view => view.type === 'idle')
             },
-            incidentsParams() {
-              // Only load the most recent incidents from the server
-              return { query: {
-                time: {
-                  $gt: new Date().getTime() - MAX_AGE_INCIDENTS_MS
-                }
-              }}
+            testIncidentDisplayDuration() {
+              let minutes = this.$store.getters['settings/getIntegerValue']('incident_test_display_minutes') || 1
+              return minutes * 60 * 1000
             },
             viewsParams() {
                 return { query: { displayId: this.theDisplayId}}
@@ -64,7 +50,15 @@ import Clock from "@/components/Clock";
         mixins: [ makeFindMixin({
             service: 'incidents',
             name: 'incidents',
-            params: 'incidentsParams'
+            params() {
+              // Only load the most recent incidents from the server
+              return { query: {
+                  time: {
+                    $gt: new Date().getTime() - this.incidentDisplayDuration
+                  }
+                }}
+            },
+            watch: true
         }), makeFindMixin({
             service: 'views',
             name: 'views',
