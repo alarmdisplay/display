@@ -96,6 +96,10 @@
             },
             titleText () {
                 let reason = this.alert.reason || 'Einsatzgrund unbekannt'
+                let reasonParts = reason.split('#')
+                if (reasonParts.length > 1) {
+                  reason = reasonParts[reasonParts.length - 1]
+                }
                 return (this.alert.status === 'Exercise' ? `Übung: ${reason}` : reason)
           }
         },
