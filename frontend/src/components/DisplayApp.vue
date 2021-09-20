@@ -1,5 +1,5 @@
 <template>
-    <div class="display-app">
+    <div class="display-app" :class="{ 'with-alert-banner': allAlertsAreEmpty }">
       <AlertBanner class="alert-banner" v-if="allAlertsAreEmpty"/>
       <div class="main-area">
         <AlertScreen v-if="activeAlerts.length > 0 && !allAlertsAreEmpty" :alerts="activeAlerts"/>
@@ -102,7 +102,10 @@ import Clock from "@/components/Clock";
     }
 
     .main-area {
-      min-height: 90%;
-      max-height: 100%;
+      height: 100%;
+    }
+
+    .display-app.with-alert-banner .main-area {
+      height: 90%;
     }
 </style>
