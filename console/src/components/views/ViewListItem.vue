@@ -6,7 +6,7 @@
           </figure>
         </div>
         <footer class="card-footer">
-          <a class="card-footer-item has-text-danger is-disabled" v-if="removable" href="#" @click.prevent="view.remove()">
+          <a class="card-footer-item has-text-danger is-disabled" href="#" @click.prevent="view.remove()">
             <span class="icon">
               <font-awesome-icon icon="trash-alt"/>
             </span>
@@ -30,8 +30,7 @@ export default {
     ViewPreview
   },
   props: {
-    view: Object,
-    removable: Boolean
+    view: Object
   }
 }
 </script>

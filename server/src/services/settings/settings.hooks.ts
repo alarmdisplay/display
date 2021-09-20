@@ -43,12 +43,12 @@ function unserializeValue(context: HookContext): HookContext {
   if (Array.isArray(items)) {
     items.forEach(item => {
       if (typeof item.value === 'string') {
-        item.value = JSON.parse(item.value);
+        item.value = item.value.length === 0 ? null : JSON.parse(item.value);
       }
     });
   } else {
     if (typeof items.value === 'string') {
-      items.value = JSON.parse(items.value);
+      items.value = items.value.length === 0 ? null : JSON.parse(items.value);
     }
   }
 

@@ -15,7 +15,7 @@
           </div>
           <div v-if="views.length" class="columns is-multiline">
             <div class="column is-one-third" v-for="view in views" :key="view.id">
-              <ViewListItem :view="view" :removable="views.length > 1"/>
+              <ViewListItem :view="view"/>
             </div>
           </div>
           <div class="buttons">

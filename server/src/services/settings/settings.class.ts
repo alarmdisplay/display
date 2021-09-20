@@ -10,6 +10,7 @@ export class Settings extends Service<SettingsData> {
 
   setup(app: Application): void {
     const settingDefaults = new Map([
+      ['alert_banner_message', null],
       ['incident_display_minutes', 60],
       ['incident_test_display_minutes', 1],
       ['station_coordinates', null],

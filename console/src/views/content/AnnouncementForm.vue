@@ -1,7 +1,7 @@
 <template>
     <section class="section">
         <div class="container">
-            <h1 class="title">Ankündigung {{ id === 'new' ? 'anlegen' : 'bearbeiten' }}</h1>
+            <h1 class="title">Bekanntmachung {{ id === 'new' ? 'anlegen' : 'bearbeiten' }}</h1>
 
             <div class="buttons is-left">
                 <BackButton/>
