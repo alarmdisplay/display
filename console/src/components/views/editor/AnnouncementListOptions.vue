@@ -5,7 +5,7 @@
         Titel
       </label>
       <div class="control">
-        <input class="input" type="text" id="input-title" placeholder="Ankündigungen" v-model.trim="title.value">
+        <input class="input" type="text" id="input-title" placeholder="Bekanntmachungen" v-model.trim="title.value">
       </div>
     </div>
   </form>

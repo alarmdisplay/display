@@ -26,7 +26,7 @@
 
                 <router-link class="navbar-item is-tab" :to="{ name: 'announcement-list' }">
                     <span class="icon"><font-awesome-icon icon="bullhorn"/></span>
-                    <span>Ank&uuml;ndigungen</span>
+                    <span>Bekanntmachungen</span>
                 </router-link>
             </div>
 
