@@ -1,15 +1,19 @@
 <template>
     <div class="display-app">
-        <AlertScreen v-if="activeAlerts.length > 0" :alerts="activeAlerts"/>
+      <AlertBanner class="alert-banner" v-if="allAlertsAreEmpty"/>
+      <div class="main-area">
+        <AlertScreen v-if="activeAlerts.length > 0 && !allAlertsAreEmpty" :alerts="activeAlerts"/>
         <IdleScreen v-else-if="idleViews.length" v-bind:child-views="idleViews"/>
         <div v-else class="fallback-idle-screen">
           <Clock/>
         </div>
+      </div>
     </div>
 </template>
 
 <script>
 import {makeFindMixin} from 'feathers-vuex';
+import AlertBanner from '@/components/AlertBanner'
 import AlertScreen from "@/components/AlertScreen";
 import IdleScreen from "@/components/IdleScreen";
 import Clock from "@/components/Clock";
@@ -18,6 +22,7 @@ import Clock from "@/components/Clock";
         name: "DisplayApp",
         components: {
           Clock,
+          AlertBanner,
             AlertScreen,
             IdleScreen
         },
@@ -27,6 +32,9 @@ import Clock from "@/components/Clock";
                   const timeVisible = incident.status === 'Test' ? this.testIncidentDisplayDuration : this.incidentDisplayDuration
                   return (Math.floor(incident.time.valueOf() + timeVisible) / 1000) > this.$root.$data.seconds;
                 })
+            },
+            allAlertsAreEmpty () {
+              return this.activeAlerts.length > 0 && this.activeAlerts.every((alert) => { return !alert.reason && !alert.keyword && !alert.description })
             },
             incidentDisplayDuration() {
               let minutes = this.$store.getters['settings/getIntegerValue']('incident_display_minutes') || 60
@@ -72,9 +80,17 @@ import Clock from "@/components/Clock";
 </script>
 
 <style scoped>
+    .alert-banner {
+      min-height: 10%;
+      max-height: 10%;
+      font-size: 7vh;
+    }
+
     .display-app {
-        height: 100%;
-        width: 100%;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
     }
 
     .fallback-idle-screen {
@@ -83,5 +99,10 @@ import Clock from "@/components/Clock";
       font-size: 3vh;
       display: flex;
       justify-content: center;
+    }
+
+    .main-area {
+      min-height: 90%;
+      max-height: 100%;
     }
 </style>

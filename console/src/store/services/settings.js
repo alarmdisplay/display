@@ -38,6 +38,10 @@ const servicePlugin = makeServicePlugin({
 
       return coordinateValue
     },
+    getStringValue: (state, getters) => (id, params) => {
+      const value = getters.getValue(id, params)
+      return String(value || '')
+    },
     getValue: (state, getters) => (id, params) => {
       const setting = getters.get(id, params)
       return setting?.value
