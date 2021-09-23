@@ -30,7 +30,7 @@ const servicePlugin = makeServicePlugin({
     },
     getStringValue: (state, getters) => (id, params) => {
       const value = getters.getValue(id, params)
-      return String(value)
+      return value ? String(value) : ''
     },
     getValue: (state, getters) => (id, params) => {
       const setting = getters.get(id, params)
