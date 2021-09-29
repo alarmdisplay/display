@@ -1,0 +1,49 @@
+---
+kind: pipeline
+type: docker
+name: compliance
+
+trigger:
+  branch:
+    include:
+      - main
+
+steps:
+  - name: lint-server
+    image: node
+    commands:
+      - ./scripts/lint-server.sh
+  - name: lint-console
+    image: node
+    commands:
+      - ./scripts/lint-console.sh
+  - name: lint-frontend
+    image: node
+    commands:
+      - ./scripts/lint-frontend.sh
+
+---
+kind: pipeline
+type: docker
+name: testing
+
+trigger:
+  branch:
+    include:
+      - main
+
+depends_on:
+  - compliance
+
+services:
+  - name: mariadb
+    image: mariadb
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
+      MARIADB_DATABASE: display_backend
+
+steps:
+  - name: test-server-node-lts
+    image: node:lts
+    commands:
+      - ./scripts/test-server.sh
