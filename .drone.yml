@@ -48,4 +48,6 @@ steps:
   - name: test-server-node-lts
     image: node:lts
     commands:
-      - ./scripts/test-server.sh
+      - cd server
+      - npm ci
+      - npm test
