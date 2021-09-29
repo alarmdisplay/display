@@ -6,6 +6,7 @@ name: compliance
 trigger:
   branch:
     include:
+      - develop
       - main
 
 steps:
@@ -30,6 +31,7 @@ name: testing
 trigger:
   branch:
     include:
+      - develop
       - main
 
 depends_on:
