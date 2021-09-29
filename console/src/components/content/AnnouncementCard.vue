@@ -18,7 +18,7 @@
         <div class="media-right">
           <div class="field is-grouped">
             <p class="control">
-              <button class="button is-outlined" title="Ankündigung bearbeiten" @click="$router.push({ name: 'announcement-form', params: { id: `${announcement.id}` } })">
+              <button class="button is-outlined" title="Bekanntmachung bearbeiten" @click="$router.push({ name: 'announcement-form', params: { id: `${announcement.id}` } })">
                   <span class="icon">
                       <font-awesome-icon icon="edit"/>
                   </span>
@@ -26,7 +26,7 @@
               </button>
             </p>
             <p class="control">
-              <button class="button is-danger is-outlined" title="Ankündigung entfernen" @click="announcement.remove()">
+              <button class="button is-danger is-outlined" title="Bekanntmachung entfernen" @click="announcement.remove()">
                 <span class="icon">
                   <font-awesome-icon icon="trash-alt"/>
                 </span>

@@ -23,6 +23,10 @@
                     <th>Koordinaten des Standorts</th>
                     <td><CoordinateValue settings-key="station_coordinates"/></td>
                 </tr>
+                <tr>
+                    <th>Text für Alarmbanner</th>
+                    <td><StringValue settings-key="alert_banner_message"/></td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -32,12 +36,14 @@
 <script>
 import CoordinateValue from '@/components/admin/settings/CoordinateValue'
 import IntegerValue from '@/components/admin/settings/IntegerValue'
+import StringValue from '@/components/admin/settings/StringValue'
 
 export default {
   name: 'Settings',
   components: {
     CoordinateValue,
-    IntegerValue
+    IntegerValue,
+    StringValue
   },
   created () {
     // Fetch all settings

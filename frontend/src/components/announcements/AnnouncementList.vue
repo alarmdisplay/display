@@ -9,7 +9,7 @@
             <div v-else class="no-announcements">
                 <div class="icon-and-text">
                     <font-awesome-icon icon="bullhorn" size="2x"/>
-                    <p>Keine Ankündigungen</p>
+                    <p>Keine Bekanntmachungen</p>
                 </div>
             </div>
         </div>
@@ -38,7 +38,7 @@
             title () {
               const option = this.options.find(option => option.key === 'title');
               if (!option || option.value === '') {
-                return 'Ankündigungen'
+                return 'Bekanntmachungen'
               }
 
               return option.value;

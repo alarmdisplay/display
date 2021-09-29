@@ -1,17 +1,17 @@
 <template>
     <section class="section">
         <div class="container">
-            <h1 class="title">Ank&uuml;ndigungen</h1>
+            <h1 class="title">Bekanntmachungen</h1>
 
             <div class="content">
-                Ankündigungen können auf den Displays im Ruhemodus angezeigt werden, um aktuelle Informationen zu verbreiten.
+                Bekanntmachungen können auf den Displays im Ruhemodus angezeigt werden, um aktuelle Informationen zu verbreiten.
                 Ein optionaler Gültigkeitszeitraum erlaubt ein zeitgesteuertes Ein- und Ausblenden von einzelnen Einträgen.
             </div>
 
             <div class="buttons">
                 <router-link tag="button" type="button" class="button" to="new" append>
                     <span class="icon"><font-awesome-icon icon="plus"/></span>
-                    <span>Ankündigung anlegen</span>
+                    <span>Bekanntmachung anlegen</span>
                 </router-link>
             </div>
 

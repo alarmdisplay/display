@@ -44,7 +44,7 @@ export default {
     getComponentName: function (componentType) {
       switch (componentType) {
         case 'AnnouncementList':
-          return 'Ankündigungen'
+          return 'Bekanntmachungen'
         case 'Clock':
           return 'Uhr'
         case 'DWDWarningMap':

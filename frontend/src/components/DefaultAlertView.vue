@@ -19,7 +19,7 @@
                     <LMap class="map" :bounds="mapBounds" :options="{ zoomSnap: 0.1 }">
                         <LTileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap-Mitwirkende"></LTileLayer>
                         <LMarker v-if="originCoordinates" :lat-lng="originCoordinates"></LMarker>
-                        <LCircleMarker :lat-lng="[alert.location.latitude, alert.location.longitude]" color="red"/>
+                        <LCircleMarker :lat-lng="[alert.location.latitude, alert.location.longitude]" color="red" weight="8" radius="16" :fill-opacity="0"/>
                     </LMap>
                 </div>
             </div>
@@ -185,7 +185,7 @@
 
     .address {
         font-size: 3em;
-        white-space: pre;
+        white-space: pre-line;
         margin-top: 0;
         margin-bottom: 0.5em;
     }
