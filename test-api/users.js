@@ -33,10 +33,23 @@ describe(basePath, () => {
         });
     });
 
-    it(`POST ${basePath} should require authentication`, (done) => {
+    it(`POST ${basePath} should not require authentication for the first user`, (done) => {
       chai.request(server.base)
         .post(basePath)
-        .send({password: 'secret'})
+        .send({ email: 'user1@example.org', password: 'secret' })
+        .end((err, res) => {
+          if (err) {
+            return done(err)
+          }
+          res.should.have.status(201);
+          done();
+        });
+    });
+
+    it(`POST ${basePath} should require authentication the second time`, (done) => {
+      chai.request(server.base)
+        .post(basePath)
+        .send({ email: 'user2@example.org', password: 'secret' })
         .end((err, res) => {
           if (err) {
             return done(err)
