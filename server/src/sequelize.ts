@@ -1,5 +1,5 @@
-import {Sequelize} from 'sequelize';
-import {Application} from './declarations';
+import { Sequelize } from 'sequelize';
+import { Application } from './declarations';
 import Umzug from 'umzug';
 import * as path from 'path';
 import logger from './logger';
@@ -38,7 +38,9 @@ export default function (app: Application): void {
     const umzug = new Umzug({
       migrations: {
         // indicates the folder containing the migration .js files
-        path: path.join(__dirname, './migrations'),
+        path: path.resolve(__dirname, './migrations'),
+        // Accept js and ts files (important for testing)
+        pattern: /^[^\.]+\.(j|t)s$/,
         // inject sequelize's QueryInterface in the migrations
         params: [
           sequelize.getQueryInterface(),

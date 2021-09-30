@@ -34,7 +34,7 @@
     "lint:fix": "eslint src/. test/. --config .eslintrc.json --ext .ts --fix",
     "dev": "ts-node-dev --no-notify --rs src/",
     "start": "npm run compile && node lib/",
-    "jest": "NODE_ENV=test jest  --forceExit",
+    "jest": "NODE_ENV=test jest --runInBand --forceExit",
     "compile": "shx rm -rf lib/ && tsc"
   },
   "standard": {
