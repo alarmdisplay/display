@@ -50,4 +50,5 @@ steps:
     commands:
       - cd server
       - npm ci
+      - sleep 10
       - npm test
