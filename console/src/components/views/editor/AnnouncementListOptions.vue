@@ -5,7 +5,7 @@
         Titel
       </label>
       <div class="control">
-        <input class="input" type="text" id="input-title" placeholder="Bekanntmachungen" v-model.trim="title.value">
+        <input class="input" type="text" id="input-title" placeholder="Bekanntmachungen" v-model.trim="options.title">
       </div>
     </div>
   </form>
@@ -14,32 +14,8 @@
 <script>
 export default {
   name: 'AnnouncementListOptions',
-  data () {
-    return {
-      title: { value: '' }
-    }
-  },
-  methods: {
-    setOption (key, defaultValue) {
-      const option = this.options.find(option => option.key === key)
-      if (!option) {
-        const { ContentSlotOption } = this.$FeathersVuex.api
-        const newOption = new ContentSlotOption()
-        newOption.key = key
-        newOption.value = defaultValue
-        this[key] = newOption
-        this.options.push(newOption)
-        return
-      }
-
-      this[key] = option
-    }
-  },
-  created () {
-    this.setOption('title', '')
-  },
   props: {
-    options: Array
+    options: Object
   }
 }
 </script>

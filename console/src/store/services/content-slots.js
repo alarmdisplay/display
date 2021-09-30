@@ -10,47 +10,9 @@ class ContentSlot extends BaseModel {
       columnEnd: 1,
       rowStart: 2,
       rowEnd: 2,
+      options: {},
       viewId: null
     }
-  }
-
-  static setupInstance (data, { models }) {
-    console.log('setup content slot', data)
-    if (!data.options || !Array.isArray(data.options)) {
-      data.options = []
-    }
-    data.options = data.options.map(option => new models.api.ContentSlotOption(option))
-    console.log('the content slot:', data)
-    return data
-  }
-
-  async save (params) {
-    const savedContentSlot = await super.save(params)
-    console.log('content slot saved', savedContentSlot)
-    const optionIdsToSave = this.options.filter(option => option.id !== undefined).map(option => option.id)
-    console.log('saving options', optionIdsToSave)
-
-    const removedOptions = savedContentSlot.options.filter(option => {
-      if (option.__id) {
-        return false
-      }
-
-      return !optionIdsToSave.includes(option.id)
-    })
-    for (const option of removedOptions) {
-      await option.remove()
-    }
-
-    // Save the remaining options
-    for (const option of this.options) {
-      console.log('saving option', option)
-      if (option.__id) {
-        option.contentSlotId = savedContentSlot.id
-      }
-      await option.save()
-    }
-
-    return savedContentSlot
   }
 }
 

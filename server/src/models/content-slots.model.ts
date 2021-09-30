@@ -37,6 +37,10 @@ export default function (app: Application): typeof Model {
         min: 2
       }
     },
+    options: {
+      type: DataTypes.JSON,
+      allowNull: true
+    }
   }, {
     hooks: {
       beforeCount(options: any): HookReturn {
@@ -49,10 +53,6 @@ export default function (app: Application): typeof Model {
   (ContentSlot as any).associate = function (models: any): void {
     models.content_slot.belongsTo(models.view, {
       as: 'view'
-    });
-    models.content_slot.hasMany(models.content_slot_options, {
-      foreignKey: { allowNull: false },
-      as: 'options'
     });
   };
 

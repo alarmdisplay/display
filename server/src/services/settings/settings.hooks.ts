@@ -1,7 +1,7 @@
 import * as authentication from '@feathersjs/authentication';
 import { allowApiKey } from '../../hooks/allowApiKey';
-import { HookContext } from '@feathersjs/feathers';
-import { disallow, getItems, replaceItems } from 'feathers-hooks-common';
+import { disallow } from 'feathers-hooks-common';
+import { unserializeJson } from '../../hooks/unserializeJson';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const { authenticate } = authentication.hooks;
@@ -18,7 +18,7 @@ export default {
   },
 
   after: {
-    all: [ unserializeValue ],
+    all: [ unserializeJson('value') ],
     find: [],
     get: [],
     create: [],
@@ -37,21 +37,3 @@ export default {
     remove: []
   }
 };
-
-function unserializeValue(context: HookContext): HookContext {
-  const items = getItems(context);
-  if (Array.isArray(items)) {
-    items.forEach(item => {
-      if (typeof item.value === 'string') {
-        item.value = item.value.length === 0 ? null : JSON.parse(item.value);
-      }
-    });
-  } else {
-    if (typeof items.value === 'string') {
-      items.value = items.value.length === 0 ? null : JSON.parse(items.value);
-    }
-  }
-
-  replaceItems(context, items);
-  return context;
-}
