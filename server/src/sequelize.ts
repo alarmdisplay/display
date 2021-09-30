@@ -39,8 +39,8 @@ export default function (app: Application): void {
       migrations: {
         // indicates the folder containing the migration .js files
         path: path.resolve(__dirname, './migrations'),
-        // Accept js and ts files (important for testing)
-        pattern: /^[^\.]+\.(j|t)s$/,
+        // Accept ts files in tests
+        pattern: process.env.NODE_ENV === 'test' ? /^[^\.]+\.ts$/ : /\.js$/,
         // inject sequelize's QueryInterface in the migrations
         params: [
           sequelize.getQueryInterface(),
