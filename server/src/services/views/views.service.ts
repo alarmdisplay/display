@@ -12,16 +12,20 @@ declare module '../../declarations' {
   }
 
   interface ViewData {
+    id: number
     type: string
     order: number
     columns: number
     rows: number
+    displayId: number
+    contentSlots: ContentSlotData[]
   }
 }
 
 export default function (app: Application): void {
   const options = {
     Model: createModel(app),
+    multi: ['remove'],
     paginate: app.get('paginate')
   };
 

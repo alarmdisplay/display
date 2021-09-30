@@ -6,7 +6,7 @@
       </label>
       <div class="control">
         <div class="select">
-          <select id="select-options-maptype" v-model="mapType.value">
+          <select id="select-options-maptype" v-model="options.mapType">
             <option value="simple">Karte ohne Legende</option>
             <option value="area">Gebietszusammenfassung mit Legende</option>
           </select>
@@ -19,12 +19,12 @@
       </label>
       <div class="control">
         <div class="select">
-          <select id="select-options-areacode" v-model="areaCode.value">
+          <select id="select-options-areacode" v-model="options.areaCode">
             <option value="DE">Deutschland</option>
             <option value="DE-BW">Baden-Württemberg</option>
             <option value="DE-BY">Bayern</option>
             <option value="DE-BE">Berlin</option>
-            <option value="Bodensee" :disabled="mapType.value !== 'area'">Bodensee</option>
+            <option value="Bodensee" :disabled="options.mapType !== 'area'">Bodensee</option>
             <option value="DE-BB">Brandenburg</option>
             <option value="DE-HB">Bremen</option>
             <option value="DE-HH">Hamburg</option>
@@ -48,34 +48,8 @@
 <script>
 export default {
   name: 'DWDWarningMapOptions',
-  data () {
-    return {
-      mapType: { value: 'area' },
-      areaCode: { value: 'DE' }
-    }
-  },
-  methods: {
-    setOption (key, defaultValue) {
-      const option = this.options.find(option => option.key === key)
-      if (!option) {
-        const { ContentSlotOption } = this.$FeathersVuex.api
-        const newOption = new ContentSlotOption()
-        newOption.key = key
-        newOption.value = defaultValue
-        this[key] = newOption
-        this.options.push(newOption)
-        return
-      }
-
-      this[key] = option
-    }
-  },
-  created () {
-    this.setOption('mapType', 'area')
-    this.setOption('areaCode', 'DE')
-  },
   props: {
-    options: Array
+    options: Object
   }
 }
 </script>

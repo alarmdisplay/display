@@ -5,7 +5,6 @@ import auth from './store.auth'
 
 import announcements from './services/announcements'
 import apiKeys from './services/api-keys'
-import contentSlotOptions from './services/content-slot-options'
 import contentSlots from './services/content-slots'
 import displays from './services/displays'
 import incidents from './services/incidents'
@@ -38,7 +37,6 @@ export default new Vuex.Store({
     createSocketPlugin(feathersClient.io),
     announcements,
     apiKeys,
-    contentSlotOptions,
     contentSlots,
     displays,
     incidents,

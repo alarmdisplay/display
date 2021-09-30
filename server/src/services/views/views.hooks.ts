@@ -1,6 +1,7 @@
 import * as authentication from '@feathersjs/authentication';
 import { shallowPopulate } from 'feathers-shallow-populate';
 import { allowApiKey } from '../../hooks/allowApiKey';
+import { HookContext } from '@feathersjs/feathers';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const { authenticate } = authentication.hooks;
@@ -19,7 +20,7 @@ export default {
     all: [ allowApiKey(), authenticate('jwt', 'api-key') ],
     find: [],
     get: [],
-    create: [],
+    create: [ includeContentSlots ],
     update: [],
     patch: [],
     remove: []
@@ -45,3 +46,13 @@ export default {
     remove: []
   }
 };
+
+/**
+ * Automatically create nested content slots when creating a view
+ * @param context
+ */
+function includeContentSlots(context: HookContext): HookContext {
+  const sequelize = context.app.get('sequelizeClient');
+  context.params.sequelize = { include: [ { model: sequelize.models.content_slot, as: 'contentSlots' } ] };
+  return context;
+}

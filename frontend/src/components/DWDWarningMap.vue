@@ -16,38 +16,21 @@
     export default {
         name: "DWDWarningMap",
         computed: {
-            areaCode: function () {
-              let option = this.options.find(option => option.key === 'areaCode');
-              if (!option) {
-                return 'DE'
-              }
-
-              return option.value;
-            },
             baseUrl: function () {
-                switch (this.mapType) {
+                switch (this.options.mapType) {
                     case 'simple':
                         return `https://www.dwd.de/DWD/warnungen/warnapp_gemeinden/json/warnungen_gemeinde_map_${this.stateCode}.png`;
                     case 'area':
-                        return `https://www.dwd.de/DWD/warnungen/warnstatus/Schilder${this.schilderCode}.jpg`;
                     default:
-                        return 'https://www.dwd.de/DWD/warnungen/warnapp_gemeinden/json/warnungen_gemeinde_map_de.png';
+                        return `https://www.dwd.de/DWD/warnungen/warnstatus/Schilder${this.schilderCode}.jpg`;
                 }
             },
             imgurl: function () {
                 return `${this.baseUrl}?${this.cacheBustingQuery}`;
             },
-            mapType: function () {
-              let option = this.options.find(option => option.key === 'mapType');
-              if (!option) {
-                return 'area'
-              }
-
-              return option.value;
-            },
             schilderCode: function () {
 
-                switch (this.areaCode) {
+                switch (this.options.areaCode) {
                     case 'DE':
                         return 'D';
                     case 'DE-BW':
@@ -80,7 +63,7 @@
                 }
             },
             stateCode: function () {
-                switch (this.areaCode) {
+                switch (this.options.areaCode) {
                     case 'DE-BW':
                     case 'Bodensee':
                         return 'baw';
@@ -129,8 +112,8 @@
         props: {
             instanceId: Number,
             options: {
-              type: Array,
-              defaultValue: []
+              type: Object,
+              defaultValue: {}
             }
         }
     }

@@ -1,4 +1,8 @@
 {
+  "logging": {
+    "level": "error"
+  },
+  "port": 8998,
   "mysql": "mysql://root:@mariadb:3306/display_backend",
   "db_prefix": "test"
 }
