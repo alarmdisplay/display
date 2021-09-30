@@ -10,32 +10,9 @@ class ContentSlot extends BaseModel {
       columnEnd: 1,
       rowStart: 2,
       rowEnd: 2,
+      options: {},
       viewId: null
     }
-  }
-
-  static setupInstance (data, { models }) {
-    // Add nested view objects to storage
-    if (!data.options || !Array.isArray(data.options)) {
-      data.options = []
-    }
-    data.options.forEach(option => new models.api.ContentSlotOption(option))
-
-    // Replace the nested views with a getter
-    Object.defineProperty(data, 'options', {
-      get: function () {
-        const options = models.api.ContentSlotOption.findInStore({
-          query: {
-            contentSlotId: data.id
-          }
-        })
-        return options.data
-      },
-      configurable: true,
-      enumerable: true
-    })
-
-    return data
   }
 }
 

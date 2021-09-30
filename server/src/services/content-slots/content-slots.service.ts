@@ -18,6 +18,7 @@ declare module '../../declarations' {
     columnEnd: number
     rowStart: number
     rowEnd: number
+    options: any
     viewId: number
   }
 }
