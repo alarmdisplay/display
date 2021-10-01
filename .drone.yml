@@ -57,7 +57,7 @@ steps:
       - apk add mariadb-client
       - echo "DROP DATABASE display_backend;" > clean.sql
       - echo "CREATE DATABASE display_backend;" >> clean.sql
-      - mysqladmin -h mariadb < clean.sql
+      - mysql -h mariadb < clean.sql
   - name: displayserver
     image: node:lts
     detach: true
