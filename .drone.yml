@@ -70,6 +70,7 @@ steps:
   - name: build-docker
     image: plugins/docker
     settings:
+      custom_dns: 1.1.1.1
       repo: alarmdisplay/display
       dry_run: true
 
