@@ -18,7 +18,7 @@ describe('Feathers application tests (with jest)', () => {
   beforeAll(done => {
     server = app.listen(port);
     (app.get('databaseReady') as Promise<void>).then(done);
-  });
+  }, 40000);
 
   afterAll(done => {
     server.close(done);
