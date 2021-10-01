@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize';
+import { Sequelize, ConnectionError } from 'sequelize';
 import { Application } from './declarations';
 import Umzug from 'umzug';
 import * as path from 'path';
@@ -51,8 +51,19 @@ export default function (app: Application): void {
       storageOptions: { sequelize }
     });
 
+    // Retry options for initial database connection
+    const retryOptions = {
+      timeout: 10000,
+      max: Number.parseInt(app.get('dbMaxRetries')) || 5,
+      backoffBase: 2000,
+      backoffExponent: 1.03,
+      match: [ ConnectionError ],
+      name: 'Database Connection',
+      report: (message: string) => logger.debug(message),
+    };
+
     // Migrate and sync to the database
-    app.set('sequelizeSync', sequelize.authenticate().then(() => {
+    app.set('sequelizeSync', sequelize.authenticate({ retry: retryOptions }).then(() => {
       logger.info('Connected to database');
       return umzug.up();
     }, (reason: Error) => {
