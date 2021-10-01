@@ -64,7 +64,7 @@ steps:
     commands:
       - cd server
       - npm ci
-      - echo "{\"mysql\": \"mysql://root:@mariadb:3306/display_backend\"}" > config/local-production.json
+      - 'echo ''{"mysql": "mysql://root:@mariadb:3306/display_backend"}'' > config/local-production.json'
       - NODE_ENV=production npm start
   - name: test-api
     image: node:lts
