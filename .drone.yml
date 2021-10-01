@@ -51,3 +51,24 @@ steps:
       - cd server
       - npm ci
       - npm test
+  - name: clean-database
+    image: alpine
+    commands:
+      - apk add mariadb-client
+      - echo "DROP DATABASE display_backend;" > clean.sql
+      - echo "CREATE DATABASE display_backend;" >> clean.sql
+      - mysql -h mariadb < clean.sql
+  - name: displayserver
+    image: node:lts
+    detach: true
+    commands:
+      - cd server
+      - 'echo ''{"mysql": "mysql://root:@mariadb:3306/display_backend"}'' > config/local-production.json'
+      - NODE_ENV=production npm start
+  - name: test-api
+    image: node:lts
+    commands:
+      - cd test-api
+      - npm ci
+      - sleep 10
+      - SERVER_URL=displayserver:3031 npm start
