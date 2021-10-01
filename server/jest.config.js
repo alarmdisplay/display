@@ -5,5 +5,6 @@ module.exports = {
     'ts-jest': {
       diagnostics: false
     }
-  }
+  },
+  testSequencer: "./test/testSequencer.js"
 };
