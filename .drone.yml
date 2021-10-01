@@ -51,58 +51,24 @@ steps:
       - cd server
       - npm ci
       - npm test
-
----
-kind: pipeline
-type: docker
-name: build
-
-trigger:
-  branch:
-    include:
-      - develop
-      - main
-
-depends_on:
-  - testing
-
-steps:
-  - name: build-docker
-    image: plugins/docker
-    settings:
-      custom_dns: 1.1.1.1
-      repo: alarmdisplay/display
-      dry_run: true
-
----
-kind: pipeline
-type: docker
-name: testing-docker
-
-trigger:
-  branch:
-    include:
-      - develop
-      - main
-
-depends_on:
-  - build
-
-services:
-  - name: mariadb
-    image: mariadb
-    environment:
-      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
-      MARIADB_DATABASE: display_backend
-  - name: display
-    image: alarmdisplay/display
-    environment:
-      MYSQL_URI: root:@mariadb:3306/display_backend
-
-steps:
+  - name: clean-database
+    image: alpine
+    commands:
+      - apk add mariadb-client
+      - echo "DROP DATABASE display_backend;" > clean.sql
+      - echo "CREATE DATABASE display_backend;" >> clean.sql
+      - mysqladmin -h mariadb < clean.sql
+  - name: displayserver
+    image: node:lts
+    detach: true
+    commands:
+      - cd server
+      - npm ci
+      - echo "{\"mysql\": \"mysql://root:@mariadb:3306/display_backend\"}" > config/local-production.json
+      - NODE_ENV=production npm start
   - name: test-api
     image: node:lts
     commands:
       - cd test-api
       - npm ci
-      - SERVER_URL=display:3031 npm start
+      - SERVER_URL=displayserver:3031 npm start
