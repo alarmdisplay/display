@@ -1,5 +1,5 @@
 import { Service, SequelizeServiceOptions } from 'feathers-sequelize';
-import { Application, SettingsData } from '../../declarations';
+import { Application, SettingsData, SettingsValue } from '../../declarations';
 import logger from '../../logger';
 
 export class Settings extends Service<SettingsData> {
@@ -9,8 +9,8 @@ export class Settings extends Service<SettingsData> {
   }
 
   setup(app: Application): void {
-    const settingDefaults = new Map([
-      ['alert_banner_message', null],
+    const settingDefaults = new Map<string, SettingsValue>([
+      ['alert_banner_message', ''],
       ['incident_display_minutes', 60],
       ['incident_test_display_minutes', 1],
       ['station_coordinates', null],

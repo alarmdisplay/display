@@ -5,8 +5,8 @@
                 <div class="level">
                     <div class="level-left">
                         <div class="level-item" style="flex-direction: column">
-                            <span>Breite: <input type="number" class="input is-small" min="-90" max="90" step="0.00001" v-model.number="clone.value.latitude"></span>
-                            <span>Länge: <input type="number" class="input is-small" min="-180" max="180" step="0.00001" v-model.number="clone.value.longitude"></span>
+                            <span>Breite: <input type="number" class="input is-small" min="-90" max="90" step="0.00001" v-model.number="latitude"></span>
+                            <span>Länge: <input type="number" class="input is-small" min="-180" max="180" step="0.00001" v-model.number="longitude"></span>
                             <ErrorMessage :form-error="formError" :short="true"/>
                         </div>
                     </div>
@@ -14,6 +14,11 @@
                         <button type="button" class="button level-item is-small is-success" @click="
                         () => {
                           $data.formError = null
+                          if (latitude && longitude) {
+                            clone.value = { latitude, longitude }
+                          } else {
+                            clone.value = null
+                          }
                           save()
                             .then(() => { $data.edit = false })
                             .catch(reason => { $data.formError = reason })
@@ -32,7 +37,7 @@
             </span>
         </div>
         <div class="level-right">
-            <button class="button is-small" @click.prevent="edit = true">Bearbeiten</button>
+            <button class="button is-small" @click.prevent="startEdit" :disabled="!settingsItem">Bearbeiten</button>
         </div>
     </div>
 </template>
@@ -60,7 +65,16 @@ export default {
   data () {
     return {
       edit: false,
-      formError: null
+      formError: null,
+      latitude: '',
+      longitude: ''
+    }
+  },
+  methods: {
+    startEdit () {
+      this.latitude = this.settingsItem.value?.latitude || ''
+      this.longitude = this.settingsItem.value?.longitude || ''
+      this.edit = true
     }
   },
   props: {

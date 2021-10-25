@@ -13,8 +13,15 @@ declare module '../../declarations' {
 
   interface SettingsData {
     key: string
-    value: any
+    value: SettingsValue
   }
+
+  interface CoordinateValue {
+    latitude: number
+    longitude: number
+  }
+
+  type SettingsValue = null | string | number | CoordinateValue
 }
 
 export default function (app: Application): void {
