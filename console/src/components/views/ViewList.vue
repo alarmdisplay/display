@@ -13,8 +13,8 @@
             Sofern kein Alarm vorliegt, befindet sich das Display im Ruhemodus.
             Dort können allgemeine Informationen angezeigt werden.
           </div>
-          <div v-if="views.length" class="columns is-multiline">
-            <div class="column is-one-third" v-for="view in views" :key="view.id">
+          <div v-if="idleViews.length" class="columns is-multiline">
+            <div class="column is-one-third" v-for="view in idleViews" :key="view.id">
               <ViewListItem :view="view"/>
             </div>
           </div>
@@ -51,8 +51,8 @@ export default {
     displayId () {
       return parseInt(this.$route.params.display_id)
     },
-    viewsParams () {
-      return { query: { displayId: this.displayId, $sort: { order: 1 } } }
+    idleViewsParams () {
+      return { query: { displayId: this.displayId, type: 'idle', $sort: { order: 1 } } }
     }
   },
   components: {
@@ -62,15 +62,12 @@ export default {
   methods: {
     addView () {
       const { View } = this.$FeathersVuex.api
-      const view = new View()
-      view.displayId = this.displayId
-      view.type = 'idle'
-      view.order = this.views.length + 1
+      const view = new View({ displayId: this.displayId, type: 'idle', order: this.idleViews.length + 1 })
       view.save()
     }
   },
   mixins: [
-    makeFindMixin({ service: 'views', name: 'views', params: 'viewsParams', qid: 'viewsList', local: true })
+    makeFindMixin({ service: 'views', name: 'idleViews', params: 'idleViewsParams', qid: 'idleViewsList', local: true })
   ],
   watch: {
     displayId: {
