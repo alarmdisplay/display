@@ -12,6 +12,7 @@ class Display extends BaseModel {
       name: '',
       active: false,
       description: '',
+      type: 'monitor',
       views: []
     }
   }
@@ -46,6 +47,11 @@ class Display extends BaseModel {
 const servicePath = 'api/v1/displays'
 const servicePlugin = makeServicePlugin({
   Model: Display,
+  getters: {
+    getCurrentDisplay: (state, getters, rootState) => {
+      return getters.get(rootState.ownDisplayId)
+    }
+  },
   service: feathersClient.service(servicePath),
   servicePath
 })

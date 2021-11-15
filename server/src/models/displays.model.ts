@@ -18,6 +18,11 @@ export default function (app: Application): typeof Model {
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: ''
+    },
+    type: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      defaultValue: 'monitor'
     }
   }, {
     hooks: {

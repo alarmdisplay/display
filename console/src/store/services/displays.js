@@ -7,7 +7,8 @@ class Display extends BaseModel {
     return {
       name: '',
       active: false,
-      description: ''
+      description: '',
+      type: 'monitor'
     }
   }
 
