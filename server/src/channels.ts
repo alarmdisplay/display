@@ -115,7 +115,14 @@ export default function(app: Application): void {
     return app.channel('authenticated');
   });
 
-  // Send all events about key requests also to the affected connection
+  // Send the patched event only to the affected connection, because it contains the key
+  app.service('api/v1/key-requests').publish('patched', (data: KeyRequestData) => {
+    return [
+      app.channel(`connections/${data.requestId}`)
+    ];
+  });
+
+  // Send all other events about key requests also to the affected connection, not only the authenticated ones
   app.service('api/v1/key-requests').publish((data: KeyRequestData) => {
     return [
       app.channel('authenticated'),
