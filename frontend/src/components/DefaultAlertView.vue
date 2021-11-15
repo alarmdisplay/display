@@ -10,19 +10,28 @@
                 <span v-if="alert.keyword" class="badge badge-category">{{ alert.keyword }}</span>
                 <span class="badge badge-elapsed-time"><font-awesome-icon icon="stopwatch"/> {{ elapsedTime }}</span>
             </div>
-            <div class="details">
-                <div class="address-and-description" :style="{ width: (showMap ? '50%' : '100%') }">
+            <template v-if="isTablet">
+                <div class="address-holder">
                     <p class="address">{{ locationText || 'Keine Ortsangabe' }}</p>
-                    <p v-if="alert.description" class="description">{{ alert.description }}</p>
+                    <a v-if="geoLink" class="button" :href="geoLink">Im Navi zeigen</a>
                 </div>
-                <div v-if="showMap" class="map-holder">
-                    <LMap class="map" :bounds="mapBounds" :options="{ zoomSnap: 0.1 }">
-                        <LTileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap-Mitwirkende"></LTileLayer>
-                        <LMarker v-if="originCoordinates" :lat-lng="originCoordinates"></LMarker>
-                        <LCircleMarker :lat-lng="[alert.location.latitude, alert.location.longitude]" color="red" :weight="8" :radius="16" :fill-opacity="0"/>
-                    </LMap>
+                <p class="description">{{ alert.description || 'Keine Bemerkung' }}</p>
+            </template>
+            <template v-else>
+                <div class="details">
+                    <div class="address-and-description" :style="{ width: (showMap ? '50%' : '100%') }">
+                        <p class="address">{{ locationText || 'Keine Ortsangabe' }}</p>
+                        <p v-if="alert.description" class="description">{{ alert.description }}</p>
+                    </div>
+                    <div v-if="showMap" class="map-holder">
+                        <LMap class="map" :bounds="mapBounds" :options="{ zoomSnap: 0.1 }">
+                            <LTileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap-Mitwirkende"></LTileLayer>
+                            <LMarker v-if="originCoordinates" :lat-lng="originCoordinates"></LMarker>
+                            <LCircleMarker :lat-lng="[alert.location.latitude, alert.location.longitude]" color="red" :weight="8" :radius="16" :fill-opacity="0"/>
+                        </LMap>
+                    </div>
                 </div>
-            </div>
+            </template>
         </div>
     </div>
 </template>
@@ -54,6 +63,19 @@
                 let elapsedSeconds = this.$root.$data.seconds - Math.floor(this.alert.time.valueOf() / 1000);
                 return textForSeconds(elapsedSeconds);
             },
+            geoLink () {
+                if (this.hasLocation) {
+                  return `geo:${this.alert.location.latitude},${this.alert.location.longitude}`
+                }
+                return ''
+            },
+            hasLocation () {
+              return !!(this.alert.location && this.alert.location.latitude && this.alert.location.longitude)
+            },
+            isTablet () {
+              const display = this.$store.getters['displays/getCurrentDisplay']
+              return !!(display && display.type === 'tablet')
+            },
             originCoordinates () {
               return this.$store.getters['settings/getLeafletCoords']('station_coordinates');
             },
@@ -80,7 +102,7 @@
               return latLngBounds.pad(0.2)
             },
             showMap () {
-              return this.alert.location && this.alert.location.latitude && this.alert.location.longitude
+              return this.hasLocation
             },
             titleText () {
                 let reason = this.alert.reason || 'Einsatzgrund unbekannt'
@@ -183,11 +205,26 @@
         }
     }
 
+    .address-holder {
+        display: flex;
+        align-items: center;
+    }
+
     .address {
         font-size: 3em;
         white-space: pre-line;
         margin-top: 0;
         margin-bottom: 0.5em;
+    }
+
+    .button {
+        padding: 0.7em;
+        margin-left: 2em;
+        border-radius: 10px;
+        background-color: #2c3e50;
+        color: white;
+        text-decoration: none;
+        font-size: 1.5em;
     }
 
     .description {
