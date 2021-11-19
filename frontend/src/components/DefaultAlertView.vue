@@ -1,12 +1,11 @@
 <template>
-    <div :class="['alert', { test: alert.status === 'Test' }]">
+    <div class="alert">
         <div class="clock-container">
             <Clock :instance-id="0" :show-date="false"/>
         </div>
         <div class="info">
             <p class="title">{{ titleText }}</p>
             <div class="badges">
-                <span class="badge badge-test">TEST</span>
                 <span v-if="alert.keyword" class="badge badge-category">{{ alert.keyword }}</span>
                 <span class="badge badge-elapsed-time"><font-awesome-icon icon="stopwatch"/> {{ elapsedTime }}</span>
             </div>
@@ -183,26 +182,9 @@
       color: white;
     }
 
-    .badge-test {
-        display: none;
-        background-color: red;
-        color: white;
-    }
-
     .badge-elapsed-time {
         background-color: #2c3e50;
         color: white;
-    }
-
-    .alert.test .badge-test {
-        display: unset;
-        animation: blinking 2s cubic-bezier(.68,-0.55,.27,1.55) infinite
-    }
-
-    @keyframes blinking {
-        50% {
-            opacity: 0;
-        }
     }
 
     .address-holder {
