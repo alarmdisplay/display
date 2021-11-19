@@ -20,6 +20,10 @@
                     <td><IntegerValue settings-key="incident_test_display_minutes" unit="Minute(n)"/></td>
                 </tr>
                 <tr>
+                    <th>Anzeigefilter für Einsatzgrund</th>
+                    <td><StringValue settings-key="reason_display_regex"/></td>
+                </tr>
+                <tr>
                     <th>Koordinaten des Standorts</th>
                     <td><CoordinateValue settings-key="station_coordinates"/></td>
                 </tr>

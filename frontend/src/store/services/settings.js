@@ -1,4 +1,4 @@
-import feathersClient, { makeServicePlugin, BaseModel } from '../../feathers-client'
+import feathersClient, { BaseModel, makeServicePlugin } from '../../feathers-client'
 
 class Setting extends BaseModel {
   static modelName = 'Setting'
@@ -27,6 +27,14 @@ const servicePlugin = makeServicePlugin({
       }
 
       return [value.latitude, value.longitude]
+    },
+    getRegExp: (state, getters) => (id, params) => {
+      const value = getters.getValue(id, params)
+      try {
+        return RegExp(value)
+      } catch (e) {
+        return  null
+      }
     },
     getStringValue: (state, getters) => (id, params) => {
       const value = getters.getValue(id, params)

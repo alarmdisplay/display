@@ -104,8 +104,25 @@
               return this.hasLocation
             },
             titleText () {
-                let reason = this.alert.reason || 'Einsatzgrund unbekannt'
-                return (this.alert.status === 'Exercise' ? `Übung: ${reason}` : reason)
+              let reason = this.alert.reason || ''
+
+              // Only show a portion the reason, if a corresponding regex is defined
+              const displayRegex = this.$store.getters['settings/getRegExp']('reason_display_regex');
+              if (displayRegex) {
+                const matches = reason.match(displayRegex)
+                if (matches && matches.length > 1 && matches[1]) {
+                  reason = matches[1]
+                }
+              }
+
+              switch (this.alert.status) {
+                case 'Exercise':
+                  return `Übung: ${reason}`
+                case 'Test':
+                  return reason ? `Probealarm: ${reason}` : 'Probealarm'
+                default:
+                  return reason || 'Einsatzgrund unbekannt'
+              }
           }
         },
         props: {

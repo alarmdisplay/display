@@ -13,6 +13,7 @@ export class Settings extends Service<SettingsData> {
       ['alert_banner_message', ''],
       ['incident_display_minutes', 60],
       ['incident_test_display_minutes', 1],
+      ['reason_display_regex', null],
       ['station_coordinates', null],
     ]);
 
