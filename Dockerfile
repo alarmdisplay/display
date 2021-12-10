@@ -1,24 +1,24 @@
-FROM node:lts as build-console
+FROM node as build-console
 
 WORKDIR /home/node/app/console
 COPY ./console/package.json ./console/package-lock.json /home/node/app/console/
-RUN npm ci
+RUN npm ci --no-audit
 COPY ./console /home/node/app/console
 RUN npm run build
 
-FROM node:lts as build-frontend
+FROM node as build-frontend
 
 WORKDIR /home/node/app/frontend
 COPY ./frontend/package.json ./frontend/package-lock.json /home/node/app/frontend/
-RUN npm ci
+RUN npm ci --no-audit
 COPY ./frontend /home/node/app/frontend
 RUN npm run build
 
-FROM node:lts as build-server
+FROM node as build-server
 
 WORKDIR /home/node/app/server
 COPY ./server/package.json ./server/package-lock.json /home/node/app/server/
-RUN npm ci
+RUN npm ci --no-audit
 COPY ./server /home/node/app/server
 RUN npm run compile
 
