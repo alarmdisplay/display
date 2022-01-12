@@ -70,5 +70,5 @@ steps:
     commands:
       - cd test-api
       - npm ci
-      - sleep 10
+      - sleep 15
       - SERVER_URL=displayserver:3031 npm start
