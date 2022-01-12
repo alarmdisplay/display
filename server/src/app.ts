@@ -26,7 +26,12 @@ const app: Application = express(feathers());
 
 // Load app configuration
 app.configure(configuration());
-logger.level = app.get('logging').level;
+
+// Set log level from config
+const level = app.get('logging').level || '';
+if (['ALL', 'MARK', 'TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'OFF'].includes(level.toUpperCase())) {
+  logger.level = level;
+}
 logger.info('Logging level is \'%s\'', logger.level);
 
 // Enable security, CORS, compression, favicon and body parsing
