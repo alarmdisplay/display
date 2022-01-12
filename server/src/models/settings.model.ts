@@ -6,7 +6,7 @@ import { HookReturn } from 'sequelize/types/lib/hooks';
 
 export default function (app: Application): typeof Model {
   const sequelizeClient: Sequelize = app.get('sequelizeClient');
-  return sequelizeClient.define('setting', {
+  const Setting = sequelizeClient.define('setting', {
     key: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -24,4 +24,5 @@ export default function (app: Application): typeof Model {
     },
     tableName: [app.get('db_prefix'), 'settings'].join('_')
   });
+  return Setting;
 }
