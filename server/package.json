@@ -91,6 +91,6 @@
     "shx": "^0.3.2",
     "ts-jest": "^27.0.7",
     "ts-node-dev": "^1.0.0-pre.63",
-    "typescript": "^3.9.7"
+    "typescript": "^4.5.4"
   }
 }

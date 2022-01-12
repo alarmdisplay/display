@@ -69,8 +69,8 @@ export default function(app: Application): void {
           }
           return;
         }
-      } catch (e) {
-        logger.warn('Socket connected, API key not accepted:', e.message || e);
+      } catch (error: any) {
+        logger.warn('Socket connected, API key not accepted:', error.message || error);
         // Create a unique identifier for this connection, that can be sent back upon a key request
         const identifier = generateIdentifier(6);
         pendingConnections.set(connection, identifier);

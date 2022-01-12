@@ -55,7 +55,7 @@ export default class LocationsWatcher {
   onUpdated = async (data: RemoteLocationData): Promise<void> => {
     logger.debug('Location updated/patched', data);
     const service = this.app.service('api/v1/locations');
-    const locations = await service.find({ query: { hubLocationId: data.id }, paginate: false }) as LocationData[];
+    const locations = await service.find({ query: { hubLocationId: data.id }, paginate: false }) as (LocationData & { id : number })[];
     if (locations.length === 0) {
       // We have not seen this Location before, pretend that it just got created
       await this.onCreated(data);
