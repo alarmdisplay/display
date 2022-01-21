@@ -62,7 +62,7 @@
     "feathers-sequelize": "^6.2.0",
     "feathers-shallow-populate": "^2.1.0",
     "helmet": "^3.23.3",
-    "log4js": "^6.3.0",
+    "log4js": "^6.4.0",
     "mysql2": "^2.2.5",
     "sequelize": "^6.3.5",
     "serve-favicon": "^2.5.0",
