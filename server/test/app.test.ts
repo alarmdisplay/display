@@ -1,6 +1,6 @@
 import { Server } from 'http';
 import url from 'url';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 import app from '../src/app';
 
@@ -34,7 +34,7 @@ describe('Feathers application tests (with jest)', () => {
 
   describe('404', () => {
     it('shows a 404 HTML page', async () => {
-      expect.assertions(2);
+      expect.assertions(3);
 
       try {
         await axios.get(getUrl('path/to/nowhere'), {
@@ -43,25 +43,27 @@ describe('Feathers application tests (with jest)', () => {
           }
         });
       } catch (error) {
-        const { response } = error;
+        expect(axios.isAxiosError(error)).toBeTruthy();
+        const { response } = error as AxiosError;
 
-        expect(response.status).toBe(404);
-        expect(response.data.indexOf('<html>')).not.toBe(-1);
+        expect(response?.status).toBe(404);
+        expect(response?.data.indexOf('<html>')).not.toBe(-1);
       }
     });
 
     it('shows a 404 JSON error without stack trace', async () => {
-      expect.assertions(4);
+      expect.assertions(5);
 
       try {
         await axios.get(getUrl('path/to/nowhere'));
       } catch (error) {
-        const { response } = error;
+        expect(axios.isAxiosError(error)).toBeTruthy();
+        const { response } = error as AxiosError;
 
-        expect(response.status).toBe(404);
-        expect(response.data.code).toBe(404);
-        expect(response.data.message).toBe('Page not found');
-        expect(response.data.name).toBe('NotFound');
+        expect(response?.status).toBe(404);
+        expect(response?.data.code).toBe(404);
+        expect(response?.data.message).toBe('Page not found');
+        expect(response?.data.name).toBe('NotFound');
       }
     });
   });
