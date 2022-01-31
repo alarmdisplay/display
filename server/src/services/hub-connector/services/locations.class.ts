@@ -96,5 +96,5 @@ export default class LocationsWatcher {
     }
 
     return undefined;
-  }
+  };
 }
