@@ -1,19 +1,20 @@
-import { Sequelize, ConnectionError } from 'sequelize';
+import { Sequelize, ConnectionError, Dialect } from 'sequelize';
 import { Application } from './declarations';
 import Umzug from 'umzug';
 import * as path from 'path';
 import logger from './logger';
 
 export default function (app: Application): void {
-  const connectionString = app.get('mysql');
+  const dialect: Dialect = process.env.NODE_ENV === 'test' ? 'sqlite' : 'mysql';
+  const connectionString = app.get(dialect);
   if (!connectionString || connectionString === '') {
-    throw new Error('The config \'mysql\' has not been set');
+    throw new Error(`The config '${dialect}' has not been set`);
   }
   if (connectionString === 'MYSQL_URI') {
     throw new Error('The environment variable MYSQL_URI has not been set');
   }
   const sequelize = new Sequelize(connectionString, {
-    dialect: 'mysql',
+    dialect: dialect,
     logging: false,
     define: {
       freezeTableName: true

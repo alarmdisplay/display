@@ -3,7 +3,7 @@
     "level": "error"
   },
   "port": 8998,
-  "mysql": "mysql://root:@mariadb:3306/display_backend",
+  "sqlite": "sqlite::memory:",
   "dbMaxRetries": 10,
   "db_prefix": "test"
 }

@@ -51,13 +51,6 @@ steps:
       - cd server
       - npm ci
       - npm test
-  - name: clean-database
-    image: alpine
-    commands:
-      - apk add mariadb-client
-      - echo "DROP DATABASE display_backend;" > clean.sql
-      - echo "CREATE DATABASE display_backend;" >> clean.sql
-      - mysql -h mariadb < clean.sql
   - name: displayserver
     image: node:lts
     detach: true
