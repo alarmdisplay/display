@@ -15,8 +15,8 @@
                 </router-link>
             </div>
 
-            <FeathersVuexFind service="announcements" :query="{ $sort: { updatedAt: -1 }, $limit: 50 }" qid="announcementList" watch="query">
-                <ul slot-scope="{ items: announcements }">
+            <FeathersVuexFind v-slot="{ items: announcements }" service="announcements" :query="{ $sort: { updatedAt: -1 }, $limit: 50 }" qid="announcementList" watch="query">
+                <ul>
                     <li v-for="announcement in announcements" :key="announcement.id">
                         <AnnouncementCard :announcement="announcement"/>
                     </li>

@@ -10,8 +10,8 @@
                 </router-link>
             </div>
 
-            <FeathersVuexFind service="users" :query="{ $limit: 50 }" qid="userList" watch="query">
-                <table class="table is-fullwidth" slot-scope="{ items: users }">
+            <FeathersVuexFind v-slot="{ items: users }" service="users" :query="{ $limit: 50 }" qid="userList" watch="query">
+                <table class="table is-fullwidth">
                     <thead>
                     <tr>
                         <th>Name</th>
