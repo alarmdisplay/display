@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes, Model } from 'sequelize';
+import { HookReturn } from 'sequelize/types/hooks';
 import { Application } from '../declarations';
-import { HookReturn } from 'sequelize/types/lib/hooks';
 
 export default function (app: Application): typeof Model {
   const sequelizeClient: Sequelize = app.get('sequelizeClient');
