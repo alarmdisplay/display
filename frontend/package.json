@@ -1,6 +1,6 @@
 {
   "name": "@alarmdisplay/display-frontend",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",

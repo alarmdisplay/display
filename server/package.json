@@ -1,7 +1,7 @@
 {
   "name": "@alarmdisplay/display",
   "description": "Display component of the Alarmdisplay project",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "homepage": "https://alarmdisplay.org",
   "private": true,
   "main": "src",
