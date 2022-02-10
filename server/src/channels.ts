@@ -69,8 +69,8 @@ export default function(app: Application): void {
           }
           return;
         }
-      } catch (e) {
-        logger.warn('Socket connected, API key not accepted:', e.message || e);
+      } catch (error: any) {
+        logger.warn('Socket connected, API key not accepted:', error.message || error);
         // Create a unique identifier for this connection, that can be sent back upon a key request
         const identifier = generateIdentifier(6);
         pendingConnections.set(connection, identifier);
@@ -115,7 +115,14 @@ export default function(app: Application): void {
     return app.channel('authenticated');
   });
 
-  // Send all events about key requests also to the affected connection
+  // Send the patched event only to the affected connection, because it contains the key
+  app.service('api/v1/key-requests').publish('patched', (data: KeyRequestData) => {
+    return [
+      app.channel(`connections/${data.requestId}`)
+    ];
+  });
+
+  // Send all other events about key requests also to the affected connection, not only the authenticated ones
   app.service('api/v1/key-requests').publish((data: KeyRequestData) => {
     return [
       app.channel('authenticated'),

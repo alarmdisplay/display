@@ -10,8 +10,8 @@
         </p>
       </div>
 
-      <FeathersVuexFind service="key-requests" :query="{ $sort: { createdAt: 1 }, $limit: 50 }" qid="keyRequestList" watch="query">
-        <div class="box has-background-grey-lighter" slot-scope="{ items: keyRequests }" v-if="keyRequests.length">
+      <FeathersVuexFind v-slot="{ items: keyRequests }" service="key-requests" :query="{ $sort: { createdAt: 1 }, $limit: 50 }" qid="keyRequestList" watch="query">
+        <div class="box has-background-grey-lighter" v-if="keyRequests.length">
           <h2 class="subtitle">
             Displays freischalten
           </h2>
@@ -31,8 +31,8 @@
 
       <hr>
       <h2 class="subtitle">Konfigurierte Displays</h2>
-      <FeathersVuexFind service="displays" :query="{ $sort: { name: 1 }, $limit: 50 }" qid="displayList" watch="query">
-        <div slot-scope="{ items: displays }">
+      <FeathersVuexFind v-slot="{ items: displays }" service="displays" :query="{ $sort: { name: 1 }, $limit: 50 }" qid="displayList" watch="query">
+        <div>
           <ul v-if="displays.length">
             <li v-for="display in displays" :key="display.id">
               <DisplayCard :display="display"/>

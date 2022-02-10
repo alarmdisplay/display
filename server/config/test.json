@@ -1,4 +1,9 @@
 {
-  "mysql": "mysql://root:@localhost:3306/display_backend",
+  "logging": {
+    "level": "error"
+  },
+  "port": 8998,
+  "sqlite": "sqlite::memory:",
+  "dbMaxRetries": 10,
   "db_prefix": "test"
 }

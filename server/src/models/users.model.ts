@@ -1,10 +1,10 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
+import { HookReturn } from 'sequelize/types/hooks';
 import { Application } from '../declarations';
-import { HookReturn } from 'sequelize/types/lib/hooks';
 
 export default function (app: Application): typeof Model {
   const sequelizeClient: Sequelize = app.get('sequelizeClient');
-  return sequelizeClient.define('user', {
+  const User = sequelizeClient.define('user', {
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -27,4 +27,5 @@ export default function (app: Application): typeof Model {
     },
     tableName: [app.get('db_prefix'), 'users'].join('_')
   });
+  return User;
 }

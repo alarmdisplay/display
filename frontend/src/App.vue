@@ -47,6 +47,10 @@ export default {
         }
 
         // If we got here, the display successfully (re)connected
+
+        // Make sure, all settings are up to date
+        await this.$store.dispatch('settings/find');
+
         if (this.$store.state.socket.lastDisconnect) {
           // We have been connected before, query any incidents updated since the disconnect (plus 30 seconds safety)
           await this.$store.dispatch('incidents/find', {

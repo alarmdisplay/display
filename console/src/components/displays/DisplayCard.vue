@@ -3,7 +3,7 @@
     <div class="card-content">
       <article class="media">
         <div class="media-left">
-          <font-awesome-icon icon="desktop" size="2x"/>
+          <DisplayIcon :display="display" size="2x"/>
         </div>
         <div class="media-content">
           <div class="content">
@@ -26,11 +26,12 @@
               </button>
             </p>
             <p class="control">
-              <button class="button is-danger is-outlined" title="Display entfernen" @click="display.remove()">
-            <span class="icon">
-              <font-awesome-icon icon="trash-alt"/>
-            </span>
-              </button>
+              <router-link class="button is-outlined" title="Display bearbeiten" :to="{ name: 'display-form', params: { id: display.id } }">
+                <span class="icon">
+                  <font-awesome-icon icon="pencil-alt"/>
+                </span>
+                <span>Bearbeiten</span>
+              </router-link>
             </p>
           </div>
         </div>
@@ -41,10 +42,22 @@
 
 <script>
 import EditableText from '@/components/EditableText'
+import DisplayIcon from '@/components/DisplayIcon'
 export default {
   name: 'DisplayCard',
   components: {
+    DisplayIcon,
     EditableText
+  },
+  computed: {
+    displayIcon () {
+      switch (this.display.type) {
+        case 'tablet':
+          return 'tablet-alt'
+        default:
+          return 'desktop'
+      }
+    }
   },
   props: {
     display: Object

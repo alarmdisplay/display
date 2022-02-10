@@ -1,6 +1,6 @@
 {
   "name": "@alarmdisplay/display-frontend",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -15,28 +15,30 @@
   "author": "Andreas Brain",
   "license": "AGPL-3.0-only",
   "dependencies": {
-    "@feathersjs/feathers": "^4.5.9",
-    "@feathersjs/socketio-client": "^4.5.9",
-    "@fortawesome/fontawesome-svg-core": "^1.2.32",
-    "@fortawesome/free-solid-svg-icons": "^5.15.1",
+    "@feathersjs/feathers": "^4.5.12",
+    "@feathersjs/socketio-client": "^4.5.13",
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/vue-fontawesome": "^0.1.10",
     "@vue/composition-api": "^0.6.7",
-    "core-js": "^3.6.5",
-    "feathers-vuex": "^3.13.0",
+    "core-js": "^3.21.0",
+    "feathers-vuex": "^3.16.0",
+    "leaflet": "^1.7.1",
     "moment": "^2.29.1",
-    "socket.io-client": "^2.3.1",
-    "vue": "^2.6.12",
+    "socket.io-client": "^2.4.0",
+    "vue": "^2.6.14",
     "vue-moment": "^4.1.0",
-    "vuex": "^3.5.1"
+    "vue2-leaflet": "^2.7.1",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.7",
-    "@vue/cli-plugin-eslint": "^4.5.7",
-    "@vue/cli-service": "^4.5.7",
-    "babel-eslint": "^10.0.3",
-    "eslint": "^6.7.2",
+    "@vue/cli-plugin-babel": "^4.5.15",
+    "@vue/cli-plugin-eslint": "^4.5.15",
+    "@vue/cli-service": "^4.5.15",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.8.0",
     "eslint-plugin-vue": "^6.2.2",
-    "vue-template-compiler": "^2.6.12"
+    "vue-template-compiler": "^2.6.14"
   },
   "eslintConfig": {
     "root": true,

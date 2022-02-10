@@ -1,6 +1,12 @@
 import app from '../src/app';
 
 describe('authentication', () => {
+  beforeAll(done => {
+    app.setup();
+    // Wait for the database to be migrated / synced
+    (app.get('databaseReady') as Promise<void>).then(done);
+  });
+
   it('registered the authentication service', () => {
     expect(app.service('authentication')).toBeTruthy();
   });
@@ -11,15 +17,13 @@ describe('authentication', () => {
       password: 'supersecret'
     };
 
-    beforeAll(async () => {
-      try {
-        // Wait for the database to be migrated / synced
-        await app.get('databaseReady');
-
-        await app.service('users').create(userInfo);
-      } catch (error) {
-        // Do nothing, it just means the user already exists and can be tested
-      }
+    beforeAll((done) => {
+      // Wait for the database to be migrated / synced
+      app.service('users').create(userInfo)
+        .then(() => done(), () => {
+          // Do nothing, it just means the user already exists and can be tested
+          done();
+        });
     });
 
     it('authenticates user and creates accessToken', async () => {

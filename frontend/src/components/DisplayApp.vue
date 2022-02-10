@@ -1,46 +1,44 @@
 <template>
-    <div class="display-app">
-        <AlertScreen v-if="activeAlerts.length > 0" :alerts="activeAlerts"/>
+    <div class="display-app" :class="{ 'with-alert-banner': allAlertsAreEmpty }">
+      <AlertBanner class="alert-banner" v-if="allAlertsAreEmpty"/>
+      <div class="main-area">
+        <AlertScreen v-if="activeAlerts.length > 0 && !allAlertsAreEmpty" :alerts="activeAlerts"/>
         <IdleScreen v-else-if="idleViews.length" v-bind:child-views="idleViews"/>
         <div v-else class="fallback-idle-screen">
           <Clock/>
         </div>
+      </div>
     </div>
 </template>
 
 <script>
 import {makeFindMixin} from 'feathers-vuex';
+import AlertBanner from '@/components/AlertBanner'
 import AlertScreen from "@/components/AlertScreen";
 import IdleScreen from "@/components/IdleScreen";
 import Clock from "@/components/Clock";
-
-/**
-     * Incidents older that this amount of milliseconds are not loaded from the server
-     *
-     * @type {number}
-     */
-    const MAX_AGE_INCIDENTS_MS = 60 * 60 * 1000
-
-    /**
-     * Incidents marked as Test, will only be show for this long
-     *
-     * @type {number}
-     */
-    const TEST_DURATION_MS = 60 * 1000
 
     export default {
         name: "DisplayApp",
         components: {
           Clock,
+          AlertBanner,
             AlertScreen,
             IdleScreen
         },
         computed: {
             activeAlerts() {
                 return this.incidents.filter(incident => {
-                  const timeVisible = incident.status === 'Test' ? TEST_DURATION_MS : MAX_AGE_INCIDENTS_MS
+                  const timeVisible = incident.status === 'Test' ? this.testIncidentDisplayDuration : this.incidentDisplayDuration
                   return (Math.floor(incident.time.valueOf() + timeVisible) / 1000) > this.$root.$data.seconds;
                 })
+            },
+            allAlertsAreEmpty () {
+              return this.activeAlerts.length > 0 && this.activeAlerts.every((alert) => { return !alert.reason && !alert.keyword && !alert.description })
+            },
+            incidentDisplayDuration() {
+              let minutes = this.$store.getters['settings/getIntegerValue']('incident_display_minutes') || 60
+              return minutes * 60 * 1000
             },
             idleViews() {
               if (!this.views) {
@@ -49,13 +47,9 @@ import Clock from "@/components/Clock";
 
               return this.views.filter(view => view.type === 'idle')
             },
-            incidentsParams() {
-              // Only load the most recent incidents from the server
-              return { query: {
-                time: {
-                  $gt: new Date().getTime() - MAX_AGE_INCIDENTS_MS
-                }
-              }}
+            testIncidentDisplayDuration() {
+              let minutes = this.$store.getters['settings/getIntegerValue']('incident_test_display_minutes') || 1
+              return minutes * 60 * 1000
             },
             viewsParams() {
                 return { query: { displayId: this.theDisplayId}}
@@ -64,7 +58,15 @@ import Clock from "@/components/Clock";
         mixins: [ makeFindMixin({
             service: 'incidents',
             name: 'incidents',
-            params: 'incidentsParams'
+            params() {
+              // Only load the most recent incidents from the server
+              return { query: {
+                  time: {
+                    $gt: new Date().getTime() - this.incidentDisplayDuration
+                  }
+                }}
+            },
+            watch: true
         }), makeFindMixin({
             service: 'views',
             name: 'views',
@@ -78,9 +80,17 @@ import Clock from "@/components/Clock";
 </script>
 
 <style scoped>
+    .alert-banner {
+      min-height: 10%;
+      max-height: 10%;
+      font-size: 7vh;
+    }
+
     .display-app {
-        height: 100%;
-        width: 100%;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
     }
 
     .fallback-idle-screen {
@@ -89,5 +99,13 @@ import Clock from "@/components/Clock";
       font-size: 3vh;
       display: flex;
       justify-content: center;
+    }
+
+    .main-area {
+      height: 100%;
+    }
+
+    .display-app.with-alert-banner .main-area {
+      height: 90%;
     }
 </style>

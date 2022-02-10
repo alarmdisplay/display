@@ -13,17 +13,9 @@ class ContentSlot extends BaseModel {
       columnStart: 1,
       columnEnd: 1,
       rowStart: 2,
-      rowEnd: 2
+      rowEnd: 2,
+      options: {}
     }
-  }
-
-  static setupInstance(data, { models }) {
-    if (!data.options || !Array.isArray(data.options)) {
-      data.options = []
-    }
-    data.options = data.options.map(option => new models.api.ContentSlotOption(option))
-
-    return data
   }
 }
 

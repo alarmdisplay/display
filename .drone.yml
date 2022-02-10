@@ -1,0 +1,94 @@
+---
+kind: pipeline
+type: docker
+name: compliance
+
+trigger:
+  branch:
+    include:
+      - develop
+      - main
+
+steps:
+  - name: lint-server
+    image: node
+    commands:
+      - ./scripts/lint-server.sh
+  - name: lint-console
+    image: node
+    commands:
+      - ./scripts/lint-console.sh
+  - name: lint-frontend
+    image: node
+    commands:
+      - ./scripts/lint-frontend.sh
+  - name: slack
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: slack_hook
+    when:
+      status:
+        - failure
+      event:
+        exclude:
+          - pull_request
+
+---
+kind: pipeline
+type: docker
+name: testing
+
+trigger:
+  branch:
+    include:
+      - develop
+      - main
+
+depends_on:
+  - compliance
+
+services:
+  - name: mariadb
+    image: mariadb
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
+      MARIADB_DATABASE: display_backend
+
+steps:
+  - name: test-server-node-lts
+    image: node:lts
+    commands:
+      - cd server
+      - npm ci
+      - npm test
+  - name: displayserver
+    image: node:lts
+    detach: true
+    commands:
+      - cd server
+      - 'echo ''{"mysql": "mysql://root:@mariadb:3306/display_backend"}'' > config/local-production.json'
+      - NODE_ENV=production npm start
+  - name: test-api
+    image: node:lts
+    commands:
+      - cd test-api
+      - npm ci
+      - sleep 15
+      - SERVER_URL=displayserver:3031 npm start
+  - name: slack
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: slack_hook
+    when:
+      status:
+        - failure
+      event:
+        exclude:
+          - pull_request
+---
+kind: signature
+hmac: 255700e5de9be2979b03490f748c9a9f13bc202c7b90a8c04aeb880f76e2819c
+
+...

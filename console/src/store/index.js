@@ -5,12 +5,12 @@ import auth from './store.auth'
 
 import announcements from './services/announcements'
 import apiKeys from './services/api-keys'
-import contentSlotOptions from './services/content-slot-options'
 import contentSlots from './services/content-slots'
 import displays from './services/displays'
 import incidents from './services/incidents'
 import keyRequests from './services/key-requests'
 import locations from './services/locations'
+import settings from './services/settings'
 import users from './services/users'
 import views from './services/views'
 import socket, { createSocketPlugin } from '@/store/socket'
@@ -37,12 +37,12 @@ export default new Vuex.Store({
     createSocketPlugin(feathersClient.io),
     announcements,
     apiKeys,
-    contentSlotOptions,
     contentSlots,
     displays,
     incidents,
     keyRequests,
     locations,
+    settings,
     users,
     views
   ]

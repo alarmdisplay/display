@@ -9,12 +9,21 @@
 
       <ErrorMessage :form-error="formError"/>
 
-      <ViewEditForm
-          v-if="viewToEdit"
-          :item="viewToEdit"
-          @save="handleSave"
-          @reset="viewToEdit.reset()"
-      ></ViewEditForm>
+      <FeathersVuexFormWrapper :item="item" :eager="false">
+        <template v-slot="{ clone, save, reset }">
+          <ViewEditForm
+              :item="clone"
+              @save="
+              () => {
+                $data.formError = null
+                save()
+                  .then(() => $router.push({ name: 'view-list', params: { display_id: `${displayId}` } }))
+                  .catch(reason => { $data.formError = reason })
+              }"
+              @reset="reset"
+          ></ViewEditForm>
+        </template>
+      </FeathersVuexFormWrapper>
     </div>
   </section>
 </template>
@@ -34,6 +43,11 @@ export default {
     displayId () {
       return parseInt(this.$route.params.display_id)
     },
+    item () {
+      const { View } = this.$FeathersVuex.api
+      // Get the View for the given ID or create a new one if the ID is 'new'
+      return this.viewId === 'new' ? this.newItem : View.getFromStore(this.viewId)
+    },
     viewId () {
       if (this.$route.params.view_id === 'new') {
         return 'new'
@@ -43,57 +57,26 @@ export default {
     }
   },
   data () {
+    const { View } = this.$FeathersVuex.api
     return {
       formError: null,
-      viewToEdit: null
-    }
-  },
-  methods: {
-    cloneWithAssociations (clonedView) {
-      console.log('clone it', clonedView)
-      clonedView.contentSlots = clonedView.contentSlots.map(contentSlot => contentSlot.clone())
-      return clonedView
-    },
-    async handleSave () {
-      console.log('about to save', this.viewToEdit)
-      this.formError = null
-      try {
-        const result = await this.viewToEdit.save()
-
-        // refresh the View from the server
-        const { View } = this.$FeathersVuex.api
-        await View.get(result.id)
-
-        await this.$router.push({ name: 'view-list', params: { display_id: `${this.displayId}` } })
-      } catch (reason) {
-        this.formError = reason
-      }
+      newItem: new View({ displayId: this.displayId })
     }
   },
   watch: {
     viewId: {
       async handler (value) {
-        console.log('setting viewToEdit...')
-        const { View } = this.$FeathersVuex.api
         if (value === 'new') {
-          this.viewToEdit = new View()
-          this.viewToEdit.displayId = this.displayId
           return
         }
 
-        let existingRecord = View.getFromStore(value)
+        const { View } = this.$FeathersVuex.api
+        const existingRecord = View.getFromStore(value)
 
         // If the record was not in the store, we have to fetch it from the server
         if (!existingRecord) {
-          existingRecord = await View.get(value)
+          await View.get(value)
         }
-
-        this.viewToEdit = existingRecord.clone()
-        this.viewToEdit.contentSlots = this.viewToEdit.contentSlots.map(contentSlot => {
-          const clone = contentSlot.clone()
-          clone.options = clone.options.map(option => option.clone())
-          return clone
-        })
       },
       immediate: true // Run this handler when the component is created
     }

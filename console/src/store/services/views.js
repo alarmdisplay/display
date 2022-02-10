@@ -9,45 +9,31 @@ class View extends BaseModel {
       order: 999,
       columns: 3,
       rows: 3,
-      contentSlots: []
+      displayId: null
     }
   }
 
   static setupInstance (data, { models }) {
+    // Add nested content slot objects to storage
     if (data.contentSlots && Array.isArray(data.contentSlots)) {
-      console.log('setup view', data)
-      data.contentSlots = data.contentSlots.map(contentSlot => new models.api.ContentSlot(contentSlot))
+      data.contentSlots.forEach(contentSlot => new models.api.ContentSlot(contentSlot))
     }
+
+    // Replace the nested content slots with a getter
+    Object.defineProperty(data, 'contentSlots', {
+      get: function () {
+        const contentSlots = models.api.ContentSlot.findInStore({
+          query: {
+            viewId: data.id
+          }
+        })
+        return contentSlots.data
+      },
+      configurable: true,
+      enumerable: true
+    })
 
     return data
-  }
-
-  async save (params) {
-    console.log('save me!', this)
-    const savedView = await super.save(params)
-    console.log('view saved', savedView, this)
-
-    const contentSlotIdsToSave = this.contentSlots.filter(contentSlot => contentSlot.id !== undefined).map(contentSlot => contentSlot.id)
-    console.log('saving slots', contentSlotIdsToSave)
-
-    const removedContentSlots = savedView.contentSlots.filter(contentSlot => {
-      if (contentSlot.__id) {
-        return false
-      }
-
-      return !contentSlotIdsToSave.includes(contentSlot.id)
-    })
-    for (const contentSlot of removedContentSlots) {
-      await contentSlot.remove()
-    }
-
-    // Save the remaining content slots
-    for (const contentSlot of this.contentSlots) {
-      console.log('saving slot', contentSlot)
-      await contentSlot.save()
-    }
-
-    return savedView
   }
 }
 

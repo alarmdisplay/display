@@ -15,7 +15,9 @@ declare module '../../declarations' {
     id: number
     name: string
     active: boolean
-    description: string
+    description: string,
+    type: string
+    views: ViewData[]
   }
 }
 

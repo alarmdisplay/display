@@ -9,8 +9,8 @@
 
             <ErrorMessage :form-error="formError"/>
 
-            <FeathersVuexFormWrapper :item="item" watch>
-                <template v-slot="{ clone, save, reset }">
+            <FeathersVuexFormWrapper v-if="item" :item="item" :watch="false" :eager="false">
+                <template v-slot="{ clone, save, reset, remove }">
                     <DisplayEditor
                         :item="clone"
                         @save="
@@ -21,6 +21,13 @@
                             .catch(reason => { $data.formError = reason })
                         }"
                         @reset="reset"
+                        @remove="
+                        () => {
+                          $data.formError = null
+                          remove()
+                            .then(() => $router.push({name: 'display-list'}))
+                            .catch(reason => { $data.formError = reason })
+                        }"
                     ></DisplayEditor>
                 </template>
             </FeathersVuexFormWrapper>
@@ -42,8 +49,7 @@ export default {
     },
     item () {
       const { Display } = this.$FeathersVuex.api
-      // Get the Display for the given ID or create a new one if the ID is 'new'
-      return this.id === 'new' ? new Display() : Display.getFromStore(this.id)
+      return Display.getFromStore(this.id)
     }
   },
   data () {
@@ -54,15 +60,16 @@ export default {
   watch: {
     id: {
       handler (value) {
-        if (value === 'new') {
+        const displayId = Number.parseInt(value)
+        if (isNaN(displayId)) {
           return
         }
         const { Display } = this.$FeathersVuex.api
-        const existingRecord = Display.getFromStore(value)
+        const existingRecord = Display.getFromStore(displayId)
 
         // If the record was not in the store, we have to fetch it from the server
         if (!existingRecord) {
-          Display.get(value)
+          Display.get(displayId)
         }
       },
       immediate: true // Run this handler when the component is created

@@ -12,7 +12,7 @@ declare module '../../declarations' {
   }
 
   interface LocationData {
-    id: number
+    id?: number
     rawText: string
     latitude?: number
     longitude?: number

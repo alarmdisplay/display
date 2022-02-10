@@ -1,19 +1,20 @@
-import {Sequelize} from 'sequelize';
-import {Application} from './declarations';
+import { Sequelize, ConnectionError, Dialect } from 'sequelize';
+import { Application } from './declarations';
 import Umzug from 'umzug';
 import * as path from 'path';
 import logger from './logger';
 
 export default function (app: Application): void {
-  const connectionString = app.get('mysql');
+  const dialect: Dialect = process.env.NODE_ENV === 'test' ? 'sqlite' : 'mysql';
+  const connectionString = app.get(dialect);
   if (!connectionString || connectionString === '') {
-    throw new Error('The config \'mysql\' has not been set');
+    throw new Error(`The config '${dialect}' has not been set`);
   }
   if (connectionString === 'MYSQL_URI') {
     throw new Error('The environment variable MYSQL_URI has not been set');
   }
   const sequelize = new Sequelize(connectionString, {
-    dialect: 'mysql',
+    dialect: dialect,
     logging: false,
     define: {
       freezeTableName: true
@@ -38,7 +39,9 @@ export default function (app: Application): void {
     const umzug = new Umzug({
       migrations: {
         // indicates the folder containing the migration .js files
-        path: path.join(__dirname, './migrations'),
+        path: path.resolve(__dirname, './migrations'),
+        // Accept ts files in tests
+        pattern: process.env.NODE_ENV === 'test' ? /^[^\.]+\.ts$/ : /\.js$/,
         // inject sequelize's QueryInterface in the migrations
         params: [
           sequelize.getQueryInterface(),
@@ -49,8 +52,19 @@ export default function (app: Application): void {
       storageOptions: { sequelize }
     });
 
+    // Retry options for initial database connection
+    const retryOptions = {
+      timeout: 10000,
+      max: Number.parseInt(app.get('dbMaxRetries')) || 5,
+      backoffBase: 2000,
+      backoffExponent: 1.03,
+      match: [ ConnectionError ],
+      name: 'Database Connection',
+      report: (message: string) => logger.debug(message),
+    };
+
     // Migrate and sync to the database
-    app.set('sequelizeSync', sequelize.authenticate().then(() => {
+    app.set('sequelizeSync', sequelize.authenticate({ retry: retryOptions }).then(() => {
       logger.info('Connected to database');
       return umzug.up();
     }, (reason: Error) => {

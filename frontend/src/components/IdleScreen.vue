@@ -35,6 +35,14 @@
         },
         props: {
             childViews: Array
+        },
+        watch: {
+          childViews() {
+            // If a view gets deleted, make sure the activeViewIndex is kept within the range of available views
+            if (this.activeViewIndex >= this.childViews.length) {
+              this.activeViewIndex = this.activeViewIndex % this.childViews.length
+            }
+          }
         }
     }
 </script>
