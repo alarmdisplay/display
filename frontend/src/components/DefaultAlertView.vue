@@ -82,8 +82,8 @@
               if (this.alert.location) {
                 let location = this.alert.location
                 let line1 = `${location.street} ${location.number}`.trim()
-                if (line1 !== '' && location.detail) {
-                  line1 += ` (${location.detail})`
+                if (location.detail) {
+                  line1 += (line1 === '' ? location.detail : ` (${location.detail})`)
                 }
                 let string = `${line1}\n${location.locality}`.trim()
                 return /^[\s\n]*$/.test(string) ? location.rawText : string
