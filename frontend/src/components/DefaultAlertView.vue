@@ -20,7 +20,7 @@
                 <div class="details">
                     <div class="address-and-description" :style="{ width: (showMap ? '50%' : '100%') }">
                         <p class="address">{{ locationText || 'Keine Ortsangabe' }}</p>
-                        <p v-if="alert.description" class="description">{{ alert.description }}</p>
+                        <p class="description">{{ alert.description || 'Keine Bemerkung' }}</p>
                     </div>
                     <div v-if="showMap" class="map-holder">
                         <LMap class="map" :bounds="mapBounds" :options="{ zoomSnap: 0.1 }">
