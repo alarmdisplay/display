@@ -85,7 +85,7 @@
                 if (location.detail) {
                   line1 += (line1 === '' ? location.detail : ` (${location.detail})`)
                 }
-                let string = `${line1}\n${location.locality}`.trim()
+                let string = `${location.name}\n${line1}\n${location.locality}`.trim()
                 return /^[\s\n]*$/.test(string) ? location.rawText : string
               }
 
