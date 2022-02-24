@@ -20,7 +20,8 @@ declare module '../../declarations' {
     street: string
     number: string
     detail: string
-    locality: string
+    municipality: string
+    district: string
     incidentId?: number
     hubLocationId?: number
   }

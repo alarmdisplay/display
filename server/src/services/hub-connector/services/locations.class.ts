@@ -11,7 +11,8 @@ export interface RemoteLocationData {
   number: string,
   detail: string,
   postCode: string,
-  locality: string,
+  municipality: string
+  district: string
   country: string
   incidentId?: number
 }
@@ -35,7 +36,8 @@ export default class LocationsWatcher {
       street: data.street,
       number: data.number,
       detail: data.detail,
-      locality: data.locality,
+      municipality: data.municipality,
+      district: data.district,
       hubLocationId: data.id
     };
 
@@ -70,7 +72,8 @@ export default class LocationsWatcher {
       street: data.street,
       number: data.number,
       detail: data.detail,
-      locality: data.locality
+      municipality: data.municipality,
+      district: data.district
     };
     if (data.incidentId) {
       updateData.incidentId = await this.translateIncidentId(data.incidentId);
