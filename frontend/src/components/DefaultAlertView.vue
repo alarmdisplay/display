@@ -85,7 +85,7 @@
                 if (location.detail) {
                   line1 += (line1 === '' ? location.detail : ` (${location.detail})`)
                 }
-                let string = `${location.name}\n${line1}\n${location.locality}`.trim()
+                let string = `${location.name}\n${line1}\n${location.district || location.municipality}`.trim()
                 return /^[\s\n]*$/.test(string) ? location.rawText : string
               }
 
