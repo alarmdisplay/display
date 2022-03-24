@@ -10,6 +10,7 @@ import announcements from './announcements/announcements.service';
 import hubConnector from './hub-connector/hub-connector.service';
 import keyRequests from './key-requests/key-requests.service';
 import settings from './settings/settings.service';
+import status from './status/status.service';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 export default function (app: Application): void {
@@ -24,4 +25,5 @@ export default function (app: Application): void {
   app.configure(hubConnector);
   app.configure(keyRequests);
   app.configure(settings);
+  app.configure(status);
 }
