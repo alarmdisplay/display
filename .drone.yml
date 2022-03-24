@@ -11,15 +11,15 @@ trigger:
 
 steps:
   - name: lint-server
-    image: node
+    image: node:16
     commands:
       - ./scripts/lint-server.sh
   - name: lint-console
-    image: node
+    image: node:16
     commands:
       - ./scripts/lint-console.sh
   - name: lint-frontend
-    image: node
+    image: node:16
     commands:
       - ./scripts/lint-frontend.sh
   - name: slack
@@ -37,7 +37,11 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: testing
+name: testing-linux-amd64
+
+platform:
+  os: linux
+  arch: amd64
 
 trigger:
   branch:
@@ -48,34 +52,37 @@ trigger:
 depends_on:
   - compliance
 
-services:
-  - name: mariadb
-    image: mariadb
-    environment:
-      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
-      MARIADB_DATABASE: display_backend
-
 steps:
-  - name: test-server-node-lts
-    image: node:lts
+  - name: test-server-node-12
+    image: node:12
+    commands:
+      - cd server
+      - npm ci --unsafe-perm
+      - npm test
+  - name: test-server-node-14
+    image: node:14
+    commands:
+      - cd server
+      - npm ci --unsafe-perm
+      - npm test
+  - name: test-server-node-16
+    image: node:16
     commands:
       - cd server
       - npm ci
       - npm test
-  - name: displayserver
-    image: node:lts
-    detach: true
-    commands:
-      - cd server
-      - 'echo ''{"mysql": "mysql://root:@mariadb:3306/display_backend"}'' > config/local-production.json'
-      - NODE_ENV=production npm start
-  - name: test-api
-    image: node:lts
-    commands:
-      - cd test-api
-      - npm ci
-      - sleep 15
-      - SERVER_URL=displayserver:3031 npm start
+  - name: docker-testimage
+    pull: always
+    image: plugins/docker:latest
+    settings:
+      repo: registry.abrain.dev:5000/alarmdisplay/display
+      registry: registry.abrain.dev:5000
+      tags: testing-amd64
+    environment:
+      DOCKER_PASSWORD:
+        from_secret: tmpregistry_password
+      DOCKER_USERNAME:
+        from_secret: tmpregistry_username
   - name: slack
     image: plugins/slack
     settings:
@@ -88,7 +95,59 @@ steps:
         exclude:
           - pull_request
 ---
+kind: pipeline
+type: docker
+name: docker-linux-amd64
+
+platform:
+  os: linux
+  arch: amd64
+
+trigger:
+  branch:
+    include:
+      - develop
+      - main
+
+depends_on:
+  - testing-linux-amd64
+
+services:
+  - name: mariadb
+    image: mariadb
+    pull: if-not-exists
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
+      MARIADB_DATABASE: display
+  - name: sut
+    image: registry.abrain.dev:5000/alarmdisplay/display:testing-amd64
+    pull: always
+    environment:
+      MYSQL_URI: mysql://root:@mariadb:3306/display
+
+steps:
+  - name: test-api
+    image: node:16
+    commands:
+      - cd test-api
+      - npm ci
+      - SERVER_URL=http://sut:3031 npm start
+  - name: slack
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: slack_hook
+    when:
+      status:
+        - failure
+      event:
+        exclude:
+          - pull_request
+
+image_pull_secrets:
+  - dockerconfig
+---
 kind: signature
-hmac: 255700e5de9be2979b03490f748c9a9f13bc202c7b90a8c04aeb880f76e2819c
+hmac: 5c24fe648b22c819ed631ea95d43b04478787fd111433fbd0333203cb3d2739b
 
 ...
