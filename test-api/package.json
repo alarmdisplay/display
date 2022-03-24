@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Tests the REST API from a client's perspective",
   "scripts": {
-    "start": "mocha ."
+    "start": "mocha"
   },
   "author": "Andreas Brain",
   "devDependencies": {

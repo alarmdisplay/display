@@ -1,15 +1,14 @@
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 let should = chai.should();
-let server = require('./server')
 
 chai.use(chaiHttp);
 
-const basePath = '/api/v1/settings'
+const basePath = '/users'
 describe(basePath, () => {
   describe('Authentication', () => {
-    it(`GET ${basePath} should require authentication`, (done) => {
-      chai.request(server.base)
+    it(`GET ${basePath} should require authentication`, function (done) {
+      chai.request(this.server.base)
         .get(basePath)
         .end((err, res) => {
           if (err) {
@@ -20,8 +19,8 @@ describe(basePath, () => {
         });
     });
 
-    it(`GET ${basePath} should reject invalid JWT`, (done) => {
-      chai.request(server.base)
+    it(`GET ${basePath} should reject invalid JWT`, function (done) {
+      chai.request(this.server.base)
         .get(basePath)
         .auth('invalid-token', { type: 'bearer' })
         .end((err, res) => {
@@ -33,10 +32,23 @@ describe(basePath, () => {
         });
     });
 
-    it(`POST ${basePath} should require authentication`, (done) => {
-      chai.request(server.base)
+    it(`POST ${basePath} should not require authentication for the first user`, function (done) {
+      chai.request(this.server.base)
         .post(basePath)
-        .send({})
+        .send({ email: 'user1@example.org', password: 'secret' })
+        .end((err, res) => {
+          if (err) {
+            return done(err)
+          }
+          res.should.have.status(201);
+          done();
+        });
+    });
+
+    it(`POST ${basePath} should require authentication the second time`, function (done) {
+      chai.request(this.server.base)
+        .post(basePath)
+        .send({ email: 'user2@example.org', password: 'secret' })
         .end((err, res) => {
           if (err) {
             return done(err)
@@ -46,11 +58,11 @@ describe(basePath, () => {
         });
     });
 
-    it(`POST ${basePath} should reject invalid JWT`, (done) => {
-      chai.request(server.base)
+    it(`POST ${basePath} should reject invalid JWT`, function (done) {
+      chai.request(this.server.base)
         .post(basePath)
         .auth('invalid-token', { type: 'bearer' })
-        .send({})
+        .send({password: 'secret'})
         .end((err, res) => {
           if (err) {
             return done(err)
@@ -60,8 +72,8 @@ describe(basePath, () => {
         });
     });
 
-    it(`GET ${basePath}/:id should require authentication`, (done) => {
-      chai.request(server.base)
+    it(`GET ${basePath}/:id should require authentication`, function (done) {
+      chai.request(this.server.base)
         .get(`${basePath}/1`)
         .end((err, res) => {
           if (err) {
@@ -72,8 +84,8 @@ describe(basePath, () => {
         });
     });
 
-    it(`GET ${basePath}/:id should reject invalid JWT`, (done) => {
-      chai.request(server.base)
+    it(`GET ${basePath}/:id should reject invalid JWT`, function (done) {
+      chai.request(this.server.base)
         .get(`${basePath}/1`)
         .auth('invalid-token', { type: 'bearer' })
         .end((err, res) => {
@@ -85,10 +97,10 @@ describe(basePath, () => {
         });
     });
 
-    it(`PUT ${basePath}/:id should require authentication`, (done) => {
-      chai.request(server.base)
+    it(`PUT ${basePath}/:id should require authentication`, function (done) {
+      chai.request(this.server.base)
         .put(`${basePath}/1`)
-        .send({})
+        .send({password: 'another secret'})
         .end((err, res) => {
           if (err) {
             return done(err)
@@ -98,11 +110,11 @@ describe(basePath, () => {
         });
     });
 
-    it(`PUT ${basePath}/:id should reject invalid JWT`, (done) => {
-      chai.request(server.base)
+    it(`PUT ${basePath}/:id should reject invalid JWT`, function (done) {
+      chai.request(this.server.base)
         .put(`${basePath}/1`)
         .auth('invalid-token', { type: 'bearer' })
-        .send({})
+        .send({password: 'another secret'})
         .end((err, res) => {
           if (err) {
             return done(err)
@@ -112,10 +124,10 @@ describe(basePath, () => {
         });
     });
 
-    it(`PATCH ${basePath}/:id should require authentication`, (done) => {
-      chai.request(server.base)
+    it(`PATCH ${basePath}/:id should require authentication`, function (done) {
+      chai.request(this.server.base)
         .patch(`${basePath}/1`)
-        .send({})
+        .send({password: 'another secret'})
         .end((err, res) => {
           if (err) {
             return done(err)
@@ -125,11 +137,11 @@ describe(basePath, () => {
         });
     });
 
-    it(`PATCH ${basePath}/:id should reject invalid JWT`, (done) => {
-      chai.request(server.base)
+    it(`PATCH ${basePath}/:id should reject invalid JWT`, function (done) {
+      chai.request(this.server.base)
         .patch(`${basePath}/1`)
         .auth('invalid-token', { type: 'bearer' })
-        .send({})
+        .send({password: 'another secret'})
         .end((err, res) => {
           if (err) {
             return done(err)
@@ -139,8 +151,8 @@ describe(basePath, () => {
         });
     });
 
-    it(`DELETE ${basePath}/:id should require authentication`, (done) => {
-      chai.request(server.base)
+    it(`DELETE ${basePath}/:id should require authentication`, function (done) {
+      chai.request(this.server.base)
         .delete(`${basePath}/1`)
         .end((err, res) => {
           if (err) {
@@ -151,8 +163,8 @@ describe(basePath, () => {
         });
     });
 
-    it(`DELETE ${basePath}/:id should reject invalid JWT`, (done) => {
-      chai.request(server.base)
+    it(`DELETE ${basePath}/:id should reject invalid JWT`, function (done) {
+      chai.request(this.server.base)
         .delete(`${basePath}/1`)
         .auth('invalid-token', { type: 'bearer' })
         .end((err, res) => {
