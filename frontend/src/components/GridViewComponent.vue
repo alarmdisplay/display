@@ -2,6 +2,7 @@
 import AnnouncementList from "@/components/announcements/AnnouncementList";
 import Clock from "@/components/Clock";
 import DWDWarningMap from "@/components/DWDWarningMap";
+import NextUpList from '@/components/NextUpList'
 
 export default {
   name: "GridViewComponent",
@@ -12,7 +13,8 @@ export default {
   components: {
     AnnouncementList,
     Clock,
-    DWDWarningMap
+    DWDWarningMap,
+    NextUpList,
   },
   props: {
     contentSlot: {
