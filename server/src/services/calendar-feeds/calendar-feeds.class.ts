@@ -1,7 +1,7 @@
 import { Service, SequelizeServiceOptions } from 'feathers-sequelize';
 import { Application } from '../../declarations';
 
-interface CalendarFeedData {
+export interface CalendarFeedData {
   id: number
   name: string
   url: string

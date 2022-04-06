@@ -1,4 +1,4 @@
-import { getLogger } from 'log4js';
+import { getLogger as getLog4JsLogger } from 'log4js';
 
 const logger = getLogger();
 
@@ -6,3 +6,7 @@ const logger = getLogger();
 logger.level = 'info';
 
 export default logger;
+
+export function getLogger(category?: string) {
+  return getLog4JsLogger(category);
+}
