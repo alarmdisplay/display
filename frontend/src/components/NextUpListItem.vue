@@ -1,23 +1,36 @@
 <template>
     <li>
-        <div class="date">{{ theDate }}</div>
+        <div class="date">{{ dateText }}</div>
         <span class="summary">{{ calendarItem.summary || '(Kein Titel)' }}</span>
-        <span class="description">{{ calendarItem.description }}</span>
+        <span class="description" v-if="calendarItem.description">{{ calendarItem.description }}</span>
     </li>
 </template>
 
 <script>
     export default {
         name: "NextUpListItem",
+        data() {
+            return {
+                dateText: ''
+            }
+        },
         computed: {
-            theDate() {
-                return this.$moment(this.calendarItem.startDate).calendar()
+            minutes() {
+              return this.$root.$data.minutes;
             },
         },
         props: {
             calendarItem: {
               type: Object,
               required: true,
+            }
+        },
+        watch: {
+            minutes: {
+              handler: function () {
+                this.dateText = this.$moment(this.calendarItem.startDate).calendar()
+              },
+              immediate: true
             }
         },
     }

@@ -28,6 +28,7 @@ new Vue({
   render: h => h(App),
   store,
   data: {
+    minutes: Math.floor(Date.now() / 60000),
     seconds: Math.floor(Date.now() / 1000)
   },
   created: function () {
@@ -43,6 +44,11 @@ new Vue({
     },
     hideSplashScreen: function () {
       this.$store.commit('setShowSplashScreen', false)
+    }
+  },
+  watch: {
+    seconds(newValue) {
+      this.minutes = Math.floor(newValue / 60);
     }
   }
 }).$mount('#app');
