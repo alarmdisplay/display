@@ -5,8 +5,8 @@
             <FeathersVuexFind
                 v-slot="{ items: calendarItems }"
                 service="calendar-items"
-                :query="{ $sort: { startDate: 1 } }"
-                qid="nextUpList"
+                :params="{ query: { $sort: { startDate: 1 } } }"
+                :qid="`nextUpList-${instanceId}`"
                 watch="query"
             >
                 <ul v-if="calendarItems.length > 0">
