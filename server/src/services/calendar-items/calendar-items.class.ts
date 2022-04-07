@@ -2,7 +2,7 @@ import { MemoryServiceOptions, Service } from 'feathers-memory';
 import { Application } from '../../declarations';
 import { getLogger } from '../../logger';
 import { CalendarFeedData } from '../calendar-feeds/calendar-feeds.class';
-import ICAL, { Component, Duration } from 'ical.js';
+import ICAL, { Component, Duration, Time } from 'ical.js';
 import axios from 'axios';
 
 interface CalendarItemData {
@@ -11,6 +11,7 @@ interface CalendarItemData {
   startDate: Date
   endDate: Date
   description: string
+  datetimeStamp: Date
   feedId: number
 }
 
@@ -54,17 +55,30 @@ export class CalendarItems extends Service<CalendarItemData> {
 
     // Try to get the feed and populate the store
     const component = await this.loadFeed(feed);
+    const initialData = this.getUpcomingEvents(component, feed);
+    await this._create(initialData);
 
+    const refreshInterval = component.getFirstPropertyValue('refresh-interval');
+    const feedRefreshIntervalSeconds = (refreshInterval instanceof Duration) ? refreshInterval.toSeconds() : 10800;
+    this.logger.debug('Feed %d will be refreshed every %d seconds', feed.id, feedRefreshIntervalSeconds);
+
+    const interval = setInterval(async () => {
+      await this.updateFeed(feed);
+    }, feedRefreshIntervalSeconds * 1000);
+    this.intervals.set(feed.id, interval);
+  }
+
+  private getUpcomingEvents(component: Component, feed: CalendarFeedData): CalendarItemData[] {
     const vEvents = component.getAllSubcomponents('vevent');
     this.logger.debug('Found %d events', vEvents.length);
 
-    // Convert events to out data model and skip events that have ended already
-    const now = Date.now();
-    const initialData = vEvents.map((vEvent): CalendarItemData | null => {
+    // Convert events to our data model and skip events that have ended already
+    const now = new Date();
+    const items = vEvents.map((vEvent): CalendarItemData | null => {
       const event = new ICAL.Event(vEvent);
       const endDate = event.endDate.toJSDate();
 
-      if (endDate.valueOf() < now) {
+      if (endDate.valueOf() < now.valueOf()) {
         return null;
       }
       return {
@@ -73,21 +87,12 @@ export class CalendarItems extends Service<CalendarItemData> {
         startDate: event.startDate.toJSDate(),
         endDate: endDate,
         description: event.description,
+        datetimeStamp: (vEvent.getFirstPropertyValue('dtstamp') as Time).toJSDate() || now,
         feedId: feed.id,
       };
     });
 
-    // Bulk create all entries
-    await this._create(initialData.filter(item => item !== null) as CalendarItemData[]);
-
-    const refreshInterval = component.getFirstPropertyValue('refresh-interval');
-    const feedRefreshIntervalSeconds = (refreshInterval instanceof Duration) ? refreshInterval.toSeconds() : 10800;
-    this.logger.debug('Feed %d will be refreshed every %d seconds', feed.id, feedRefreshIntervalSeconds);
-
-    const interval = setInterval(async () => {
-      await this.loadFeed(feed);
-    }, feedRefreshIntervalSeconds * 1000);
-    this.intervals.set(feed.id, interval);
+    return items.filter(item => item !== null) as CalendarItemData[];
   }
 
   private async loadFeed(feed: CalendarFeedData): Promise<Component> {
@@ -95,5 +100,33 @@ export class CalendarItems extends Service<CalendarItemData> {
     const response = await axios.get(feed.url);
     const jcalData = ICAL.parse(response.data);
     return new ICAL.Component(jcalData);
+  }
+
+  private async updateFeed(feed: CalendarFeedData) {
+    const component = await this.loadFeed(feed);
+    const upcomingEvents = this.getUpcomingEvents(component, feed);
+
+    const receivedUids = upcomingEvents.map(event => event.uid);
+
+    const currentItems = await this.find({ query: { feedId: feed.id }, paginate: false }) as CalendarItemData[];
+    const currentUids = currentItems.map(item => item.uid);
+    const uidsToRemove = currentUids.filter(uid => !receivedUids.includes(uid));
+    if (uidsToRemove.length) {
+      this.logger.debug('Removing UIDs', uidsToRemove);
+      await this._remove(null, { query: { uid: { $in: uidsToRemove } } });
+    }
+
+    for (const upcomingEvent of upcomingEvents) {
+      if (!currentUids.includes(upcomingEvent.uid)) {
+        this.logger.debug('Adding %s', upcomingEvent.summary);
+        await this.create(upcomingEvent);
+      } else {
+        const storedItem = await this._get(upcomingEvent.uid);
+        if (new Date(storedItem.datetimeStamp).valueOf() < upcomingEvent.datetimeStamp.valueOf()) {
+          this.logger.debug('Updating %s', upcomingEvent.summary);
+          await this.update(upcomingEvent.uid, upcomingEvent);
+        }
+      }
+    }
   }
 }

@@ -32,7 +32,7 @@ declare module 'ical.js' {
     constructor(jCal: JcalData | string, parent?: Component)
 
     public getAllSubcomponents(name?: string): Component[]
-    public getFirstPropertyValue(name?: string): string | Duration | null
+    public getFirstPropertyValue(name?: string): string | Duration | Time | null
     public getFirstSubcomponent(name?: string): Component | null
   }
 
