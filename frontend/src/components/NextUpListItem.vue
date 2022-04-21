@@ -1,8 +1,11 @@
 <template>
     <li>
         <div class="summary">{{ calendarItem.summary || '(Kein Titel)' }}</div>
+        <div>
+            <div class="summary">{{ calendarItem.summary || '(Kein Titel)' }}</div>
+            <span class="description" v-if="calendarItem.description">{{ calendarItem.description }}</span>
+        </div>
         <div class="date">{{ dateText }}</div>
-        <span class="description" v-if="calendarItem.description">{{ calendarItem.description }}</span>
     </li>
 </template>
 
