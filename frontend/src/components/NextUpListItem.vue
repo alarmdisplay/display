@@ -28,7 +28,19 @@
         watch: {
             minutes: {
               handler: function () {
-                this.dateText = this.$moment(this.calendarItem.startDate).calendar()
+                if (this.calendarItem.allDayEvent) {
+                  // Show the date without the time (which is always 00:00)
+                  this.dateText = this.$moment(this.calendarItem.startDate).calendar({
+                    sameDay: '[Heute]',
+                    nextDay: '[Morgen]',
+                    nextWeek: 'dddd',
+                    lastDay: '[Gestern]',
+                    lastWeek: '[Letzten] dddd',
+                    sameElse: 'L'
+                  })
+                } else {
+                  this.dateText = this.$moment(this.calendarItem.startDate).calendar()
+                }
               },
               immediate: true
             }

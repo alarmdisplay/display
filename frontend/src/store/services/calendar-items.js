@@ -14,6 +14,7 @@ class CalendarItem extends BaseModel {
       startDate: null,
       endDate: null,
       description: '',
+      allDayEvent: false,
       feedId: 0,
     }
   }

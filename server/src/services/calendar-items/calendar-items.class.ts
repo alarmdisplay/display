@@ -11,6 +11,7 @@ interface CalendarItemData {
   startDate: Date
   endDate: Date
   description: string
+  allDayEvent: boolean
   datetimeStamp: Date
   feedId: number
 }
@@ -81,12 +82,16 @@ export class CalendarItems extends Service<CalendarItemData> {
       if (endDate.valueOf() < now.valueOf()) {
         return null;
       }
+      const startDate = event.startDate;
+      const allDayEvent = startDate.icaltype === 'date';
+
       return {
         uid: event.uid,
         summary: event.summary,
-        startDate: event.startDate.toJSDate(),
+        startDate: startDate.toJSDate(),
         endDate: endDate,
         description: event.description,
+        allDayEvent: allDayEvent,
         datetimeStamp: (vEvent.getFirstPropertyValue('dtstamp') as Time).toJSDate() || now,
         feedId: feed.id,
       };
