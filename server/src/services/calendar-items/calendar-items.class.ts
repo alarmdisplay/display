@@ -5,12 +5,19 @@ import { CalendarFeedData } from '../calendar-feeds/calendar-feeds.class';
 import ICAL, { Component, Duration, Time } from 'ical.js';
 import axios from 'axios';
 
+enum CalendarItemStatus {
+  confirmed = 'confirmed',
+  tentative = 'tentative',
+  cancelled = 'cancelled'
+}
+
 interface CalendarItemData {
   uid: string
   summary: string
   startDate: Date
   endDate: Date
   description: string
+  status: CalendarItemStatus
   allDayEvent: boolean
   datetimeStamp: Date
   feedId: number
@@ -82,6 +89,17 @@ export class CalendarItems extends Service<CalendarItemData> {
       if (endDate.valueOf() < now.valueOf()) {
         return null;
       }
+
+      let status = CalendarItemStatus.confirmed;
+      const statusValue = vEvent.getFirstPropertyValue('status');
+      if (statusValue && typeof statusValue === 'string') {
+        if (statusValue.toLowerCase() === 'cancelled') {
+          status = CalendarItemStatus.cancelled;
+        } else if (statusValue.toLowerCase() === 'tentative') {
+          status = CalendarItemStatus.tentative;
+        }
+      }
+
       const startDate = event.startDate;
       const allDayEvent = startDate.icaltype === 'date';
 
@@ -91,6 +109,7 @@ export class CalendarItems extends Service<CalendarItemData> {
         startDate: startDate.toJSDate(),
         endDate: endDate,
         description: event.description,
+        status: status,
         allDayEvent: allDayEvent,
         datetimeStamp: (vEvent.getFirstPropertyValue('dtstamp') as Time).toJSDate() || now,
         feedId: feed.id,

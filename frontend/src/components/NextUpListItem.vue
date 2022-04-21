@@ -1,6 +1,8 @@
 <template>
-    <li>
-        <div class="summary">{{ calendarItem.summary || '(Kein Titel)' }}</div>
+    <li :class="{
+      cancelled: calendarItem.status === 'cancelled',
+      tentative: calendarItem.status === 'tentative'
+    }">
         <div>
             <div class="summary">{{ calendarItem.summary || '(Kein Titel)' }}</div>
             <span class="description" v-if="calendarItem.description">{{ calendarItem.description }}</span>
@@ -58,7 +60,7 @@
         background-color: #ddd;
         border-bottom: 1px solid #999;
         list-style: none;
-        padding: 1em;
+        padding: 0.75em;
         color: #222222;
     }
 
@@ -73,5 +75,19 @@
 
     .description {
         white-space: pre-line;
+    }
+
+    .cancelled .summary, .cancelled .date {
+        text-decoration-line: line-through;
+        font-weight: normal;
+    }
+
+    .cancelled .description {
+        display: none;
+    }
+
+    .tentative .summary::before {
+        font-weight: normal;
+        content: "Vorläufig: ";
     }
 </style>
