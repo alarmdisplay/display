@@ -1,7 +1,7 @@
 <template>
     <li>
+        <div class="summary">{{ calendarItem.summary || '(Kein Titel)' }}</div>
         <div class="date">{{ dateText }}</div>
-        <span class="summary">{{ calendarItem.summary || '(Kein Titel)' }}</span>
         <span class="description" v-if="calendarItem.description">{{ calendarItem.description }}</span>
     </li>
 </template>
@@ -50,6 +50,8 @@
 
 <style scoped>
     li {
+        display: flex;
+        justify-content: space-between;
         background-color: #ddd;
         border-bottom: 1px solid #999;
         list-style: none;
@@ -58,16 +60,12 @@
     }
 
     .date {
-        float: right;
         margin-left: 0.5em;
-        white-space: pre-line;
-        text-align: right;
+        text-align: end;
     }
 
     .summary {
-        display: block;
         font-weight: bold;
-        margin-bottom: 0.2em;
     }
 
     .description {
