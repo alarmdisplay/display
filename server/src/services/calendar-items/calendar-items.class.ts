@@ -137,7 +137,13 @@ export class CalendarItems extends Service<CalendarItemData> {
     const uidsToRemove = currentUids.filter(uid => !receivedUids.includes(uid));
     if (uidsToRemove.length) {
       this.logger.debug('Removing UIDs', uidsToRemove);
-      await this._remove(null, { query: { uid: { $in: uidsToRemove } } });
+      // Remove items individually, because multi-remove does not emit an event
+      const itemsToRemove = await this.find(
+        { query: { uid: { $in: uidsToRemove } }, paginate: false }
+      ) as CalendarItemData[];
+      for (const itemToRemove of itemsToRemove) {
+        await this.remove(itemToRemove.uid);
+      }
     }
 
     for (const upcomingEvent of upcomingEvents) {
