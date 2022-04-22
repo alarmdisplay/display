@@ -27,15 +27,37 @@ export class CalendarItems extends Service<CalendarItemData> {
   private app: Application;
   private intervals: Map<number, NodeJS.Timeout>;
   private logger;
+  private urls;
 
   constructor(options: Partial<MemoryServiceOptions>, app: Application) {
     super(options);
     this.app = app;
     this.intervals = new Map<number, NodeJS.Timeout>();
     this.logger = getLogger('calendar-items');
+    this.urls = new Map<number, string>();
   }
 
   setup(app: Application): void {
+    const calendarFeedsService = app.service('calendar-feeds');
+    calendarFeedsService.on('created', async (feed: CalendarFeedData) => {
+      await this.startWatching(feed);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore TypeScript does not know about the event emitter
+      this.emit('bulk-change');
+    });
+    calendarFeedsService.on('updated', async (feed: CalendarFeedData) => {
+      await this.updateFeedUrl(feed);
+    });
+    calendarFeedsService.on('patched', async (feed: CalendarFeedData) => {
+      await this.updateFeedUrl(feed);
+    });
+    calendarFeedsService.on('removed', async (feed: CalendarFeedData) => {
+      await this.stopWatching(feed);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore TypeScript does not know about the event emitter
+      this.emit('bulk-change');
+    });
+
     (app.get('databaseReady') as Promise<void>).then(() => {
       return app.service('calendar-feeds').find({ paginate: false }) as Promise<CalendarFeedData[]>;
     }).then(feeds => {
@@ -53,6 +75,9 @@ export class CalendarItems extends Service<CalendarItemData> {
         this.logger.error('Could not start to watch calendar feed %s:', feed.url, error.message);
       }
     }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore TypeScript does not know about the event emitter
+    this.emit('bulk-change');
   }
 
   private async startWatching(feed: CalendarFeedData) {
@@ -62,6 +87,7 @@ export class CalendarItems extends Service<CalendarItemData> {
     }
 
     // Try to get the feed and populate the store
+    this.urls.set(feed.id, feed.url);
     const component = await this.loadFeed(feed);
     const initialData = this.getUpcomingEvents(component, feed);
     await this._create(initialData);
@@ -74,6 +100,26 @@ export class CalendarItems extends Service<CalendarItemData> {
       await this.updateFeed(feed);
     }, feedRefreshIntervalSeconds * 1000);
     this.intervals.set(feed.id, interval);
+  }
+
+  private async stopWatching(feed: CalendarFeedData) {
+    // Stop the update interval
+    if (this.intervals.has(feed.id)) {
+      clearInterval(<NodeJS.Timeout>this.intervals.get(feed.id));
+      this.intervals.delete(feed.id);
+    }
+    await this._remove(null, { query: { feedId: feed.id } });
+  }
+
+  private async updateFeedUrl(feed: CalendarFeedData) {
+    const currentUrl = this.urls.get(feed.id);
+    if (currentUrl !== feed.url) {
+      this.urls.set(feed.id, feed.url);
+      await this.updateFeed(feed);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore TypeScript does not know about the event emitter
+      this.emit('bulk-change');
+    }
   }
 
   private getUpcomingEvents(component: Component, feed: CalendarFeedData): CalendarItemData[] {
@@ -120,8 +166,13 @@ export class CalendarItems extends Service<CalendarItemData> {
   }
 
   private async loadFeed(feed: CalendarFeedData): Promise<Component> {
-    this.logger.debug('Getting feed', feed.url);
-    const response = await axios.get(feed.url);
+    const url = this.urls.get(feed.id);
+    if (!url) {
+      throw new Error(`No URL set for feed ${feed.id}`);
+    }
+
+    this.logger.debug('Getting feed', url);
+    const response = await axios.get(url);
     const jcalData = ICAL.parse(response.data);
     return new ICAL.Component(jcalData);
   }
