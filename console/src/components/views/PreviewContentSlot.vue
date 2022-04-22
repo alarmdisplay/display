@@ -23,6 +23,8 @@ export default {
           return 'clock'
         case 'DWDWarningMap':
           return 'cloud-showers-heavy'
+        case 'NextUpList':
+          return 'calendar'
         default:
           return 'cube'
       }

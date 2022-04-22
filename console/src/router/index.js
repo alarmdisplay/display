@@ -6,6 +6,8 @@ import AnnouncementList from '@/views/content/AnnouncementList'
 import AnnouncementForm from '@/views/content/AnnouncementForm'
 import ApiKeyForm from '@/views/admin/ApiKeyForm'
 import ApiKeyList from '@/views/admin/ApiKeyList'
+import CalendarFeedEditor from '@/views/content/CalendarFeedEditor'
+import CalendarsView from '@/views/content/CalendarsView'
 import DisplayForm from '@/views/displays/DisplayForm'
 import DisplayList from '@/views/displays/DisplayList'
 import Settings from '@/views/admin/Settings'
@@ -35,6 +37,17 @@ const routes = [
     path: '/announcements/:id',
     name: 'announcement-form',
     component: AnnouncementForm
+  },
+  {
+    path: '/content/calendars',
+    name: 'calendars',
+    component: CalendarsView
+  },
+  {
+    path: '/content/calendar-feeds/:feedId',
+    name: 'calendar-feed-editor',
+    component: CalendarFeedEditor,
+    props: true
   },
   {
     path: '/displays',

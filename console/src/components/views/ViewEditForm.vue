@@ -58,7 +58,7 @@ export default {
   name: 'ViewEditForm',
   data: function () {
     return {
-      availableComponentTypes: ['AnnouncementList', 'DWDWarningMap', 'Clock']
+      availableComponentTypes: ['AnnouncementList', 'DWDWarningMap', 'Clock', 'NextUpList']
     }
   },
   components: {
@@ -90,6 +90,8 @@ export default {
           return 'Uhr'
         case 'DWDWarningMap':
           return 'DWD-Warnkarte'
+        case 'NextUpList':
+          return 'Termine'
         default:
           return componentType
       }
@@ -102,6 +104,8 @@ export default {
           return 'clock'
         case 'DWDWarningMap':
           return 'cloud-showers-heavy'
+        case 'NextUpList':
+          return 'calendar'
         default:
           return 'cube'
       }

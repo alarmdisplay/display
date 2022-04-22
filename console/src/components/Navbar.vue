@@ -24,10 +24,24 @@
                     <span>Displays</span>
                 </router-link>
 
-                <router-link class="navbar-item is-tab" :to="{ name: 'announcement-list' }">
-                    <span class="icon"><font-awesome-icon icon="bullhorn"/></span>
-                    <span>Bekanntmachungen</span>
-                </router-link>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        <span class="icon"><font-awesome-icon icon="folder-tree"/></span>
+                        <span>Inhalte</span>
+                    </a>
+
+                    <div class="navbar-dropdown">
+                        <router-link class="navbar-item" :to="{ name: 'announcement-list' }">
+                            <span class="icon"><font-awesome-icon icon="bullhorn"/></span>
+                            <span>Bekanntmachungen</span>
+                        </router-link>
+
+                        <router-link class="navbar-item" :to="{ name: 'calendars' }">
+                            <span class="icon"><font-awesome-icon icon="calendar"/></span>
+                            <span>Kalender</span>
+                        </router-link>
+                    </div>
+                </div>
             </div>
 
             <div class="navbar-end">
