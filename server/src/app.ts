@@ -24,6 +24,8 @@ import sequelize from './sequelize';
 
 const app: Application = express(feathers());
 
+const productionMode = process.env.NODE_ENV === 'production';
+
 // Load app configuration
 app.configure(configuration());
 
@@ -35,7 +37,22 @@ if (['ALL', 'MARK', 'TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'OFF'].i
 logger.info('Logging level is \'%s\'', logger.level);
 
 // Enable security, CORS, compression, favicon and body parsing
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    useDefaults: false,
+    reportOnly: !productionMode,
+    directives: {
+      'default-src': ['\'none\''],
+      'base-uri': ['\'self\''],
+      'font-src': ['\'self\'', 'data:'],
+      'form-action': ['\'self\''],
+      'img-src': ['\'self\'', 'data:'],
+      'script-src': ['\'self\'', '\'unsafe-eval\''],
+      'style-src': ['\'self\'', '\'unsafe-inline\''],
+      'upgrade-insecure-requests': []
+    }
+  }
+}));
 app.use(cors<Request>());
 app.use(compress());
 app.use(express.json());
@@ -47,14 +64,14 @@ app.use('/', express.static(app.get('public')));
 // Serve the Display frontend statically
 if (fs.existsSync('ext-display')) {
   app.use('/display', express.static('ext-display'));
-} else if (process.env.NODE_ENV === 'production') {
+} else if (productionMode) {
   logger.warn('The static files for the display frontend could not be found, the path /display will not work');
 }
 
 // Serve the Console UI statically
 if (fs.existsSync('ext-console')) {
   app.use('/console', express.static('ext-console'));
-} else if (process.env.NODE_ENV === 'production') {
+} else if (productionMode) {
   logger.warn('The static files for the console UI could not be found, the path /console will not work');
 }
 
