@@ -58,7 +58,7 @@ export default {
   name: 'ViewEditForm',
   data: function () {
     return {
-      availableComponentTypes: ['AnnouncementList', 'DWDWarningMap', 'Clock', 'NextUpList']
+      availableComponentTypes: ['AnnouncementList', 'DWDWarningMap', 'Clock', 'NextUpList', 'RemoteImage']
     }
   },
   components: {

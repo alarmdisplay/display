@@ -37,7 +37,7 @@ export default {
   },
   data () {
     return {
-      componentTypesWithOptions: ['DWDWarningMap', 'AnnouncementList']
+      componentTypesWithOptions: ['DWDWarningMap', 'AnnouncementList', 'RemoteImage']
     }
   },
   methods: {
