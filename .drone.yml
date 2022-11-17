@@ -11,15 +11,15 @@ trigger:
 
 steps:
   - name: lint-server
-    image: node:16
+    image: node:18
     commands:
       - ./scripts/lint-server.sh
   - name: lint-console
-    image: node:16
+    image: node:18
     commands:
       - ./scripts/lint-console.sh
   - name: lint-frontend
-    image: node:16
+    image: node:18
     commands:
       - ./scripts/lint-frontend.sh
   - name: slack
@@ -53,12 +53,6 @@ depends_on:
   - compliance
 
 steps:
-  - name: test-server-node-12
-    image: node:12
-    commands:
-      - cd server
-      - npm ci --unsafe-perm
-      - npx jest --runInBand --forceExit
   - name: test-server-node-14
     image: node:14
     commands:
@@ -67,6 +61,12 @@ steps:
       - npx jest --runInBand --forceExit
   - name: test-server-node-16
     image: node:16
+    commands:
+      - cd server
+      - npm ci
+      - npx jest --runInBand --forceExit
+  - name: test-server-node-18
+    image: node:18
     environment:
       CC_TEST_REPORTER_ID:
         from_secret: cc_test_reporter_id
@@ -139,7 +139,7 @@ services:
 
 steps:
   - name: test-api
-    image: node:16
+    image: node:18
     commands:
       - cd test-api
       - npm ci
@@ -160,6 +160,6 @@ image_pull_secrets:
   - dockerconfig
 ---
 kind: signature
-hmac: a1f6179e36d71afa39a5611a914201b9598a3ab75c987677406385988b50f89a
+hmac: 2f065af39ad34e9cc9f5547b7c492a2cc0757abdbe02f16bd194563a63d39ef8
 
 ...
