@@ -18,6 +18,7 @@
               </p>
               <AnnouncementListOptions v-else-if="selectedContentSlot.component === 'AnnouncementList'" :options="selectedContentSlot.options"/>
               <DWDWarningMapOptions v-else-if="selectedContentSlot.component === 'DWDWarningMap'" :options="selectedContentSlot.options"/>
+              <RemoteImageOptions v-else-if="selectedContentSlot.component === 'RemoteImage'" :options="selectedContentSlot.options"/>
               <p v-else>
                 Für diese Komponente gibt es keine Optionen
               </p>
@@ -31,12 +32,14 @@
 import ContentSlot from '@/components/views/editor/ContentSlot'
 import AnnouncementListOptions from '@/components/views/editor/AnnouncementListOptions'
 import DWDWarningMapOptions from '@/components/views/editor/DWDWarningMapOptions'
+import RemoteImageOptions from '@/components/views/editor/RemoteImageOptions'
 
 const margin = 7
 
 export default {
   name: 'GridEditor',
   components: {
+    RemoteImageOptions,
     AnnouncementListOptions,
     DWDWarningMapOptions,
     ContentSlot
