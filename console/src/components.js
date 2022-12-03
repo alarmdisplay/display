@@ -19,6 +19,11 @@ const components = {
     icon: 'calendar',
     options: false,
   },
+  RemoteImage: {
+    name: 'Bild',
+    icon: 'image',
+    options: true,
+  },
 }
 
 export function getAvailableComponentTypes() {
