@@ -12,16 +12,16 @@
   "dependencies": {
     "@feathersjs/feathers": "^4.5.15",
     "@feathersjs/socketio-client": "^4.5.15",
-    "@fortawesome/fontawesome-svg-core": "^6.2.0",
-    "@fortawesome/free-solid-svg-icons": "^6.2.0",
-    "@fortawesome/vue-fontawesome": "^2.0.8",
+    "@fortawesome/fontawesome-svg-core": "^6.2.1",
+    "@fortawesome/free-solid-svg-icons": "^6.2.1",
+    "@fortawesome/vue-fontawesome": "^2.0.9",
     "@vue/composition-api": "^0.6.7",
-    "core-js": "^3.25.5",
+    "core-js": "^3.26.1",
     "feathers-vuex": "^3.16.0",
-    "leaflet": "^1.9.2",
+    "leaflet": "^1.9.3",
     "moment": "^2.29.4",
     "socket.io-client": "^2.5.0",
-    "vue": "^2.7.11",
+    "vue": "^2.7.14",
     "vue-moment": "^4.1.0",
     "vue2-leaflet": "^2.7.1",
     "vuex": "^3.6.2"
@@ -31,9 +31,9 @@
     "@vue/cli-plugin-babel": "~5.0.3",
     "@vue/cli-plugin-eslint": "^5.0.8",
     "@vue/cli-service": "~5.0.3",
-    "eslint": "^8.25.0",
+    "eslint": "^8.29.0",
     "eslint-plugin-vue": "^8.7.1",
-    "vue-template-compiler": "^2.7.11"
+    "vue-template-compiler": "^2.7.14"
   },
   "overrides": {
     "feathers-vuex": {
