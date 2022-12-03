@@ -53,21 +53,22 @@
 
 <script>
 import GridEditor from '@/components/views/editor/GridEditor'
+import { getAvailableComponentTypes, getComponentName, isValidComponentType } from '@/components'
 
 export default {
   name: 'ViewEditForm',
-  data: function () {
-    return {
-      availableComponentTypes: ['AnnouncementList', 'DWDWarningMap', 'Clock', 'NextUpList', 'RemoteImage']
-    }
-  },
   components: {
     GridEditor
+  },
+  computed: {
+    availableComponentTypes() {
+      return getAvailableComponentTypes();
+    },
   },
   methods: {
     addContentSlot: function () {
       const select = document.getElementById('select-component-to-add')
-      if (!this.availableComponentTypes.includes(select.value)) {
+      if (!isValidComponentType(select.value)) {
         return
       }
 
@@ -82,34 +83,7 @@ export default {
 
       this.item.contentSlots.push(contentSlot)
     },
-    getComponentName: function (componentType) {
-      switch (componentType) {
-        case 'AnnouncementList':
-          return 'Bekanntmachungen'
-        case 'Clock':
-          return 'Uhr'
-        case 'DWDWarningMap':
-          return 'DWD-Warnkarte'
-        case 'NextUpList':
-          return 'Termine'
-        default:
-          return componentType
-      }
-    },
-    getIcon: function (componentType) {
-      switch (componentType) {
-        case 'AnnouncementList':
-          return 'bullhorn'
-        case 'Clock':
-          return 'clock'
-        case 'DWDWarningMap':
-          return 'cloud-showers-heavy'
-        case 'NextUpList':
-          return 'calendar'
-        default:
-          return 'cube'
-      }
-    },
+    getComponentName,
     isValid () {
       return this.item.rows > 1 && this.item.columns > 1
     },
