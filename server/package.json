@@ -61,7 +61,6 @@
     "feathers-memory": "^4.1.0",
     "feathers-sequelize": "^6.4.0",
     "feathers-shallow-populate": "^2.5.1",
-    "helmet": "^6.0.1",
     "ical.js": "^1.5.0",
     "log4js": "^6.7.1",
     "mysql2": "^2.3.3",
