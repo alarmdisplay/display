@@ -18,7 +18,7 @@
     "@vue/composition-api": "^1.7.1",
     "bulma": "^0.9.4",
     "core-js": "^3.27.2",
-    "feathers-hooks-common": "^5.0.6",
+    "feathers-hooks-common": "^6.1.5",
     "feathers-vuex": "^3.16.0",
     "moment": "^2.29.4",
     "simple-vue2-datetimepicker": "^2.3.1",
