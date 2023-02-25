@@ -22,17 +22,6 @@ steps:
     image: node:18
     commands:
       - ./scripts/lint-frontend.sh
-  - name: slack
-    image: plugins/slack
-    settings:
-      webhook:
-        from_secret: slack_hook
-    when:
-      status:
-        - failure
-      event:
-        exclude:
-          - pull_request
 
 ---
 kind: pipeline
@@ -78,88 +67,9 @@ steps:
       - npm ci
       - npx jest --runInBand --forceExit --coverage
       - ../scripts/report-code-coverage.sh
-  - name: docker-testimage
-    pull: always
-    image: plugins/docker:latest
-    settings:
-      repo: registry.abrain.dev:5000/alarmdisplay/display
-      registry: registry.abrain.dev:5000
-      tags: testing-amd64
-    environment:
-      DOCKER_PASSWORD:
-        from_secret: tmpregistry_password
-      DOCKER_USERNAME:
-        from_secret: tmpregistry_username
-    when:
-      event:
-        - push
-  - name: slack
-    image: plugins/slack
-    settings:
-      webhook:
-        from_secret: slack_hook
-    when:
-      status:
-        - failure
-      event:
-        exclude:
-          - pull_request
----
-kind: pipeline
-type: docker
-name: docker-linux-amd64
 
-platform:
-  os: linux
-  arch: amd64
-
-trigger:
-  branch:
-    include:
-      - develop
-      - main
-  event:
-    - push
-
-depends_on:
-  - testing-linux-amd64
-
-services:
-  - name: mariadb
-    image: mariadb
-    pull: if-not-exists
-    environment:
-      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
-      MARIADB_DATABASE: display
-  - name: sut
-    image: registry.abrain.dev:5000/alarmdisplay/display:testing-amd64
-    pull: always
-    environment:
-      MYSQL_URI: mysql://root:@mariadb:3306/display
-
-steps:
-  - name: test-api
-    image: node:18
-    commands:
-      - cd test-api
-      - npm ci
-      - SERVER_URL=http://sut:3031 npm start
-  - name: slack
-    image: plugins/slack
-    settings:
-      webhook:
-        from_secret: slack_hook
-    when:
-      status:
-        - failure
-      event:
-        exclude:
-          - pull_request
-
-image_pull_secrets:
-  - dockerconfig
 ---
 kind: signature
-hmac: 2f065af39ad34e9cc9f5547b7c492a2cc0757abdbe02f16bd194563a63d39ef8
+hmac: bdd4a9296bfe85666724dd58bd3a74dbc9ff4505c4739e83898a4e899ed61269
 
 ...
