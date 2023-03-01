@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{ test: testAlert }">
     <span>
       {{ text }}
     </span>
@@ -9,8 +9,18 @@
 <script>
 export default {
   name: 'AlertBanner',
+  props: {
+    testAlert: {
+      type: Boolean,
+      default: false
+    }
+  },
   computed: {
     text () {
+      if (this.testAlert) {
+        return 'Probealarm'
+      }
+
       let message = this.$store.getters['settings/getStringValue']('alert_banner_message')
       return message ? `ALARM – ${message}` : 'ALARM'
     }
@@ -26,5 +36,10 @@ div {
   color: white;
   background-color: red;
   font-weight: bold;
+}
+
+.test {
+    background-color: darkorange !important;
+    color: white;
 }
 </style>
