@@ -1,6 +1,6 @@
 <template>
     <div class="display-app" :class="{ 'with-alert-banner': allAlertsAreEmpty }">
-      <AlertBanner class="alert-banner" v-if="allAlertsAreEmpty"/>
+      <AlertBanner class="alert-banner" v-if="allAlertsAreEmpty" :test-alert="allAlertsAreTests"/>
       <div class="main-area">
         <AlertScreen v-if="activeAlerts.length > 0 && !allAlertsAreEmpty" :alerts="activeAlerts"/>
         <IdleScreen v-else-if="idleViews.length" v-bind:child-views="idleViews"/>
@@ -36,6 +36,9 @@ import Clock from "@/components/Clock";
             allAlertsAreEmpty () {
               return this.activeAlerts.length > 0 && this.activeAlerts.every((alert) => { return !alert.reason && !alert.keyword && !alert.description })
             },
+          allAlertsAreTests () {
+            return this.activeAlerts.length > 0 && this.activeAlerts.every((alert) => { return alert.status === 'Test' })
+          },
             incidentDisplayDuration() {
               let minutes = this.$store.getters['settings/getIntegerValue']('incident_display_minutes') || 60
               return minutes * 60 * 1000
