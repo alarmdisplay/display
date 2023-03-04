@@ -1,0 +1,50 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":semanticPrefixFixDepsChoreOthers",
+    ":ignoreModulesAndTests",
+    ":autodetectRangeStrategy",
+    ":prHourlyLimit2",
+    ":prConcurrentLimit10",
+    "docker:disable",
+    "group:monorepos",
+    "group:nodeJs",
+    "group:jsTest",
+    "group:fortawesome",
+    "group:jestPlusTSJest",
+    "group:jestPlusTypes",
+    "group:jwtFramework",
+    "group:socketio",
+    "group:allNonMajor",
+    "workarounds:all",
+    ":pinAllExceptPeerDependencies",
+    "npm:unpublishSafe",
+    "schedule:automergeNonOfficeHours",
+    ":automergeLinters",
+    ":automergeTesters"
+  ],
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["^@feathersjs/"],
+      "allowedVersions": "< 5"
+    },
+    {
+      "matchPackageNames": ["feathers-hooks-common", "feathers-sequelize"],
+      "allowedVersions": "< 7"
+    },
+    {
+      "matchPackageNames": ["vue", "vue-template-compiler"],
+      "allowedVersions": "< 2.7"
+    },
+    {
+      "matchPackageNames": ["vue-router"],
+      "allowedVersions": "< 4"
+    },
+    {
+      "matchPackageNames": ["@fortawesome/vue-fontawesome"],
+      "allowedVersions": "< 3"
+    }
+  ]
+}
