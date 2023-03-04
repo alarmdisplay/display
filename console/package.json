@@ -10,7 +10,7 @@
   "license": "AGPL-3.0-only",
   "dependencies": {
     "@feathersjs/authentication-client": "^4.5.16",
-    "@feathersjs/feathers": "^4.5.16",
+    "@feathersjs/feathers": "^5.0.0",
     "@feathersjs/socketio-client": "^4.5.16",
     "@fortawesome/fontawesome-svg-core": "^6.3.0",
     "@fortawesome/free-solid-svg-icons": "^6.3.0",
