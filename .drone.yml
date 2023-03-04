@@ -42,12 +42,6 @@ depends_on:
   - compliance
 
 steps:
-  - name: test-server-node-14
-    image: node:14
-    commands:
-      - cd server
-      - npm ci --unsafe-perm
-      - npx jest --runInBand --forceExit
   - name: test-server-node-16
     image: node:16
     commands:
@@ -70,6 +64,6 @@ steps:
 
 ---
 kind: signature
-hmac: bdd4a9296bfe85666724dd58bd3a74dbc9ff4505c4739e83898a4e899ed61269
+hmac: fe992988d160e4b1c9d4ad2ebefc53c8e7a8303eb447d201ee1471e3a774d0a9
 
 ...
