@@ -25,26 +25,13 @@
     ":automergeLinters",
     ":automergeTesters"
   ],
+  "major": {
+    "dependencyDashboardApproval": true
+  },
   "packageRules": [
-    {
-      "matchPackagePatterns": ["^@feathersjs/"],
-      "allowedVersions": "< 5"
-    },
-    {
-      "matchPackageNames": ["feathers-hooks-common", "feathers-sequelize"],
-      "allowedVersions": "< 7"
-    },
     {
       "matchPackageNames": ["vue", "vue-template-compiler"],
       "allowedVersions": "< 2.7"
-    },
-    {
-      "matchPackageNames": ["vue-router", "vuex"],
-      "allowedVersions": "< 4"
-    },
-    {
-      "matchPackageNames": ["@fortawesome/vue-fontawesome"],
-      "allowedVersions": "< 3"
     }
   ]
 }
