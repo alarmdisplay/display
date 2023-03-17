@@ -43,7 +43,7 @@ describe('Feathers application tests (with jest)', () => {
           }
         });
       } catch (error) {
-        expect(axios.isAxiosError(error)).toBeTruthy();
+        expect(error).toBeInstanceOf(AxiosError);
         const { response } = error as AxiosError;
 
         expect(response?.status).toBe(404);
@@ -57,7 +57,7 @@ describe('Feathers application tests (with jest)', () => {
       try {
         await axios.get(getUrl('path/to/nowhere'));
       } catch (error) {
-        expect(axios.isAxiosError(error)).toBeTruthy();
+        expect(error).toBeInstanceOf(AxiosError);
         const { response } = error as AxiosError;
 
         expect(response?.status).toBe(404);
