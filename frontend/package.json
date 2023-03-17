@@ -16,7 +16,7 @@
     "@fortawesome/free-solid-svg-icons": "6.3.0",
     "@fortawesome/vue-fontawesome": "2.0.10",
     "@vue/composition-api": "0.6.7",
-    "core-js": "3.29.0",
+    "core-js": "3.29.1",
     "feathers-vuex": "3.16.0",
     "leaflet": "1.9.3",
     "moment": "2.29.4",
@@ -27,11 +27,11 @@
     "vuex": "3.6.2"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "7.19.1",
+    "@babel/eslint-parser": "7.21.3",
     "@vue/cli-plugin-babel": "5.0.8",
     "@vue/cli-plugin-eslint": "5.0.8",
     "@vue/cli-service": "5.0.8",
-    "eslint": "8.35.0",
+    "eslint": "8.36.0",
     "eslint-plugin-vue": "9.9.0",
     "vue-template-compiler": "2.6.14"
   },

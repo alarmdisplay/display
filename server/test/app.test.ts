@@ -34,7 +34,7 @@ describe('Feathers application tests (with jest)', () => {
 
   describe('404', () => {
     it('shows a 404 HTML page', async () => {
-      expect.assertions(3);
+      expect.assertions(4);
 
       try {
         await axios.get(getUrl('path/to/nowhere'), {
@@ -43,27 +43,30 @@ describe('Feathers application tests (with jest)', () => {
           }
         });
       } catch (error) {
-        expect(axios.isAxiosError(error)).toBeTruthy();
+        expect(error).toBeInstanceOf(AxiosError);
         const { response } = error as AxiosError;
 
         expect(response?.status).toBe(404);
-        expect(response?.data.indexOf('<html>')).not.toBe(-1);
+        expect(typeof response?.data).toBe('string');
+        expect((response?.data as string).startsWith('<html>')).toBeTruthy();
       }
     });
 
     it('shows a 404 JSON error without stack trace', async () => {
-      expect.assertions(5);
+      expect.assertions(3);
 
       try {
         await axios.get(getUrl('path/to/nowhere'));
       } catch (error) {
-        expect(axios.isAxiosError(error)).toBeTruthy();
+        expect(error).toBeInstanceOf(AxiosError);
         const { response } = error as AxiosError;
 
         expect(response?.status).toBe(404);
-        expect(response?.data.code).toBe(404);
-        expect(response?.data.message).toBe('Page not found');
-        expect(response?.data.name).toBe('NotFound');
+        expect(response?.data).toMatchObject({
+          code: 404,
+          message: 'Page not found',
+          name: 'NotFound'
+        });
       }
     });
   });
