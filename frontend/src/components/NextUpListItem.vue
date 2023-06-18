@@ -35,14 +35,25 @@
               handler: function () {
                 if (this.calendarItem.allDayEvent) {
                   // Show the date without the time (which is always 00:00)
-                  this.dateText = this.$moment(this.calendarItem.startDate).calendar({
+                  let allDayFormat = {
                     sameDay: '[Heute]',
                     nextDay: '[Morgen]',
                     nextWeek: 'dddd',
                     lastDay: '[Gestern]',
                     lastWeek: '[Letzten] dddd',
                     sameElse: 'L'
-                  })
+                  }
+                  this.dateText = this.$moment(this.calendarItem.startDate).calendar(allDayFormat)
+
+                  // Subtract one second, because the end is at 00:00 of the following day
+                  const endDate = this.calendarItem.endDate - 1000
+                  const endDateText = this.$moment(endDate).calendar(allDayFormat)
+
+                  // Is it a multi-day event?
+                  if (this.dateText !== endDateText) {
+                    this.dateText = `${this.dateText} - ${endDateText}`
+                  }
+
                 } else {
                   this.dateText = this.$moment(this.calendarItem.startDate).calendar()
                 }
