@@ -53,7 +53,7 @@ export class ApiKeyStrategy extends AuthenticationBaseStrategy {
     if (storedApiKey.displayId) {
       const DisplayService = this.app.service('api/v1/displays');
       try {
-        result.display = await DisplayService.get(storedApiKey.displayId);
+        result.display = await DisplayService.get(storedApiKey.displayId, params);
       } catch (e) {
       }
     }
