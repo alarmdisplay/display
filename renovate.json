@@ -8,7 +8,6 @@
     ":autodetectRangeStrategy",
     ":prHourlyLimit2",
     ":prConcurrentLimit10",
-    "docker:disable",
     "group:monorepos",
     "group:nodeJs",
     "group:jsTest",
@@ -32,6 +31,11 @@
     {
       "matchPackageNames": ["vue", "vue-template-compiler"],
       "allowedVersions": "< 2.7"
+    },
+    {
+      "matchFileNames": ["Dockerfile*"],
+      "matchPackageNames": ["node"],
+      "allowedVersions": "/^[1-9][02468]$/"
     }
   ]
 }
