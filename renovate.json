@@ -8,7 +8,6 @@
     ":autodetectRangeStrategy",
     ":prHourlyLimit2",
     ":prConcurrentLimit10",
-    "docker:disable",
     "group:monorepos",
     "group:nodeJs",
     "group:jsTest",
