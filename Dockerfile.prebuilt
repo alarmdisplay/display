@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:20.11.0
 
 WORKDIR /home/node/app
 COPY ./build/package.json ./build/package-lock.json /home/node/app/
