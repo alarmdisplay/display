@@ -8,6 +8,12 @@ declare module 'ical.js' {
     strictExceptions: boolean
   }
 
+  interface OccurrenceDetails {
+    item: Event
+    startDate: Time
+    endDate: Time
+  }
+
   interface TimeConstructorData {
     year?: number
     month?: number
@@ -47,6 +53,7 @@ declare module 'ical.js' {
   }
 
   class Event {
+    public component: Component;
     public description: string;
     public duration: Duration;
     public endDate: Time;
@@ -56,6 +63,15 @@ declare module 'ical.js' {
     public uid: string;
 
     constructor(component?: Component | null, options?: EventOptions)
+    public isRecurrenceException(): boolean;
+    public isRecurring(): boolean;
+    public iterator(startTime?: Time): RecurExpansion
+    public getOccurrenceDetails(occurrence: Time): OccurrenceDetails
+  }
+
+  class RecurExpansion {
+    constructor(options: { component?: Component, dtstart: Time })
+    public next(): Time
   }
 
   class Time {
@@ -63,6 +79,7 @@ declare module 'ical.js' {
 
     public readonly icaltype: 'date' | 'date-time';
 
+    public fromJSDate(aDate: Date, useUTC: boolean): Time
     public toJSDate(): Date
     public toString(): string
   }

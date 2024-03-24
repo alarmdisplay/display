@@ -83,7 +83,7 @@ export function createSocketPlugin (socket) {
         socket.on('calendar-items bulk-change', async () => {
             // Some bigger change happened, refresh everything
             await store.commit('calendar-items/clearAll');
-            await store.dispatch('calendar-items/find', { query: { $sort: { startDate: 1 } } })
+            await store.dispatch('calendar-items/find', { query: { $sort: { startDate: 1 }, $limit: 25 } })
         })
     }
 }

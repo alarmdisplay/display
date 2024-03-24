@@ -5,7 +5,7 @@
             <FeathersVuexFind
                 v-slot="{ items: calendarItems }"
                 service="calendar-items"
-                :params="{ query: { $sort: { startDate: 1 } } }"
+                :params="{ query: { $sort: { startDate: 1 }, $limit: 25 } }"
                 :qid="`nextUpList-${instanceId}`"
                 watch="query"
             >
