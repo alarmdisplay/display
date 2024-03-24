@@ -39,7 +39,7 @@
   },
   "overrides": {
     "feathers-vuex": {
-      "serialize-error": "6.0.0"
+      "serialize-error": "11.0.3"
     }
   },
   "browserslist": [
