@@ -128,12 +128,14 @@ export class CalendarItems extends Service<CalendarItemData> {
 
     // Convert events to our data model and skip events that have ended already
     const now = new Date();
-    const items = vEvents.map((vEvent): CalendarItemData | null => {
+    const items: CalendarItemData[] = [];
+    for (const vEvent of vEvents) {
       const event = new ICAL.Event(vEvent);
       const endDate = event.endDate.toJSDate();
 
+      // Skip events that have already ended
       if (endDate.valueOf() < now.valueOf()) {
-        return null;
+        continue;
       }
 
       let status = CalendarItemStatus.confirmed;
@@ -149,7 +151,7 @@ export class CalendarItems extends Service<CalendarItemData> {
       const startDate = event.startDate;
       const allDayEvent = startDate.icaltype === 'date';
 
-      return {
+      items.push({
         uid: event.uid,
         summary: event.summary,
         startDate: startDate.toJSDate(),
@@ -159,10 +161,10 @@ export class CalendarItems extends Service<CalendarItemData> {
         allDayEvent: allDayEvent,
         datetimeStamp: (vEvent.getFirstPropertyValue('dtstamp') as Time).toJSDate() || now,
         feedId: feed.id,
-      };
-    });
+      });
+    }
 
-    return items.filter(item => item !== null) as CalendarItemData[];
+    return items;
   }
 
   private async loadFeed(feed: CalendarFeedData): Promise<Component> {
