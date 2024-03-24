@@ -43,7 +43,7 @@ depends_on:
 
 steps:
   - name: test-server-node-18
-    image: node:18.19.1
+    image: node:20.11.1
     commands:
       - cd server
       - npm ci
