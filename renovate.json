@@ -36,6 +36,12 @@
       "matchFileNames": ["Dockerfile*"],
       "matchPackageNames": ["node"],
       "allowedVersions": "/^[1-9][02468]$/"
+    },
+    {
+      "matchFileNames": [".drone.yml"],
+      "matchPackageNames": ["node"],
+      "matchCurrentVersion": "< 20.0",
+      "enabled": false
     }
   ]
 }
