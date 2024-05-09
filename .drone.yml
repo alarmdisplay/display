@@ -11,15 +11,15 @@ trigger:
 
 steps:
   - name: lint-server
-    image: node:20.13.0
+    image: node:20.13.1
     commands:
       - ./scripts/lint-server.sh
   - name: lint-console
-    image: node:20.13.0
+    image: node:20.13.1
     commands:
       - ./scripts/lint-console.sh
   - name: lint-frontend
-    image: node:20.13.0
+    image: node:20.13.1
     commands:
       - ./scripts/lint-frontend.sh
 
@@ -49,7 +49,7 @@ steps:
       - npm ci
       - npx jest --runInBand --forceExit
   - name: test-server-node-20
-    image: node:20.13.0
+    image: node:20.13.1
     environment:
       CC_TEST_REPORTER_ID:
         from_secret: cc_test_reporter_id
@@ -64,6 +64,6 @@ steps:
 
 ---
 kind: signature
-hmac: 09dc58ba0cfa64700a3ed8d1765df69d87e084923f6cf25b71a329d71f87691a
+hmac: ba32cd01ad6e3befaefa710ba1b99940f2d00a4e384efe07795011d5c8615cb3
 
 ...
