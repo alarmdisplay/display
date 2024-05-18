@@ -1,0 +1,45 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI for Server
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+defaults:
+  run:
+    working-directory: ./server
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v3
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+        cache-dependency-path: server/package-lock.json
+    - run: npm ci
+    - run: npm run lint
+    - run: npm run compile
+    - run: npm run jest -- --coverage
+    - name: Upload code coverage to Code Climate
+      uses: paambaati/codeclimate-action@v6.0.0
+      env:
+        CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+      with:
+        coverageLocations: |
+          ${{github.workspace}}/server/coverage/lcov.info:lcov
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4.0.1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        directory: ${{github.workspace}}/server/coverage
+        flags: server
