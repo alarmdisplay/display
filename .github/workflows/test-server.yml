@@ -28,11 +28,18 @@ jobs:
     - run: npm ci
     - run: npm run lint
     - run: npm run compile
-    - name: Test & publish code coverage
+    - run: npm run jest -- --coverage
+    - name: Upload code coverage to Code Climate
       uses: paambaati/codeclimate-action@v6.0.0
       env:
         CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
       with:
-        coverageCommand: cd server && npm run jest -- --coverage
         coverageLocations: |
           ${{github.workspace}}/server/coverage/lcov.info:lcov
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4.0.1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        directory: ${{github.workspace}}/server/coverage
+        flags: server
