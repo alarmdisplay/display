@@ -18,18 +18,20 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
-
     steps:
     - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+    - uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version-file: '.nvmrc'
         cache: 'npm'
         cache-dependency-path: server/package-lock.json
     - run: npm ci
     - run: npm run lint
-    - run: npm test
+    - name: Test & publish code coverage
+      uses: paambaati/codeclimate-action@v6.0.0
+      env:
+        CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+      with:
+        coverageCommand: npm test -- --coverage
+        coverageLocations: |
+          ${{github.workspace}}/server/coverage/lcov.info:lcov
