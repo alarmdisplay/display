@@ -33,7 +33,6 @@ jobs:
       env:
         CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
       with:
-        workingDirectory: ./server
-        coverageCommand: npm run jest -- --coverage
+        coverageCommand: cd server && npm run jest -- --coverage
         coverageLocations: |
           ${{github.workspace}}/server/coverage/lcov.info:lcov
