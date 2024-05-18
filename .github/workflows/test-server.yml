@@ -20,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x]
+        node-version: [18.x, 20.x]
 
     steps:
     - uses: actions/checkout@v4
@@ -31,5 +31,5 @@ jobs:
         cache: 'npm'
         cache-dependency-path: server/package-lock.json
     - run: npm ci
-    - run: npm lint
+    - run: npm run lint
     - run: npm test
