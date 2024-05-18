@@ -27,12 +27,13 @@ jobs:
         cache-dependency-path: server/package-lock.json
     - run: npm ci
     - run: npm run lint
+    - run: npm run compile
     - name: Test & publish code coverage
       uses: paambaati/codeclimate-action@v6.0.0
       env:
         CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
       with:
         workingDirectory: ./server
-        coverageCommand: npm test -- --coverage
+        coverageCommand: npm run jest -- --coverage
         coverageLocations: |
           ${{github.workspace}}/server/coverage/lcov.info:lcov
