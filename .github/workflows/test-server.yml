@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+    - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
@@ -30,7 +30,7 @@ jobs:
     - run: npm run compile
     - run: npm run jest -- --coverage
     - name: Upload code coverage to Code Climate
-      uses: paambaati/codeclimate-action@v8.0.0
+      uses: paambaati/codeclimate-action@7c100bd1ed15de0bdee476b38ca759d8c94207b5 # v8.0.0
       env:
         CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
       with:
@@ -38,7 +38,7 @@ jobs:
           ${{github.workspace}}/server/coverage/lcov.info:lcov
 
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v4.0.1
+      uses: codecov/codecov-action@e0b68c6749509c5f83f984dd99a76a1c1a231044 # v4.0.1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ${{github.workspace}}/server/coverage
