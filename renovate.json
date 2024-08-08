@@ -17,22 +17,37 @@
   },
   "packageRules": [
     {
-      "matchPackageNames": ["typescript"],
+      "matchPackageNames": [
+        "typescript"
+      ],
       "groupName": "TypeScript",
       "separateMultipleMinor": true
     },
     {
-      "depTypeList": [ "devDependencies" ],
-      "updateTypes": [ "patch", "minor", "digest"],
+      "matchDepTypes": [
+        "devDependencies"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "minor",
+        "digest"
+      ],
       "groupName": "devDependencies (non-major)"
     },
     {
-      "matchPackageNames": ["vue", "vue-template-compiler"],
+      "matchPackageNames": [
+        "vue",
+        "vue-template-compiler"
+      ],
       "allowedVersions": "< 2.7"
     },
     {
-      "matchFileNames": ["Dockerfile*"],
-      "matchPackageNames": ["node"],
+      "matchFileNames": [
+        "Dockerfile*"
+      ],
+      "matchPackageNames": [
+        "node"
+      ],
       "allowedVersions": "/^[1-9][02468]$/"
     }
   ]
