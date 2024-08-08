@@ -9,6 +9,6 @@
   "devDependencies": {
     "chai": "5.1.1",
     "chai-http": "4.4.0",
-    "mocha": "10.4.0"
+    "mocha": "10.7.0"
   }
 }
