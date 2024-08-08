@@ -11,7 +11,7 @@ enum CalendarItemStatus {
   cancelled = 'cancelled'
 }
 
-interface CalendarItemData {
+export interface CalendarItemData {
   uid: string
   summary: string
   startDate: Date

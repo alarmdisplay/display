@@ -82,6 +82,12 @@ export default function (app: Application): void {
     // Migrate and sync to the database
     app.set('sequelizeSync', sequelize.authenticate({ retry: retryOptions }).then(() => {
       logger.info('Connected to database');
+      // Tear down the existing tables for testing
+      if (process.env.NODE_ENV === 'test') {
+        logger.debug('Tearing down tables for testing ...');
+        return umzug.down();
+      }
+    }).then(() => {
       return umzug.up();
     }, (reason: Error) => {
       logger.error('Database connection failed:', reason.message);
