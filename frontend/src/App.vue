@@ -63,7 +63,7 @@ export default {
 
           // Forget and re-fetch all calendar items
           await this.$store.commit('calendar-items/clearAll');
-          await this.$store.dispatch('calendar-items/find', { query: { $sort: { startDate: 1 } } })
+          await this.$store.dispatch('calendar-items/find', { query: { $sort: { startDate: 1 }, $limit: 25 } })
         }
       }
     })

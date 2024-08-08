@@ -11,7 +11,7 @@ enum CalendarItemStatus {
   cancelled = 'cancelled'
 }
 
-interface CalendarItemData {
+export interface CalendarItemData {
   uid: string
   summary: string
   startDate: Date
@@ -126,18 +126,10 @@ export class CalendarItems extends Service<CalendarItemData> {
     const vEvents = component.getAllSubcomponents('vevent');
     this.logger.debug('Found %d events', vEvents.length);
 
-    // Convert events to our data model and skip events that have ended already
-    const now = new Date();
-    const items = vEvents.map((vEvent): CalendarItemData | null => {
-      const event = new ICAL.Event(vEvent);
-      const endDate = event.endDate.toJSDate();
-
-      if (endDate.valueOf() < now.valueOf()) {
-        return null;
-      }
-
+    // Convert event to our data model, optionally taking recurrences into account
+    function pushEvent(event: ICAL.Event, occurrence?: { next: Time, startDate: Time, endDate: Time }) {
       let status = CalendarItemStatus.confirmed;
-      const statusValue = vEvent.getFirstPropertyValue('status');
+      const statusValue = event.component.getFirstPropertyValue('status');
       if (statusValue && typeof statusValue === 'string') {
         if (statusValue.toLowerCase() === 'cancelled') {
           status = CalendarItemStatus.cancelled;
@@ -146,23 +138,46 @@ export class CalendarItems extends Service<CalendarItemData> {
         }
       }
 
-      const startDate = event.startDate;
+      const startDate = occurrence?.startDate ?? event.startDate;
       const allDayEvent = startDate.icaltype === 'date';
 
-      return {
-        uid: event.uid,
+      items.push({
+        uid: occurrence?.next ? `${event.uid}-${occurrence.next}` : event.uid,
         summary: event.summary,
         startDate: startDate.toJSDate(),
-        endDate: endDate,
+        endDate: (occurrence?.endDate ?? event.endDate).toJSDate(),
         description: event.description,
         status: status,
         allDayEvent: allDayEvent,
-        datetimeStamp: (vEvent.getFirstPropertyValue('dtstamp') as Time).toJSDate() || now,
+        datetimeStamp: (event.component.getFirstPropertyValue('dtstamp') as Time).toJSDate() || now,
         feedId: feed.id,
-      };
-    });
+      });
+    }
 
-    return items.filter(item => item !== null) as CalendarItemData[];
+    const now = new Date();
+    const items: CalendarItemData[] = [];
+
+    for (const vEvent of vEvents) {
+      const event = new ICAL.Event(vEvent);
+
+      if (event.isRecurring()) {
+        // Include up to 5 occurrences of a recurring event
+        let pushedOccurrences = 0;
+        const iterator = event.iterator();
+        for (let next = iterator.next(); next && pushedOccurrences < 5; next = iterator.next()) {
+          const occurrence = event.getOccurrenceDetails(next);
+          if (occurrence.startDate.toJSDate() > now) {
+            pushedOccurrences++;
+            pushEvent(occurrence.item, { next, startDate: occurrence.startDate, endDate: occurrence.endDate });
+          }
+        }
+      } else if(event.endDate.toJSDate().valueOf() > now.valueOf()) {
+        // Include singular events that have not yet ended
+        pushEvent(event);
+      }
+    }
+
+    return items;
   }
 
   private async loadFeed(feed: CalendarFeedData): Promise<Component> {
