@@ -43,13 +43,10 @@
       "allowedVersions": "< 2.7"
     },
     {
-      "matchFileNames": [
-        "Dockerfile*"
-      ],
       "matchPackageNames": [
         "node"
       ],
-      "allowedVersions": "/^[1-9][02468]\./"
+      "allowedVersions": "/^[1-9][02468]\\./"
     }
   ]
 }
