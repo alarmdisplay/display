@@ -8,6 +8,7 @@
     "schedule:automergeNonOfficeHours",
     ":automergeLinters",
     ":automergeTesters",
+    ":maintainLockFilesWeekly",
     ":pinAllExceptPeerDependencies",
     ":semanticCommits",
     ":separateMajorReleases"
