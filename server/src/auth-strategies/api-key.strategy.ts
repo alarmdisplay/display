@@ -34,7 +34,7 @@ export class ApiKeyStrategy extends AuthenticationBaseStrategy {
     let storedApiKey;
     try {
       storedApiKey = await ApiKeyService.get(id);
-    } catch (e) {
+    } catch {
       // No API key with that ID found
       throw new NotAuthenticated('API key invalid');
     }
@@ -54,7 +54,7 @@ export class ApiKeyStrategy extends AuthenticationBaseStrategy {
       const DisplayService = this.app.service('api/v1/displays');
       try {
         result.display = await DisplayService.get(storedApiKey.displayId, params);
-      } catch (e) {
+      } catch {
       }
     }
 

@@ -8,7 +8,7 @@ export const up: Migration = async ({context: {app, query}}) => {
     await query.describeTable(tableName);
     // Exit early if the table exists
     return;
-  } catch (e) {
+  } catch {
     // The table does not exist, so we just continue
   }
 
