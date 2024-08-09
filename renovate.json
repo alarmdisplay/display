@@ -49,7 +49,7 @@
       "matchPackageNames": [
         "node"
       ],
-      "allowedVersions": "/^[1-9][02468]$/"
+      "allowedVersions": "/^[1-9][02468]\./"
     }
   ]
 }
