@@ -3,7 +3,10 @@
     "level": "error"
   },
   "port": 8998,
-  "sqlite": "sqlite::memory:",
+  "dbConfig": {
+    "dialect": "sqlite",
+    "connection": "sqlite::memory:"
+  },
   "dbMaxRetries": 10,
   "db_prefix": "test"
 }

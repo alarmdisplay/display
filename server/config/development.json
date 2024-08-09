@@ -1,5 +1,11 @@
 {
   "logging": {
     "level": "debug"
+  },
+  "dbConfig": {
+    "dialect": "sqlite3",
+    "connection": {
+      "filename": "src/db.sqlite"
+    }
   }
 }

@@ -27,10 +27,13 @@
       "passwordField": "password"
     }
   },
+  "dbConfig": {
+    "dialect": "mysql",
+    "connection": "MYSQL_URI"
+  },
   "logging": {
     "level": "info"
   },
-  "mysql": "",
   "dbMaxRetries": 5,
   "db_prefix": "display",
   "hub_host": "",
