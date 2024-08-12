@@ -6,6 +6,7 @@ export default typescriptEslint.config(
   eslint.configs.recommended,
   ...typescriptEslint.configs.recommended,
   {
+    files: [ '**/*.js', '**/*.ts' ],
     ignores: ['**/.idea/', '**/jest.config.js'],
   },
   {
