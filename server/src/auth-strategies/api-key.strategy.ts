@@ -55,6 +55,7 @@ export class ApiKeyStrategy extends AuthenticationBaseStrategy {
       try {
         result.display = await DisplayService.get(storedApiKey.displayId, params);
       } catch {
+        // TODO ignore NotFound error, rethrow others
       }
     }
 

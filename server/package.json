@@ -30,8 +30,8 @@
   },
   "scripts": {
     "test": "npm run compile && npm run jest",
-    "lint": "eslint src/. test/. --config .eslintrc.json --ext .ts",
-    "lint:fix": "eslint src/. test/. --config .eslintrc.json --ext .ts --fix",
+    "lint": "eslint src/. test/.",
+    "lint:fix": "eslint src/. test/. --fix",
     "dev": "ts-node-dev --no-notify --rs src/",
     "start": "npm run compile && node lib/",
     "jest": "jest --runInBand --forceExit",
@@ -71,6 +71,8 @@
     "uuid": "10.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "9.9.0",
+    "@jest/test-sequencer": "29.7.0",
     "@types/bcryptjs": "2.4.6",
     "@types/bluebird": "3.5.42",
     "@types/compression": "1.7.5",
@@ -80,14 +82,14 @@
     "@types/serve-favicon": "2.5.7",
     "@types/socket.io-client": "1.4.36",
     "@types/uuid": "10.0.0",
-    "@typescript-eslint/eslint-plugin": "8.0.1",
-    "@typescript-eslint/parser": "8.0.1",
     "eslint": "9.9.0",
+    "globals": "15.9.0",
     "jest": "29.7.0",
     "shx": "0.3.4",
     "sqlite3": "5.1.7",
     "ts-jest": "29.2.4",
     "ts-node-dev": "2.0.0",
-    "typescript": "5.5.4"
+    "typescript": "5.5.4",
+    "typescript-eslint": "8.0.1"
   }
 }

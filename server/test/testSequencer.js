@@ -1,4 +1,4 @@
-const Sequencer = require('@jest/test-sequencer').default;
+import Sequencer from '@jest/test-sequencer';
 
 class CustomSequencer extends Sequencer {
   sort(tests) {
