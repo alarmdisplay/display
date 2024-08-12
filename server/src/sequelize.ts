@@ -45,7 +45,7 @@ export default function (app: Application): void {
             throw new Error('No support for migrations without a path');
           }
 
-          // eslint-disable-next-line @typescript-eslint/no-var-requires,@typescript-eslint/no-require-imports
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
           const migration = require(path);
 
           // Always store the migration with the .js suffix
