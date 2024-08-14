@@ -3,19 +3,18 @@
   "extends": [
     "config:best-practices",
     "group:allNonMajor",
-    "group:jsTest",
+    "group:linters",
+    "group:test",
     "npm:unpublishSafe",
     "schedule:automergeNonOfficeHours",
+    ":approveMajorUpdates",
     ":automergeLinters",
     ":automergeTesters",
     ":maintainLockFilesWeekly",
     ":pinAllExceptPeerDependencies",
     ":semanticCommits",
-    ":separateMajorReleases"
+    ":separateMultipleMajorReleases"
   ],
-  "major": {
-    "dependencyDashboardApproval": true
-  },
   "packageRules": [
     {
       "matchPackageNames": [
@@ -23,17 +22,6 @@
       ],
       "groupName": "TypeScript",
       "separateMultipleMinor": true
-    },
-    {
-      "matchDepTypes": [
-        "devDependencies"
-      ],
-      "matchUpdateTypes": [
-        "patch",
-        "minor",
-        "digest"
-      ],
-      "groupName": "devDependencies (non-major)"
     },
     {
       "matchPackageNames": [
