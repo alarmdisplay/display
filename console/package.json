@@ -34,7 +34,7 @@
     "@vue/cli-plugin-router": "5.0.8",
     "@vue/cli-service": "5.0.8",
     "eslint": "8.57.0",
-    "eslint-plugin-vue": "9.27.0",
+    "eslint-plugin-vue": "9.28.0",
     "vue-template-compiler": "2.6.14"
   },
   "overrides": {
