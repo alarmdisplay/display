@@ -8,7 +8,7 @@
   "author": "Andreas Brain",
   "devDependencies": {
     "chai": "5.1.1",
-    "chai-http": "5.0.0",
+    "chai-http": "5.1.1",
     "mocha": "10.7.3"
   }
 }
