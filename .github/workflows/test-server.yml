@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mysql:
-        image: mariadb:11.5.2@sha256:4066f2d4805fef72a83cf4a62689a0aadb6e83a8c8a82b64431edd4b94f684f8
+        image: mariadb:11.5.2@sha256:528a1cb190a336ee9f5d2ee39a26eac3c50a237c4cfbfabd65e29bbce18138b9
         env:
           MARIADB_USER: display
           MARIADB_PASSWORD: display
