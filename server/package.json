@@ -77,7 +77,7 @@
     "@types/bluebird": "3.5.42",
     "@types/compression": "1.7.5",
     "@types/cors": "2.8.17",
-    "@types/jest": "29.5.13",
+    "@types/jest": "29.5.14",
     "@types/jsonwebtoken": "9.0.6",
     "@types/serve-favicon": "2.5.7",
     "@types/socket.io-client": "1.4.36",
