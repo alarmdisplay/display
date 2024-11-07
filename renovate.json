@@ -29,12 +29,6 @@
         "vue-template-compiler"
       ],
       "allowedVersions": "< 2.7"
-    },
-    {
-      "matchPackageNames": [
-        "node"
-      ],
-      "allowedVersions": "/^[1-9][02468]\\./"
     }
   ]
 }
