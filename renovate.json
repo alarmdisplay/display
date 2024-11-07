@@ -2,7 +2,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:best-practices",
-    "group:allNonMajor",
     "group:linters",
     "group:test",
     "npm:unpublishSafe",
@@ -29,12 +28,6 @@
         "vue-template-compiler"
       ],
       "allowedVersions": "< 2.7"
-    },
-    {
-      "matchPackageNames": [
-        "node"
-      ],
-      "allowedVersions": "/^[1-9][02468]\\./"
     }
   ]
 }
