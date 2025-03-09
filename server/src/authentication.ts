@@ -1,7 +1,6 @@
 import { ServiceAddons } from '@feathersjs/feathers';
 import { AuthenticationService, JWTStrategy } from '@feathersjs/authentication';
 import { LocalStrategy } from '@feathersjs/authentication-local';
-import { expressOauth } from '@feathersjs/authentication-oauth';
 import { ApiKeyStrategy } from './auth-strategies/api-key.strategy';
 
 import { Application } from './declarations';
@@ -20,5 +19,4 @@ export default function(app: Application): void {
   authentication.register('api-key', new ApiKeyStrategy());
 
   app.use('/authentication', authentication);
-  app.configure(expressOauth());
 }

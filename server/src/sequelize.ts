@@ -1,12 +1,12 @@
-import { Sequelize, ConnectionError, Dialect } from 'sequelize';
+import { Sequelize, ConnectionError, Dialect, QueryInterface } from 'sequelize';
 import { Application } from './declarations';
-import Umzug from 'umzug';
-import * as path from 'path';
+import { MigrationParams, SequelizeStorage, Umzug } from 'umzug';
 import logger from './logger';
 
+export type Migration = (params: MigrationParams<{ query: QueryInterface, app: Application }>) => Promise<void>;
+
 export default function (app: Application): void {
-  const dialect: Dialect = process.env.NODE_ENV === 'test' ? 'sqlite' : 'mysql';
-  const connectionString = app.get(dialect);
+  const { dialect, connection: connectionString } = app.get('dbConfig') as { dialect: Dialect, connection: string };
   if (!connectionString || connectionString === '') {
     throw new Error(`The config '${dialect}' has not been set`);
   }
@@ -37,19 +37,34 @@ export default function (app: Application): void {
 
     // Initialize Umzug, used for database migrations
     const umzug = new Umzug({
+      logger: undefined,
       migrations: {
-        // indicates the folder containing the migration .js files
-        path: path.resolve(__dirname, './migrations'),
-        // Accept ts files in tests
-        pattern: process.env.NODE_ENV === 'test' ? /^[^\.]+\.ts$/ : /\.js$/,
-        // inject sequelize's QueryInterface in the migrations
-        params: [
-          sequelize.getQueryInterface(),
-          app
-        ]
+        glob: ['migrations/*.{js,ts}', { cwd: __dirname }],
+        resolve: ({name, path, context}) => {
+          if (!path) {
+            throw new Error('No support for migrations without a path');
+          }
+
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          const migration = require(path);
+
+          // Always store the migration with the .js suffix
+          const jsName = name.replace(/\.ts$/, '.js');
+
+          return {
+            name: jsName,
+            up: async () => migration.up({context}),
+            down: async () => migration.down({context})
+          };
+        },
       },
-      storage: 'sequelize',
-      storageOptions: { sequelize }
+      context: {
+        query: sequelize.getQueryInterface(),
+        app
+      },
+      storage: new SequelizeStorage({
+        sequelize: sequelize,
+      }),
     });
 
     // Retry options for initial database connection
@@ -66,6 +81,12 @@ export default function (app: Application): void {
     // Migrate and sync to the database
     app.set('sequelizeSync', sequelize.authenticate({ retry: retryOptions }).then(() => {
       logger.info('Connected to database');
+      // Tear down the existing tables for testing
+      if (process.env.NODE_ENV === 'test') {
+        logger.debug('Tearing down tables for testing ...');
+        return umzug.down();
+      }
+    }).then(() => {
       return umzug.up();
     }, (reason: Error) => {
       logger.error('Database connection failed:', reason.message);

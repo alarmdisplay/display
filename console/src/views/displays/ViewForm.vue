@@ -16,6 +16,7 @@
               @save="
               () => {
                 $data.formError = null
+                clone.displayId = displayId;
                 save()
                   .then(() => $router.push({ name: 'view-list', params: { display_id: `${displayId}` } }))
                   .catch(reason => { $data.formError = reason })
@@ -60,7 +61,7 @@ export default {
     const { View } = this.$FeathersVuex.api
     return {
       formError: null,
-      newItem: new View({ displayId: this.displayId })
+      newItem: new View()
     }
   },
   watch: {

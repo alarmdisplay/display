@@ -1,0 +1,6 @@
+{
+  "dbConfig": {
+    "dialect": "mysql",
+    "connection": "MYSQL_URI"
+  }
+}

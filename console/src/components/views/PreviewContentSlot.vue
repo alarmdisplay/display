@@ -1,12 +1,14 @@
 <template>
     <div class="preview-content-slot" :style="gridItemStyle">
         <div class="content">
-            <font-awesome-icon :icon="getIcon(contentSlot.component)"/>
+            <font-awesome-icon :icon="getComponentIcon(contentSlot.component)"/>
         </div>
     </div>
 </template>
 
 <script>
+import { getComponentIcon } from '@/components'
+
 export default {
   name: 'PreviewContentSlot',
   computed: {
@@ -15,18 +17,7 @@ export default {
     }
   },
   methods: {
-    getIcon: function (componentType) {
-      switch (componentType) {
-        case 'AnnouncementList':
-          return 'bullhorn'
-        case 'Clock':
-          return 'clock'
-        case 'DWDWarningMap':
-          return 'cloud-showers-heavy'
-        default:
-          return 'cube'
-      }
-    }
+    getComponentIcon,
   },
   props: {
     contentSlot: Object

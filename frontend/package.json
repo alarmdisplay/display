@@ -1,58 +1,44 @@
 {
   "name": "@alarmdisplay/display-frontend",
-  "version": "1.0.0-beta.4",
+  "version": "1.0.0-beta.5",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/alarmdisplay/display-frontend-vue.git"
-  },
-  "keywords": [],
   "author": "Andreas Brain",
   "license": "AGPL-3.0-only",
   "dependencies": {
-    "@feathersjs/feathers": "^4.5.12",
-    "@feathersjs/socketio-client": "^4.5.13",
-    "@fortawesome/fontawesome-svg-core": "^1.2.36",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
-    "@fortawesome/vue-fontawesome": "^0.1.10",
-    "@vue/composition-api": "^0.6.7",
-    "core-js": "^3.21.0",
-    "feathers-vuex": "^3.16.0",
-    "leaflet": "^1.7.1",
-    "moment": "^2.29.1",
-    "socket.io-client": "^2.4.0",
-    "vue": "^2.6.14",
-    "vue-moment": "^4.1.0",
-    "vue2-leaflet": "^2.7.1",
-    "vuex": "^3.6.2"
+    "@feathersjs/feathers": "4.5.17",
+    "@feathersjs/socketio-client": "4.5.18",
+    "@fortawesome/fontawesome-svg-core": "6.7.2",
+    "@fortawesome/free-solid-svg-icons": "6.7.2",
+    "@fortawesome/vue-fontawesome": "2.0.10",
+    "@vue/composition-api": "1.7.2",
+    "core-js": "3.41.0",
+    "feathers-vuex": "3.16.0",
+    "leaflet": "1.9.4",
+    "moment": "2.30.1",
+    "socket.io-client": "2.5.0",
+    "vue": "2.6.14",
+    "vue-moment": "4.1.0",
+    "vue2-leaflet": "2.7.1",
+    "vuex": "3.6.2"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.15",
-    "@vue/cli-plugin-eslint": "^4.5.15",
-    "@vue/cli-service": "^4.5.15",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.8.0",
-    "eslint-plugin-vue": "^6.2.2",
-    "vue-template-compiler": "^2.6.14"
+    "@babel/eslint-parser": "7.26.8",
+    "@vue/cli-plugin-babel": "5.0.8",
+    "@vue/cli-plugin-eslint": "5.0.8",
+    "@vue/cli-service": "5.0.8",
+    "eslint": "8.57.1",
+    "eslint-plugin-vue": "9.33.0",
+    "vue-template-compiler": "2.6.14"
   },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
+  "overrides": {
+    "feathers-vuex": {
+      "serialize-error": "11.0.3"
+    }
   },
   "browserslist": [
     "> 1%",

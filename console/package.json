@@ -1,6 +1,6 @@
 {
   "name": "@alarmdisplay/display-console",
-  "version": "1.0.0-beta.4",
+  "version": "1.0.0-beta.5",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,53 +9,38 @@
   },
   "license": "AGPL-3.0-only",
   "dependencies": {
-    "@feathersjs/authentication-client": "^4.5.13",
-    "@feathersjs/feathers": "^4.5.12",
-    "@feathersjs/socketio-client": "^4.5.13",
-    "@fortawesome/fontawesome-svg-core": "^1.2.36",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
-    "@fortawesome/vue-fontawesome": "^0.1.10",
-    "@vue/composition-api": "^1.4.6",
-    "axios": "^0.21.4",
-    "bulma": "^0.9.3",
-    "core-js": "^3.21.0",
-    "feathers-hooks-common": "^5.0.6",
-    "feathers-vuex": "^3.16.0",
-    "moment": "^2.29.1",
-    "simple-vue2-datetimepicker": "^2.3.1",
-    "socket.io-client": "^2.4.0",
-    "vue": "^2.6.14",
-    "vue-moment": "^4.1.0",
-    "vue-router": "^3.5.3",
-    "vuex": "^3.6.2"
+    "@feathersjs/authentication-client": "4.5.18",
+    "@feathersjs/feathers": "4.5.17",
+    "@feathersjs/socketio-client": "4.5.18",
+    "@fortawesome/fontawesome-svg-core": "6.7.2",
+    "@fortawesome/free-solid-svg-icons": "6.7.2",
+    "@fortawesome/vue-fontawesome": "2.0.10",
+    "@vue/composition-api": "1.7.2",
+    "bulma": "0.9.4",
+    "core-js": "3.41.0",
+    "feathers-hooks-common": "6.1.5",
+    "feathers-vuex": "3.16.0",
+    "moment": "2.30.1",
+    "socket.io-client": "2.5.0",
+    "vue": "2.6.14",
+    "vue-moment": "4.1.0",
+    "vue-router": "3.6.5",
+    "vuex": "3.6.2"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.15",
-    "@vue/cli-plugin-eslint": "^4.5.15",
-    "@vue/cli-service": "^4.5.15",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.8.0",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.3.1",
-    "eslint-plugin-standard": "^4.1.0",
-    "eslint-plugin-vue": "^6.2.2",
-    "vue-template-compiler": "^2.6.14"
+    "@babel/eslint-parser": "7.26.8",
+    "@vue/cli-plugin-babel": "5.0.8",
+    "@vue/cli-plugin-eslint": "5.0.8",
+    "@vue/cli-plugin-router": "5.0.8",
+    "@vue/cli-service": "5.0.8",
+    "eslint": "8.57.1",
+    "eslint-plugin-vue": "9.33.0",
+    "vue-template-compiler": "2.6.14"
   },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "standard"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
+  "overrides": {
+    "feathers-vuex": {
+      "serialize-error": "11.0.3"
+    }
   },
   "browserslist": [
     "> 1%",

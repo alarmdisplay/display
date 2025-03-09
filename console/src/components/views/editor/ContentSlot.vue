@@ -6,9 +6,9 @@
         <div class="content">
           <div class="has-text-centered">
             <span class="icon">
-              <font-awesome-icon :icon="getIcon(contentSlot.component)" size="lg"/>
+              <font-awesome-icon :icon="getComponentIcon(contentSlot.component)" size="lg"/>
             </span>
-            <p v-if="componentTypesWithOptions.includes(contentSlot.component)">
+            <p v-if="isComponentConfigurable(contentSlot.component)">
               <a href="#" @click.prevent="$emit('selected', contentSlot)">
                 {{ getComponentName(contentSlot.component) }}
               </a>
@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import { getComponentIcon, getComponentName, isComponentConfigurable } from '@/components'
+
 export default {
   name: 'ContentSlot',
   computed: {
@@ -35,36 +37,10 @@ export default {
       return `grid-column-start: ${this.contentSlot.columnStart}; grid-row-start: ${this.contentSlot.rowStart}; grid-column-end: ${this.contentSlot.columnEnd}; grid-row-end: ${this.contentSlot.rowEnd}`
     }
   },
-  data () {
-    return {
-      componentTypesWithOptions: ['DWDWarningMap', 'AnnouncementList']
-    }
-  },
   methods: {
-    getComponentName: function (componentType) {
-      switch (componentType) {
-        case 'AnnouncementList':
-          return 'Bekanntmachungen'
-        case 'Clock':
-          return 'Uhr'
-        case 'DWDWarningMap':
-          return 'DWD-Warnkarte'
-        default:
-          return componentType
-      }
-    },
-    getIcon: function (componentType) {
-      switch (componentType) {
-        case 'AnnouncementList':
-          return 'bullhorn'
-        case 'Clock':
-          return 'clock'
-        case 'DWDWarningMap':
-          return 'cloud-showers-heavy'
-        default:
-          return 'cube'
-      }
-    },
+    getComponentName,
+    getComponentIcon,
+    isComponentConfigurable,
     onDragEnd: function () {
       this.$emit('drag-ended')
     },

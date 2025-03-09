@@ -5,14 +5,10 @@ import logger from '../../logger';
 import IncidentsWatcher from './services/incidents.class';
 import LocationsWatcher from './services/locations.class';
 
-interface ServiceOptions {}
-
 export class HubConnector implements SetupMethod {
   app: Application;
-  options: ServiceOptions;
 
-  constructor (options: ServiceOptions = {}, app: Application) {
-    this.options = options;
+  constructor (app: Application) {
     this.app = app;
   }
 
@@ -28,7 +24,7 @@ export class HubConnector implements SetupMethod {
     let hubUrl: URL;
     try {
       hubUrl = new URL(hubHost);
-    } catch (e) {
+    } catch {
       logger.error('hub_host is not a valid URL');
       return;
     }

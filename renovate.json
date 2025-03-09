@@ -1,0 +1,33 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices",
+    "group:linters",
+    "group:test",
+    "npm:unpublishSafe",
+    "schedule:automergeNonOfficeHours",
+    ":approveMajorUpdates",
+    ":automergeLinters",
+    ":automergeTesters",
+    ":maintainLockFilesWeekly",
+    ":pinAllExceptPeerDependencies",
+    ":semanticCommits",
+    ":separateMultipleMajorReleases"
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "typescript"
+      ],
+      "groupName": "TypeScript",
+      "separateMultipleMinor": true
+    },
+    {
+      "matchPackageNames": [
+        "vue",
+        "vue-template-compiler"
+      ],
+      "allowedVersions": "< 2.7"
+    }
+  ]
+}

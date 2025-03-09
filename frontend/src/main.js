@@ -10,11 +10,11 @@ import VueMoment from 'vue-moment';
 
 // Import Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faBullhorn, faClock, faStopwatch } from '@fortawesome/free-solid-svg-icons'
+import { faBullhorn, faCalendar, faClock, faStopwatch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 // Configure Font Awesome
-library.add(faBullhorn, faClock, faStopwatch)
+library.add(faBullhorn, faCalendar, faClock, faStopwatch)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 require('moment/locale/de');
@@ -28,6 +28,7 @@ new Vue({
   render: h => h(App),
   store,
   data: {
+    minutes: Math.floor(Date.now() / 60000),
     seconds: Math.floor(Date.now() / 1000)
   },
   created: function () {
@@ -43,6 +44,11 @@ new Vue({
     },
     hideSplashScreen: function () {
       this.$store.commit('setShowSplashScreen', false)
+    }
+  },
+  watch: {
+    seconds(newValue) {
+      this.minutes = Math.floor(newValue / 60);
     }
   }
 }).$mount('#app');

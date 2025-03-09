@@ -1,0 +1,59 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI for Server
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+defaults:
+  run:
+    working-directory: ./server
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mariadb:11.7.2@sha256:310d29fbb58169dcddb384b0ff138edb081e2773d6e2eceb976b3668089f2f84
+        env:
+          MARIADB_USER: display
+          MARIADB_PASSWORD: display
+          MARIADB_ROOT_PASSWORD: doesntmatter
+          MARIADB_DATABASE: display
+          TZ: Europe/Berlin
+        ports:
+          - 3306/tcp
+        options: --health-cmd="mariadb-admin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+    - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+        cache-dependency-path: server/package-lock.json
+    - run: npm ci
+    - run: npm run lint
+    - run: npm run compile
+    - run: npm run jest -- --coverage
+      env:
+        MYSQL_URI: mysql://display:display@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/display
+    - name: Upload code coverage to Code Climate
+      uses: paambaati/codeclimate-action@7c100bd1ed15de0bdee476b38ca759d8c94207b5 # v8.0.0
+      env:
+        CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+      with:
+        coverageLocations: |
+          ${{github.workspace}}/server/coverage/lcov.info:lcov
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v5.4.0
+      with:
+        fail_ci_if_error: true
+        token: ${{ secrets.CODECOV_TOKEN }}
+        directory: ${{github.workspace}}/server/coverage
+        flags: server

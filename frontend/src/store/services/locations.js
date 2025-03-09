@@ -16,7 +16,8 @@ class Location extends BaseModel {
       street: '',
       number: '',
       detail: '',
-      locality: '',
+      municipality: '',
+      district: '',
       incidentId: undefined
     }
   }
