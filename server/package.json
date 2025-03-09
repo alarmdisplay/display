@@ -63,7 +63,7 @@
     "feathers-shallow-populate": "2.5.1",
     "ical.js": "2.1.0",
     "log4js": "6.9.1",
-    "mysql2": "3.12.0",
+    "mysql2": "3.13.0",
     "sequelize": "6.37.6",
     "serve-favicon": "2.5.0",
     "socket.io-client": "2.5.0",
