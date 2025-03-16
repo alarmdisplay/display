@@ -8,13 +8,8 @@ import store from './store'
 import moment from 'moment'
 import VueMoment from 'vue-moment';
 
-// Import Font Awesome
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faBullhorn, faCalendar, faClock, faStopwatch } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
-// Configure Font Awesome
-library.add(faBullhorn, faCalendar, faClock, faStopwatch)
+// Load Font Awesome
+import FontAwesomeIcon from './font-awesome'
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 require('moment/locale/de');

@@ -1,5 +1,6 @@
 <script>
 import AnnouncementList from "@/components/announcements/AnnouncementList";
+import BrightSky from '@/components/BrightSky.vue'
 import Clock from "@/components/Clock";
 import DWDWarningMap from "@/components/DWDWarningMap";
 import NextUpList from '@/components/NextUpList'
@@ -13,6 +14,7 @@ export default {
   },
   components: {
     AnnouncementList,
+    BrightSky,
     Clock,
     DWDWarningMap,
     NextUpList,

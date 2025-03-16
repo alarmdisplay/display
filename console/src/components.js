@@ -4,6 +4,11 @@ const components = {
     icon: 'bullhorn',
     options: true,
   },
+  BrightSky: {
+    name: 'Bright Sky',
+    icon: 'cloud-sun',
+    options: false,
+  },
   Clock: {
     name: 'Uhr',
     icon: 'clock',
