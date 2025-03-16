@@ -13,6 +13,7 @@ class View extends BaseModel {
       order: 999,
       columns: 3,
       rows: 3,
+      active: true,
       contentSlots: []
     }
   }
@@ -22,6 +23,8 @@ class View extends BaseModel {
     if (data.contentSlots && Array.isArray(data.contentSlots)) {
       data.contentSlots.forEach(contentSlot => new models.api.ContentSlot(contentSlot))
     }
+
+    data.active = data.active === 1;
 
     // Replace the nested content slots with a getter
     Object.defineProperty(data, 'contentSlots', {

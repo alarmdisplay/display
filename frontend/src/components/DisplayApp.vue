@@ -48,7 +48,9 @@ import Clock from "@/components/Clock";
                 return []
               }
 
-              return this.views.filter(view => view.type === 'idle')
+              return this.views.filter(view => {
+                return view.type === 'idle' && view.active === true;
+              })
             },
             testIncidentDisplayDuration() {
               let minutes = this.$store.getters['settings/getIntegerValue']('incident_test_display_minutes') || 1

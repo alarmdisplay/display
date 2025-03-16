@@ -18,6 +18,7 @@ declare module '../../declarations' {
     columns: number
     rows: number
     displayId: number
+    active: boolean
     contentSlots: ContentSlotData[]
   }
 }
