@@ -9,12 +9,6 @@
             </figure>
         </div>
         <footer class="card-footer">
-            <a class="card-footer-item has-text-danger is-disabled" href="#" @click.prevent="view.remove()">
-                <span class="icon">
-                  <font-awesome-icon icon="trash-alt"/>
-                </span>
-                <span>Löschen</span>
-            </a>
             <div class="card-footer-item" v-if="view.active">
                 <button class="button" @click="deactivateView">
                     <span class="icon">
@@ -31,7 +25,7 @@
                     <span>Aktivieren</span>
                 </button>
             </div>
-            <router-link :to="`/displays/${view.displayId}/views/${view.id}`" class="card-footer-item">
+            <router-link :to="{ name: 'view-form', params: { display_id: view.displayId, view_id: view.id }}" class="card-footer-item">
             <span class="icon">
               <font-awesome-icon icon="pencil-alt"/>
             </span>
