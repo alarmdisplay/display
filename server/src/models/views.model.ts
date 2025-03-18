@@ -35,6 +35,11 @@ export default function (app: Application): typeof Model {
       allowNull: false,
       defaultValue: true,
     },
+    pinned: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    }
   }, {
     hooks: {
       beforeCount(options: any): HookReturn {

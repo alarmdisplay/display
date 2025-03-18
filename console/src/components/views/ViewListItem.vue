@@ -9,6 +9,20 @@
             </figure>
         </div>
         <footer class="card-footer">
+            <div class="card-footer-item">
+                <button v-if="view.pinned === true" class="button" @click="unpinView">
+                    <span class="icon">
+                        <font-awesome-icon icon="thumbtack-slash"/>
+                    </span>
+                    <span>Loslösen</span>
+                </button>
+                <button v-else class="button" @click="pinView">
+                    <span class="icon">
+                        <font-awesome-icon icon="thumbtack"/>
+                    </span>
+                    <span>Anpinnen</span>
+                </button>
+            </div>
             <div class="card-footer-item" v-if="view.active">
                 <button class="button" @click="deactivateView">
                     <span class="icon">
@@ -52,7 +66,13 @@ export default {
     },
     deactivateView() {
       this.view.patch({ data: { active: false } });
-    }
+    },
+    pinView() {
+      this.view.patch({ data: { pinned: true } });
+    },
+    unpinView() {
+      this.view.patch({ data: { pinned: false } });
+    },
   }
 }
 </script>

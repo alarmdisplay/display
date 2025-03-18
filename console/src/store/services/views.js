@@ -11,6 +11,7 @@ class View extends BaseModel {
       rows: 3,
       displayId: null,
       active: true,
+      pinned: false,
     }
   }
 
@@ -19,6 +20,9 @@ class View extends BaseModel {
     if (data.contentSlots && Array.isArray(data.contentSlots)) {
       data.contentSlots.forEach(contentSlot => new models.api.ContentSlot(contentSlot))
     }
+
+    data.active = data.active === 1;
+    data.pinned = data.pinned === 1;
 
     // Replace the nested content slots with a getter
     Object.defineProperty(data, 'contentSlots', {

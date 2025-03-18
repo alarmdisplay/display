@@ -14,6 +14,7 @@ class View extends BaseModel {
       columns: 3,
       rows: 3,
       active: true,
+      pinned: false,
       contentSlots: []
     }
   }
@@ -25,6 +26,7 @@ class View extends BaseModel {
     }
 
     data.active = data.active === 1;
+    data.pinned = data.pinned === 1;
 
     // Replace the nested content slots with a getter
     Object.defineProperty(data, 'contentSlots', {

@@ -19,6 +19,7 @@ declare module '../../declarations' {
     rows: number
     displayId: number
     active: boolean
+    pinned: boolean
     contentSlots: ContentSlotData[]
   }
 }
