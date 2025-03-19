@@ -1,6 +1,6 @@
 import { Migration } from '../sequelize';
 
-export const up: Migration = async ({context: {app, query}}) => {
+export const up: Migration = async ({context: {query}}) => {
   const tableName = 'locations';
 
   // Remove the incorrect constraint
@@ -16,7 +16,7 @@ export const up: Migration = async ({context: {app, query}}) => {
     onUpdate: 'CASCADE'
   });
 };
-export const down: Migration = async ({context: {app, query}}) => {
+export const down: Migration = async ({context: {query}}) => {
   const tableName = 'locations';
 
   // Remove the correct constraint

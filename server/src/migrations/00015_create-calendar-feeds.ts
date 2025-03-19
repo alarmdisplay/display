@@ -1,7 +1,7 @@
 import Sequelize, {DataTypes} from 'sequelize';
 import { Migration } from '../sequelize';
 
-export const up: Migration = async ({context: {app, query}}) => {
+export const up: Migration = async ({context: {query}}) => {
   const tableName = 'calendar_feeds';
 
   try {
@@ -43,6 +43,6 @@ export const up: Migration = async ({context: {app, query}}) => {
     fields: ['name']
   });
 };
-export const down: Migration = async ({context: {app, query}}) => {
+export const down: Migration = async ({context: {query}}) => {
   await query.dropTable('calendar_feeds');
 };

@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
 import { Migration } from '../sequelize';
 
-export const up: Migration = async ({context: {app, query}}) => {
+export const up: Migration = async ({context: {query}}) => {
   await query.createTable('users', {
     id: {
       type: Sequelize.INTEGER,
@@ -34,6 +34,6 @@ export const up: Migration = async ({context: {app, query}}) => {
   });
 };
 
-export const down: Migration = async ({context: {app, query}}) => {
+export const down: Migration = async ({context: {query}}) => {
   await query.dropTable('users');
 };

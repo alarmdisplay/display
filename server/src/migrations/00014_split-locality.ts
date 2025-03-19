@@ -1,7 +1,7 @@
 import {DataTypes} from 'sequelize';
 import { Migration } from '../sequelize';
 
-export const up: Migration = async ({context: {app, query}}) => {
+export const up: Migration = async ({context: {query}}) => {
   const tableName = 'locations';
 
   await query.renameColumn(tableName, 'locality', 'municipality');
@@ -11,7 +11,7 @@ export const up: Migration = async ({context: {app, query}}) => {
     defaultValue: ''
   });
 };
-export const down: Migration = async ({context: {app, query}}) => {
+export const down: Migration = async ({context: {query}}) => {
   const tableName = 'locations';
   await query.removeColumn(tableName, 'district');
   await query.renameColumn(tableName, 'municipality', 'locality');

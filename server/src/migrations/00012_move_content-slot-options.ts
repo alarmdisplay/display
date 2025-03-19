@@ -1,7 +1,7 @@
 import Sequelize, { DataTypes } from 'sequelize';
 import { Migration } from '../sequelize';
 
-export const up: Migration = async ({context: {app, query}}) => {
+export const up: Migration = async ({context: {query}}) => {
   const contentSlotsTableName = 'content_slots';
   await query.addColumn(contentSlotsTableName, 'options', {
     type: DataTypes.JSON,
@@ -26,7 +26,7 @@ export const up: Migration = async ({context: {app, query}}) => {
 
   await query.dropTable(optionsTableName);
 };
-export const down: Migration = async ({context: {app, query}}) => {
+export const down: Migration = async ({context: {query}}) => {
   const tableName = 'content_slot_options';
   await query.createTable(tableName, {
     id: {
