@@ -57,7 +57,7 @@ export default function (app: Application): typeof Model {
         options.raw = true;
       }
     },
-    tableName: [app.get('db_prefix'), 'locations'].join('_')
+    tableName: 'locations'
   });
 
   (locations as any).associate = function (models: any): void {

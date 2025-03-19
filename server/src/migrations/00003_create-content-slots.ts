@@ -2,7 +2,7 @@ import Sequelize, {DataTypes} from 'sequelize';
 import { Migration } from '../sequelize';
 
 export const up: Migration = async ({context: {app, query}}) => {
-  const tableName = [app.get('db_prefix'), 'content_slots'].join('_');
+  const tableName = 'content_slots';
 
   try {
     await query.describeTable(tableName);
@@ -62,11 +62,11 @@ export const up: Migration = async ({context: {app, query}}) => {
     name: `${tableName}_ibfk_1`,
     type: 'foreign key',
     fields: ['viewId'],
-    references: { table: [app.get('db_prefix'), 'views'].join('_'), field: 'id' },
+    references: { table: 'views', field: 'id' },
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE'
   });
 };
 export const down: Migration = async ({context: {app, query}}) => {
-  await query.dropTable([app.get('db_prefix'), 'content_slots'].join('_'));
+  await query.dropTable('content_slots');
 };

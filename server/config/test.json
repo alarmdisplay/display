@@ -7,6 +7,5 @@
     "dialect": "sqlite",
     "connection": "sqlite::memory:"
   },
-  "dbMaxRetries": 10,
-  "db_prefix": "test"
+  "dbMaxRetries": 10
 }

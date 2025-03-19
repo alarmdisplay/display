@@ -47,7 +47,7 @@ export default function (app: Application): typeof Model {
         options.raw = true;
       }
     },
-    tableName: [app.get('db_prefix'), 'content_slots'].join('_')
+    tableName: 'content_slots'
   });
 
   (ContentSlot as any).associate = function (models: any): void {

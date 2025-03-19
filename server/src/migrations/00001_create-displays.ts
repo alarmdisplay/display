@@ -2,7 +2,7 @@ import Sequelize, {DataTypes} from 'sequelize';
 import { Migration } from '../sequelize';
 
 export const up: Migration = async ({context: {app, query}}) => {
-  await query.createTable([app.get('db_prefix'), 'displays'].join('_'), {
+  await query.createTable('displays', {
     id: {
       type: Sequelize.INTEGER,
       allowNull: false,
@@ -34,5 +34,5 @@ export const up: Migration = async ({context: {app, query}}) => {
   });
 };
 export const down: Migration = async ({context: {app, query}}) => {
-  await query.dropTable([app.get('db_prefix'), 'displays'].join('_'));
+  await query.dropTable('displays');
 };

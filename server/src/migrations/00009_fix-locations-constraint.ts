@@ -1,7 +1,7 @@
 import { Migration } from '../sequelize';
 
 export const up: Migration = async ({context: {app, query}}) => {
-  const tableName = [app.get('db_prefix'), 'locations'].join('_');
+  const tableName = 'locations';
 
   // Remove the incorrect constraint
   await query.removeConstraint(tableName, `${tableName}_ibfk_1`);
@@ -11,13 +11,13 @@ export const up: Migration = async ({context: {app, query}}) => {
     name: `${tableName}_ibfk_1`,
     type: 'foreign key',
     fields: ['incidentId'],
-    references: { table: [app.get('db_prefix'), 'incidents'].join('_'), field: 'id' },
+    references: { table: 'incidents', field: 'id' },
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE'
   });
 };
 export const down: Migration = async ({context: {app, query}}) => {
-  const tableName = [app.get('db_prefix'), 'locations'].join('_');
+  const tableName = 'locations';
 
   // Remove the correct constraint
   await query.removeConstraint(tableName, `${tableName}_ibfk_1`);
@@ -27,7 +27,7 @@ export const down: Migration = async ({context: {app, query}}) => {
     name: `${tableName}_ibfk_1`,
     type: 'foreign key',
     fields: ['incidentId'],
-    references: { table: [app.get('db_prefix'), 'incidents'].join('_'), field: 'id' },
+    references: { table: 'incidents', field: 'id' },
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE'
   });

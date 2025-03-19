@@ -20,7 +20,7 @@ export default function (app: Application): typeof Model {
         options.raw = true;
       }
     },
-    tableName: [app.get('db_prefix'), 'api_keys'].join('_')
+    tableName: 'api_keys'
   });
 
   (ApiKey as any).associate = function (models: any): void {

@@ -35,7 +35,6 @@
     "level": "info"
   },
   "dbMaxRetries": 5,
-  "db_prefix": "display",
   "hub_host": "",
   "hub_api_key": ""
 }

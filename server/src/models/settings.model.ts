@@ -22,7 +22,7 @@ export default function (app: Application): typeof Model {
         options.raw = true;
       }
     },
-    tableName: [app.get('db_prefix'), 'settings'].join('_')
+    tableName: 'settings'
   });
   return Setting;
 }
