@@ -1,54 +1,66 @@
 <template>
-  <div class="columns" v-if="item">
-    <div class="column is-two-thirds">
-      <div class="preview-container">
-        <GridEditor :columns="item.columns" :rows="item.rows" :content-slots="item.contentSlots" @content-slot-removed="removeContentSlot"/>
-      </div>
-    </div>
-
-    <div class="column is-one-third">
-      <div class="panel">
-        <div class="panel-heading">Raster</div>
-        <div class="panel-block">
-          <p>
-            Die Komponenten können auf einem Raster angeordnet werden, wobei die Anzahl der Spalten und Zeilen die kleinstmögliche Größe einer Komponente bestimmen. Je mehr Spalten und Zeilen es gibt, desto feiner kann das Layout bestimmt werden. Komponenten können sich über mehrere Zeilen und/oder Spalten erstrecken.
-          </p>
-        </div>
-        <div class="panel-block">
-          <p class="control">
-            <label class="label" for="input-columns">Spalten:</label>
-            <input id="input-columns" type="number" min="1" class="input" v-model.number="item.columns">
-          </p>
-        </div>
-        <div class="panel-block">
-          <p class="control">
-            <label class="label" for="input-rows">Zeilen:</label>
-            <input id="input-rows" type="number" min="1" class="input" v-model.number="item.rows">
-          </p>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-heading">Komponente hinzufügen</div>
-        <div class="panel-block">
-          <div class="control">
-            <label class="label is-hidden" for="select-component-to-add">Verf&uuml;gbare Komponenten:</label>
-            <div class="select">
-              <select id="select-component-to-add">
-                <option value="">Komponente wählen</option>
-                <option v-for="componentType in availableComponentTypes" :key="`add-${componentType}`"
-                        :value="componentType">{{ getComponentName(componentType) }}
-                </option>
-              </select>
+    <div>
+        <div class="columns">
+            <div class="column is-two-thirds">
+                <div class="preview-container">
+                    <GridEditor :columns="item.columns" :rows="item.rows" :content-slots="item.contentSlots" @content-slot-removed="removeContentSlot"/>
+                </div>
             </div>
-            <button type="button" @click="addContentSlot" class="button">Hinzuf&uuml;gen</button>
-          </div>
-        </div>
-      </div>
 
-      <button type="button" class="button is-success" @click="saveChanges">Speichern</button>
+            <div class="column is-one-third">
+                <div class="panel">
+                    <div class="panel-heading">Raster</div>
+                    <div class="panel-block">
+                        <p>
+                            Die Komponenten können auf einem Raster angeordnet werden, wobei die Anzahl der Spalten und Zeilen die kleinstmögliche Größe einer Komponente bestimmen. Je mehr Spalten und Zeilen es gibt, desto feiner kann das Layout bestimmt werden. Komponenten können sich über mehrere Zeilen und/oder Spalten erstrecken.
+                        </p>
+                    </div>
+                    <div class="panel-block">
+                        <p class="control">
+                            <label class="label" for="input-columns">Spalten:</label>
+                            <input id="input-columns" type="number" min="1" class="input" v-model.number="item.columns">
+                        </p>
+                    </div>
+                    <div class="panel-block">
+                        <p class="control">
+                            <label class="label" for="input-rows">Zeilen:</label>
+                            <input id="input-rows" type="number" min="1" class="input" v-model.number="item.rows">
+                        </p>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-heading">Komponente hinzufügen</div>
+                    <div class="panel-block">
+                        <div class="control">
+                            <label class="label is-hidden" for="select-component-to-add">Verf&uuml;gbare Komponenten:</label>
+                            <div class="select">
+                                <select id="select-component-to-add">
+                                    <option value="">Komponente wählen</option>
+                                    <option v-for="componentType in availableComponentTypes" :key="`add-${componentType}`"
+                                            :value="componentType">{{ getComponentName(componentType) }}
+                                    </option>
+                                </select>
+                            </div>
+                            <button type="button" @click="addContentSlot" class="button">Hinzuf&uuml;gen</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column">
+                <div class="field is-grouped">
+                    <p class="control is-expanded">
+                        <button type="button" class="button is-danger is-outlined" @click="$emit('remove')">Löschen</button>
+                    </p>
+                    <p class="control">
+                        <button type="button" class="button is-success" @click="saveChanges">Speichern</button>
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>

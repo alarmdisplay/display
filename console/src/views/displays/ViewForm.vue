@@ -9,8 +9,8 @@
 
       <ErrorMessage :form-error="formError"/>
 
-      <FeathersVuexFormWrapper :item="item" :eager="false">
-        <template v-slot="{ clone, save, reset }">
+      <FeathersVuexFormWrapper v-if="item" :item="item" :eager="false">
+        <template v-slot="{ clone, save, reset, remove }">
           <ViewEditForm
               :item="clone"
               @save="
@@ -21,6 +21,13 @@
                   .then(() => $router.push({ name: 'view-list', params: { display_id: `${displayId}` } }))
                   .catch(reason => { $data.formError = reason })
               }"
+              @remove="
+                () => {
+                  $data.formError = null;
+                  remove()
+                    .then(() => $router.push({ name: 'view-list', params: { display_id: `${displayId}` } }))
+                    .catch(reason => { $data.formError = reason })
+                }"
               @reset="reset"
           ></ViewEditForm>
         </template>

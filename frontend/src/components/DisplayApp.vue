@@ -48,7 +48,17 @@ import Clock from "@/components/Clock";
                 return []
               }
 
-              return this.views.filter(view => view.type === 'idle')
+              const activeViews = this.views.filter(view => {
+                return view.type === 'idle' && view.active === true
+              })
+
+              const pinnedView = activeViews.find(view => view.pinned === true)
+
+              if (pinnedView) {
+                return [pinnedView]
+              } else {
+                return activeViews
+              }
             },
             testIncidentDisplayDuration() {
               let minutes = this.$store.getters['settings/getIntegerValue']('incident_test_display_minutes') || 1

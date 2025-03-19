@@ -29,6 +29,16 @@ export default function (app: Application): typeof Model {
       validate: {
         min: 1
       }
+    },
+    active: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+    },
+    pinned: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   }, {
     hooks: {
