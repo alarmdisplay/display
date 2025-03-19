@@ -23,7 +23,7 @@ export default function (app: Application): typeof Model {
         options.raw = true;
       }
     },
-    tableName: [app.get('db_prefix'), 'calendar_feeds'].join('_')
+    tableName: 'calendar_feeds'
   });
 
   return CalendarFeed;

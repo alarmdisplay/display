@@ -1,8 +1,8 @@
 import Sequelize, {DataTypes} from 'sequelize';
 import { Migration } from '../sequelize';
 
-export const up: Migration = async ({context: {app, query}}) => {
-  const tableName = [app.get('db_prefix'), 'settings'].join('_');
+export const up: Migration = async ({context: {query}}) => {
+  const tableName = 'settings';
 
   try {
     await query.describeTable(tableName);
@@ -32,6 +32,6 @@ export const up: Migration = async ({context: {app, query}}) => {
     }
   });
 };
-export const down: Migration = async ({context: {app, query}}) => {
-  await query.dropTable([app.get('db_prefix'), 'settings'].join('_'));
+export const down: Migration = async ({context: {query}}) => {
+  await query.dropTable('settings');
 };

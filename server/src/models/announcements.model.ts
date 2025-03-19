@@ -32,7 +32,7 @@ export default function (app: Application): typeof Model {
         options.raw = true;
       }
     },
-    tableName: [app.get('db_prefix'), 'announcements'].join('_')
+    tableName: 'announcements'
   });
   return Announcement;
 }

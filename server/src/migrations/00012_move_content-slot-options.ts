@@ -1,14 +1,14 @@
 import Sequelize, { DataTypes } from 'sequelize';
 import { Migration } from '../sequelize';
 
-export const up: Migration = async ({context: {app, query}}) => {
-  const contentSlotsTableName = [app.get('db_prefix'), 'content_slots'].join('_');
+export const up: Migration = async ({context: {query}}) => {
+  const contentSlotsTableName = 'content_slots';
   await query.addColumn(contentSlotsTableName, 'options', {
     type: DataTypes.JSON,
     allowNull: true
   });
 
-  const optionsTableName = [app.get('db_prefix'), 'content_slot_options'].join('_');
+  const optionsTableName = 'content_slot_options';
 
   const oldOptions = await query.select(null, optionsTableName) as { id: number, key: string, value: string, contentSlotId: number }[];
   const newOptions = new Map<number, any>();
@@ -26,8 +26,8 @@ export const up: Migration = async ({context: {app, query}}) => {
 
   await query.dropTable(optionsTableName);
 };
-export const down: Migration = async ({context: {app, query}}) => {
-  const tableName = [app.get('db_prefix'), 'content_slot_options'].join('_');
+export const down: Migration = async ({context: {query}}) => {
+  const tableName = 'content_slot_options';
   await query.createTable(tableName, {
     id: {
       type: Sequelize.INTEGER,
@@ -66,13 +66,13 @@ export const down: Migration = async ({context: {app, query}}) => {
     name: `${tableName}_ibfk_1`,
     type: 'foreign key',
     fields: ['contentSlotId'],
-    references: { table: [app.get('db_prefix'), 'content_slots'].join('_'), field: 'id' },
+    references: { table: 'content_slots', field: 'id' },
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE'
   });
 
   // no data migration for now
 
-  const contentSlotsTableName = [app.get('db_prefix'), 'content_slots'].join('_');
+  const contentSlotsTableName = 'content_slots';
   await query.removeColumn(contentSlotsTableName, 'options');
 };
