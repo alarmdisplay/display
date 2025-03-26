@@ -1,12 +1,16 @@
 <template>
   <div id="app">
-    <SplashScreen v-if="showSplashScreen === true"/>
-    <DisplayApp v-else-if="displayId" :the-display-id="displayId"/>
-    <DisplaySetup v-else/>
+    <div id="maincontent" :class="{ connection_banner_visible: showConnectionBanner }">
+      <SplashScreen v-if="showSplashScreen === true"/>
+      <DisplayApp v-else-if="displayId" :the-display-id="displayId"/>
+      <DisplaySetup v-else/>
+    </div>
+    <ConnectionBanner v-if="showConnectionBanner" :socket-is-connected="socketIsConnected" />
   </div>
 </template>
 
 <script>
+import ConnectionBanner from '@/components/ConnectionBanner.vue'
 import DisplayApp from "@/components/DisplayApp";
 import DisplaySetup from "@/components/DisplaySetup";
 import SplashScreen from "@/components/SplashScreen";
@@ -15,6 +19,7 @@ import feathersClient from "@/feathers-client";
 export default {
   name: 'App',
   components: {
+    ConnectionBanner,
     DisplayApp,
     DisplaySetup,
     SplashScreen
@@ -25,6 +30,16 @@ export default {
     },
     showSplashScreen() {
       return this.$store.state.showSplashScreen
+    },
+    socketIsConnected () {
+      return this.$store.state.socket.connected
+    },
+  },
+  data () {
+    return {
+      hideConnectionBannerTimeout: null,
+      showConnectionBanner: false,
+      showConnectionBannerTimeout: null
     }
   },
   mounted() {
@@ -67,6 +82,21 @@ export default {
         }
       }
     })
+  },
+  watch: {
+    socketIsConnected (connected) {
+      clearTimeout(this.hideConnectionBannerTimeout)
+      clearTimeout(this.showConnectionBannerTimeout)
+      if (connected && this.showConnectionBanner) {
+        this.hideConnectionBannerTimeout = setTimeout(() => {
+          this.showConnectionBanner = false
+        }, 1500)
+      } else if (!connected && !this.showConnectionBanner) {
+        this.showConnectionBannerTimeout = setTimeout(() => {
+          this.showConnectionBanner = true
+        }, 500)
+      }
+    }
   }
 }
 </script>
@@ -80,6 +110,17 @@ export default {
   padding: 0;
   height: 100%;
   overflow: hidden;
+}
+
+#maincontent {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+#maincontent.connection_banner_visible {
+  height: 96% !important;
 }
 
 body {
