@@ -1,14 +1,6 @@
 <template>
   <div id="app">
-    <div v-if="showConnectionBanner" :class="['has-text-white', 'has-text-weight-bold', 'has-text-centered', 'p-1', socketIsConnected ? 'has-background-success' : 'has-background-danger']">
-      <span v-if="socketIsConnected">
-          Verbunden
-      </span>
-      <span v-else class="icon-text">
-        <span class="icon"><font-awesome-icon icon="spinner" spin/></span>
-        <span>Keine Verbindung zum Server &hellip;</span>
-      </span>
-    </div>
+    <ConnectionBanner v-if="showConnectionBanner" :socket-is-connected="socketIsConnected" />
     <Navbar v-if="loggedIn"/>
     <router-view v-if="loggedIn"/>
     <Setup v-else-if="showSetup"/>
@@ -21,10 +13,12 @@ import 'bulma/css/bulma.css'
 import Navbar from './components/Navbar'
 import Login from './views/Login'
 import Setup from '@/views/Setup'
+import ConnectionBanner from '@/components/ConnectionBanner.vue'
 
 export default {
   name: 'App',
   components: {
+    ConnectionBanner,
     Setup,
     Login,
     Navbar
