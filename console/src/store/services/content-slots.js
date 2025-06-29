@@ -16,7 +16,7 @@ class ContentSlot extends BaseModel {
   }
 }
 
-const servicePath = 'api/v1/content-slots'
+const servicePath = 'content-slots'
 const servicePlugin = makeServicePlugin({
   Model: ContentSlot,
   service: feathersClient.service(servicePath),

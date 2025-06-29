@@ -1,4 +1,4 @@
-// Initializes the `announcements` service on path `/api/v1/announcements`
+// Initializes the `announcements` service on path `/announcements`
 import { ServiceAddons } from '@feathersjs/feathers';
 import { Application } from '../../declarations';
 import { Announcements } from './announcements.class';
@@ -8,7 +8,7 @@ import hooks from './announcements.hooks';
 // Add this service to the service type index
 declare module '../../declarations' {
   interface ServiceTypes {
-    'api/v1/announcements': Announcements & ServiceAddons<any>;
+    'announcements': Announcements & ServiceAddons<any>;
   }
 
   interface AnnouncementData {
@@ -28,10 +28,10 @@ export default function (app: Application): void {
   };
 
   // Initialize our service with any options it requires
-  app.use('/api/v1/announcements', new Announcements(options, app));
+  app.use('/announcements', new Announcements(options, app));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('api/v1/announcements');
+  const service = app.service('announcements');
 
   service.hooks(hooks);
 }

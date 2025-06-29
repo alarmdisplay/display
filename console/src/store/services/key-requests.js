@@ -13,7 +13,7 @@ class KeyRequest extends BaseModel {
   }
 }
 
-const servicePath = 'api/v1/key-requests'
+const servicePath = 'key-requests'
 const servicePlugin = makeServicePlugin({
   Model: KeyRequest,
   service: feathersClient.service(servicePath),

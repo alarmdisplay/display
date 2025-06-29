@@ -11,7 +11,7 @@ const { authenticate } = authentication.hooks;
 
 const populateOptions = {
   include: {
-    service: 'api/v1/locations',
+    service: 'locations',
     nameAs: 'location',
     keyHere: 'id',
     keyThere: 'incidentId',
@@ -53,7 +53,7 @@ export default {
 
 async function includeAssociations(context: HookContext): Promise<HookContext> {
   if (context.data.location) {
-    const LocationService = context.app.service('api/v1/locations');
+    const LocationService = context.app.service('locations');
     context.params.sequelize = {
       include: [{ model: LocationService.Model }]
     };

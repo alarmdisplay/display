@@ -1,4 +1,4 @@
-// Initializes the `content-slots` service on path `/api/v1/content-slots`
+// Initializes the `content-slots` service on path `/content-slots`
 import { ServiceAddons } from '@feathersjs/feathers';
 import { Application } from '../../declarations';
 import { ContentSlots } from './content-slots.class';
@@ -8,7 +8,7 @@ import hooks from './content-slots.hooks';
 // Add this service to the service type index
 declare module '../../declarations' {
   interface ServiceTypes {
-    'api/v1/content-slots': ContentSlots & ServiceAddons<any>;
+    'content-slots': ContentSlots & ServiceAddons<any>;
   }
 
   interface ContentSlotData {
@@ -31,10 +31,10 @@ export default function (app: Application): void {
   };
 
   // Initialize our service with any options it requires
-  app.use('/api/v1/content-slots', new ContentSlots(options, app));
+  app.use('/content-slots', new ContentSlots(options, app));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('api/v1/content-slots');
+  const service = app.service('content-slots');
 
   service.hooks(hooks);
 }

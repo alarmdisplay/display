@@ -12,7 +12,7 @@ class Setting extends BaseModel {
   }
 }
 
-const servicePath = 'api/v1/settings'
+const servicePath = 'settings'
 const servicePlugin = makeServicePlugin({
   Model: Setting,
   idField: 'key',

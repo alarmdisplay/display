@@ -5,14 +5,14 @@ let should = chai.should();
 chai.use(chaiHttp);
 
 const basePaths = [
-  '/api/v1/announcements',
-  '/api/v1/api-keys',
-  '/api/v1/content-slots',
-  '/api/v1/displays',
-  '/api/v1/incidents',
-  '/api/v1/locations',
-  '/api/v1/settings',
-  '/api/v1/views',
+  '/announcements',
+  '/api-keys',
+  '/content-slots',
+  '/displays',
+  '/incidents',
+  '/locations',
+  '/settings',
+  '/views',
 ]
 
 describe('Authentication', function () {

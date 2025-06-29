@@ -30,7 +30,7 @@ export class ApiKeyStrategy extends AuthenticationBaseStrategy {
     if (!this.app) {
       throw new Error('Cannot access main application');
     }
-    const ApiKeyService = this.app.service('api/v1/api-keys');
+    const ApiKeyService = this.app.service('api-keys');
     let storedApiKey;
     try {
       storedApiKey = await ApiKeyService.get(id);
@@ -51,7 +51,7 @@ export class ApiKeyStrategy extends AuthenticationBaseStrategy {
 
     // If the API key belongs to a Display
     if (storedApiKey.displayId) {
-      const DisplayService = this.app.service('api/v1/displays');
+      const DisplayService = this.app.service('displays');
       try {
         result.display = await DisplayService.get(storedApiKey.displayId, params);
       } catch {

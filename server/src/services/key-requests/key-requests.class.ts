@@ -38,11 +38,11 @@ export class KeyRequests extends Service<KeyRequestData> {
     const existingRecord = await this.get(id);
     // If the key request gets granted, create an API key, connected to a new Display
     if (!existingRecord.granted && data.granted === true) {
-      const newDisplay = await this.app.service('api/v1/displays').create({
+      const newDisplay = await this.app.service('displays').create({
         name: data.name || 'Neues Display',
         active: true
       }) as DisplayData;
-      const newApiKey = await this.app.service('api/v1/api-keys').create({
+      const newApiKey = await this.app.service('api-keys').create({
         name: newDisplay.name,
         displayId: newDisplay.id
       });

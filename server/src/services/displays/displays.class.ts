@@ -38,14 +38,14 @@ export class Displays extends Service<DisplayData> {
       await this.diffViews(id as number, data.views);
     } else {
       // The views are intentionally left empty, remove all existing ones
-      await this.app.service('api/v1/views').remove(null, { query: { displayId: id } });
+      await this.app.service('views').remove(null, { query: { displayId: id } });
     }
 
     return await super._update(id, data, params);
   }
 
   private async diffViews(id: number, submittedViews: ViewData[] | undefined) {
-    const ViewsService = this.app.service('api/v1/views');
+    const ViewsService = this.app.service('views');
 
     if (submittedViews && submittedViews.length === 0) {
       // Shortcut: No views should be assigned, so delete any that belong to this display

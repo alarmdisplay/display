@@ -1,4 +1,4 @@
-// Initializes the `api-keys` service on path `/api/v1/api-keys`
+// Initializes the `api-keys` service on path `/api-keys`
 import { ServiceAddons } from '@feathersjs/feathers';
 import { Application } from '../../declarations';
 import { ApiKeys } from './api-keys.class';
@@ -8,7 +8,7 @@ import hooks from './api-keys.hooks';
 // Add this service to the service type index
 declare module '../../declarations' {
   interface ServiceTypes {
-    'api/v1/api-keys': ApiKeys & ServiceAddons<any>;
+    'api-keys': ApiKeys & ServiceAddons<any>;
   }
 }
 
@@ -19,10 +19,10 @@ export default function (app: Application): void {
   };
 
   // Initialize our service with any options it requires
-  app.use('/api/v1/api-keys', new ApiKeys(options, app));
+  app.use('/api-keys', new ApiKeys(options, app));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('api/v1/api-keys');
+  const service = app.service('api-keys');
 
   service.hooks(hooks);
 }

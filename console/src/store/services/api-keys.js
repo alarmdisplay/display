@@ -11,7 +11,7 @@ class ApiKey extends BaseModel {
   }
 }
 
-const servicePath = 'api/v1/api-keys'
+const servicePath = 'api-keys'
 const servicePlugin = makeServicePlugin({
   Model: ApiKey,
   service: feathersClient.service(servicePath),

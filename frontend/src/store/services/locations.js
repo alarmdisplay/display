@@ -23,7 +23,7 @@ class Location extends BaseModel {
   }
 }
 
-const servicePath = 'api/v1/locations'
+const servicePath = 'locations'
 const servicePlugin = makeServicePlugin({
   Model: Location,
   service: feathersClient.service(servicePath),

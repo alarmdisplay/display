@@ -50,13 +50,13 @@ export default class LocationsWatcher {
       newData.incidentId = incidentId;
     }
 
-    const newLocation = await this.app.service('api/v1/locations').create(newData) as LocationData;
+    const newLocation = await this.app.service('locations').create(newData) as LocationData;
     logger.debug('Location mirrored (remote: %d, local: %d)', data.id, newLocation.id);
   };
 
   onUpdated = async (data: RemoteLocationData): Promise<void> => {
     logger.debug('Location updated/patched', data);
-    const service = this.app.service('api/v1/locations');
+    const service = this.app.service('locations');
     const locations = await service.find({ query: { hubLocationId: data.id }, paginate: false }) as (LocationData & { id : number })[];
     if (locations.length === 0) {
       // We have not seen this Location before, pretend that it just got created
@@ -84,7 +84,7 @@ export default class LocationsWatcher {
 
   onRemoved = async (data: RemoteLocationData): Promise<void> => {
     logger.debug('Location removed', data);
-    await this.app.service('api/v1/locations').remove(null, { query: { hubLocationId: data.id } });
+    await this.app.service('locations').remove(null, { query: { hubLocationId: data.id } });
   };
 
   /**
@@ -93,7 +93,7 @@ export default class LocationsWatcher {
    * @param id
    */
   private translateIncidentId = async (id: number): Promise<number | undefined> => {
-    const incidents = await this.app.service('api/v1/incidents').find({ query: { hubIncidentId: id }, paginate: false }) as IncidentData[];
+    const incidents = await this.app.service('incidents').find({ query: { hubIncidentId: id }, paginate: false }) as IncidentData[];
     if (incidents.length) {
       return incidents[0].id;
     }

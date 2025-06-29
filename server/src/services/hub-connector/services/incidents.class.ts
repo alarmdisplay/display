@@ -40,7 +40,7 @@ export default class IncidentsWatcher {
       delete locationData.id;
     }
 
-    const newIncident = await this.app.service('api/v1/incidents').create({
+    const newIncident = await this.app.service('incidents').create({
       time: new Date(data.time),
       sender: data.sender,
       ref: data.ref,
@@ -59,7 +59,7 @@ export default class IncidentsWatcher {
 
   onUpdated = async (data: RemoteIncidentData): Promise<void> => {
     logger.debug('Incident updated/patched', data);
-    const service = this.app.service('api/v1/incidents');
+    const service = this.app.service('incidents');
     const incidents = await service.find({ query: { hubIncidentId: data.id }, paginate: false }) as IncidentData[];
     if (incidents.length === 0) {
       // We have not seen this incident before, pretend that it just got created
@@ -84,6 +84,6 @@ export default class IncidentsWatcher {
 
   onRemoved = async (data: RemoteIncidentData): Promise<void> => {
     logger.debug('Incident removed', data);
-    await this.app.service('api/v1/incidents').remove(null, { query: { hubIncidentId: data.id } });
+    await this.app.service('incidents').remove(null, { query: { hubIncidentId: data.id } });
   };
 }

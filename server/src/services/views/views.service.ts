@@ -1,4 +1,4 @@
-// Initializes the `views` service on path `/api/v1/views`
+// Initializes the `views` service on path `/views`
 import { ServiceAddons } from '@feathersjs/feathers';
 import { Application } from '../../declarations';
 import { Views } from './views.class';
@@ -8,7 +8,7 @@ import hooks from './views.hooks';
 // Add this service to the service type index
 declare module '../../declarations' {
   interface ServiceTypes {
-    'api/v1/views': Views & ServiceAddons<any>;
+    'views': Views & ServiceAddons<any>;
   }
 
   interface ViewData {
@@ -32,10 +32,10 @@ export default function (app: Application): void {
   };
 
   // Initialize our service with any options it requires
-  app.use('/api/v1/views', new Views(options, app));
+  app.use('/views', new Views(options, app));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('api/v1/views');
+  const service = app.service('views');
 
   service.hooks(hooks);
 }
