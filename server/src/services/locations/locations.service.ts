@@ -1,4 +1,4 @@
-// Initializes the `locations` service on path `/api/v1/locations`
+// Initializes the `locations` service on path `/locations`
 import { ServiceAddons } from '@feathersjs/feathers';
 import { Application } from '../../declarations';
 import { Locations } from './locations.class';
@@ -8,7 +8,7 @@ import hooks from './locations.hooks';
 // Add this service to the service type index
 declare module '../../declarations' {
   interface ServiceTypes {
-    'api/v1/locations': Locations & ServiceAddons<any>;
+    'locations': Locations & ServiceAddons<any>;
   }
 
   interface LocationData {
@@ -35,10 +35,10 @@ export default function (app: Application): void {
   };
 
   // Initialize our service with any options it requires
-  app.use('/api/v1/locations', new Locations(options, app));
+  app.use('/locations', new Locations(options, app));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('api/v1/locations');
+  const service = app.service('locations');
 
   service.hooks(hooks);
 }

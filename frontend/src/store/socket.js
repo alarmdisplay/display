@@ -52,7 +52,7 @@ export function createSocketPlugin (socket) {
         socket.on('error', (err) => {
             console.error('Socket error', err)
         })
-        socket.on('api/v1/key-requests patched', (data) => {
+        socket.on('key-requests patched', (data) => {
             let keyRequestId = store.state.socket.keyRequestId;
             if (!keyRequestId) {
                 console.error('No key request active, this update should not have been sent here')
@@ -73,7 +73,7 @@ export function createSocketPlugin (socket) {
         })
 
         // If 'our' display is deleted on the backend, reload the app to restart the onboarding
-        socket.on('api/v1/displays removed', (data) => {
+        socket.on('displays removed', (data) => {
             let ownDisplayId = store.state.ownDisplayId;
             if (ownDisplayId && ownDisplayId === data.id) {
                 location.reload()

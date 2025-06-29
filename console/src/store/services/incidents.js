@@ -30,7 +30,7 @@ class Incident extends BaseModel {
   }
 }
 
-const servicePath = 'api/v1/incidents'
+const servicePath = 'incidents'
 const servicePlugin = makeServicePlugin({
   Model: Incident,
   service: feathersClient.service(servicePath),

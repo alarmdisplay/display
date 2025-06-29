@@ -8,7 +8,7 @@ const { authenticate } = authentication.hooks;
 
 const populateOptions = {
   include: {
-    service: 'api/v1/content-slots',
+    service: 'content-slots',
     nameAs: 'contentSlots',
     keyHere: 'id',
     keyThere: 'viewId',

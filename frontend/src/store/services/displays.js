@@ -44,7 +44,7 @@ class Display extends BaseModel {
   }
 }
 
-const servicePath = 'api/v1/displays'
+const servicePath = 'displays'
 const servicePlugin = makeServicePlugin({
   Model: Display,
   getters: {

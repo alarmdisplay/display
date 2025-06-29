@@ -49,7 +49,7 @@ export default {
           await this.$store.dispatch('displays/get', 'self')
         } catch (reason) {
           console.error('Error while trying to get own Display ID:', reason.message);
-          feathersClient.io.emit('create', 'api/v1/key-requests', {}, (error, result) => {
+          feathersClient.io.emit('create', 'key-requests', {}, (error, result) => {
             if (error) {
               console.error('Could not request API key:', error)
               return

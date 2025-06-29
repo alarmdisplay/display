@@ -4,7 +4,7 @@ let should = chai.should();
 
 chai.use(chaiHttp);
 
-const basePath = '/api/v1/key-requests'
+const basePath = '/key-requests'
 describe(basePath, () => {
   describe('Authentication', () => {
     it(`GET ${basePath} should require authentication`, function (done) {

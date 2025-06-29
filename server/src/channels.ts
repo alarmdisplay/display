@@ -99,7 +99,7 @@ export default function(app: Application): void {
     if (pendingConnections.has(connection)) {
       const clientId = pendingConnections.get(connection);
       // Remove any key request, that came through this connection
-      await app.service('api/v1/key-requests').remove(null, { query: { requestId: clientId } });
+      await app.service('key-requests').remove(null, { query: { requestId: clientId } });
       pendingConnections.delete(connection);
     }
   });
@@ -109,21 +109,21 @@ export default function(app: Application): void {
     // Here you can add event publishers to channels set up in `channels.js`
     // To publish only for a specific event use `app.publish(eventname, () => {})`
 
-    logger.debug('Publishing all events to all authenticated users. See `channels.js` and https://docs.feathersjs.com/api/channels.html for more information.');  
+    logger.debug('Publishing all events to all authenticated users. See `channels.js` and https://docs.feathersjs.com/api/channels.html for more information.');
 
     // e.g. to publish all service events to all authenticated users use
     return app.channel('authenticated');
   });
 
   // Send the patched event only to the affected connection, because it contains the key
-  app.service('api/v1/key-requests').publish('patched', (data: KeyRequestData) => {
+  app.service('key-requests').publish('patched', (data: KeyRequestData) => {
     return [
       app.channel(`connections/${data.requestId}`)
     ];
   });
 
   // Send all other events about key requests also to the affected connection, not only the authenticated ones
-  app.service('api/v1/key-requests').publish((data: KeyRequestData) => {
+  app.service('key-requests').publish((data: KeyRequestData) => {
     return [
       app.channel('authenticated'),
       app.channel(`connections/${data.requestId}`)

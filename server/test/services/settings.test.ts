@@ -7,7 +7,7 @@ describe('\'settings\' service', () => {
   });
 
   it('registered the service', () => {
-    const service = app.service('api/v1/settings');
+    const service = app.service('settings');
     expect(service).toBeTruthy();
   });
 });

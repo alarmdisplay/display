@@ -1,6 +1,6 @@
 import app from '../../src/app';
 
-const servicePath = 'api/v1/displays';
+const servicePath = 'displays';
 
 describe('\'displays\' service', () => {
   beforeAll(done => {

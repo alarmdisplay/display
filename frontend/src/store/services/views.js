@@ -46,7 +46,7 @@ class View extends BaseModel {
   }
 }
 
-const servicePath = 'api/v1/views'
+const servicePath = 'views'
 const servicePlugin = makeServicePlugin({
   Model: View,
   service: feathersClient.service(servicePath),

@@ -20,14 +20,14 @@ export class Views extends Service<ViewData> {
       await this.diffContentSlots(id as number, data.contentSlots);
     } else {
       // The content slots are intentionally left empty, remove all existing ones
-      await this.app.service('api/v1/content-slots').remove(null, { query: { viewId: id } });
+      await this.app.service('content-slots').remove(null, { query: { viewId: id } });
     }
 
     return await super._update(id, data, params);
   }
 
   private async diffContentSlots(id: number, submittedContentSlots: ContentSlotData[] | undefined) {
-    const ContentSlotsService = this.app.service('api/v1/content-slots');
+    const ContentSlotsService = this.app.service('content-slots');
 
     if (submittedContentSlots && submittedContentSlots.length === 0) {
       // Shortcut: No content slots should be assigned, so delete any that belong to this view

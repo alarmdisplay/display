@@ -29,7 +29,7 @@ class Announcement extends BaseModel {
   }
 }
 
-const servicePath = 'api/v1/announcements'
+const servicePath = 'announcements'
 const servicePlugin = makeServicePlugin({
   Model: Announcement,
   service: feathersClient.service(servicePath),
