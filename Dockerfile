@@ -1,4 +1,4 @@
-FROM node:20.19.3@sha256:6a4de97365bb291992222c4f27cafc338773989712259e809632a873ff45a6ff as build-console
+FROM node:20.19.3@sha256:691ef3fccb415741c5f5ecb39cc5f5a9b8122b84c5ffda53cf68f4a4963f45ff as build-console
 
 WORKDIR /home/node/app/console
 COPY ./console/package.json ./console/package-lock.json /home/node/app/console/
@@ -6,7 +6,7 @@ RUN npm ci --no-audit
 COPY ./console /home/node/app/console
 RUN npm run build
 
-FROM node:20.19.3@sha256:6a4de97365bb291992222c4f27cafc338773989712259e809632a873ff45a6ff as build-frontend
+FROM node:20.19.3@sha256:691ef3fccb415741c5f5ecb39cc5f5a9b8122b84c5ffda53cf68f4a4963f45ff as build-frontend
 
 WORKDIR /home/node/app/frontend
 COPY ./frontend/package.json ./frontend/package-lock.json /home/node/app/frontend/
@@ -14,7 +14,7 @@ RUN npm ci --no-audit
 COPY ./frontend /home/node/app/frontend
 RUN npm run build
 
-FROM node:20.19.3@sha256:6a4de97365bb291992222c4f27cafc338773989712259e809632a873ff45a6ff as build-server
+FROM node:20.19.3@sha256:691ef3fccb415741c5f5ecb39cc5f5a9b8122b84c5ffda53cf68f4a4963f45ff as build-server
 
 WORKDIR /home/node/app/server
 COPY ./server/package.json ./server/package-lock.json /home/node/app/server/
@@ -22,7 +22,7 @@ RUN npm ci --no-audit
 COPY ./server /home/node/app/server
 RUN npm run compile
 
-FROM node:20.19.3@sha256:6a4de97365bb291992222c4f27cafc338773989712259e809632a873ff45a6ff
+FROM node:20.19.3@sha256:691ef3fccb415741c5f5ecb39cc5f5a9b8122b84c5ffda53cf68f4a4963f45ff
 WORKDIR /home/node/app/
 COPY ./server/package.json ./server/package-lock.json /home/node/app/
 RUN npm ci --only=production --no-audit
