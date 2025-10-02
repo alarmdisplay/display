@@ -1,4 +1,4 @@
-FROM node:20.19.5@sha256:abcf9c98af22ea2c5d33435143d9d8a5f6f191e1e1938a7650fc8b78c382b5a9
+FROM node:20.19.5@sha256:8cdc6b9b711af0711cc6139955cc1331fab5e0a995afd3260c52736fbc338059
 
 WORKDIR /home/node/app
 COPY ./build/package.json ./build/package-lock.json /home/node/app/
