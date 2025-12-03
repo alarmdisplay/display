@@ -7,6 +7,7 @@
     "group:test",
     "npm:unpublishSafe",
     "schedule:automergeNonOfficeHours",
+    "schedule:weekends",
     ":approveMajorUpdates",
     ":automergeLinters",
     ":automergeTesters",
