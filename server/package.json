@@ -56,7 +56,7 @@
     "axios": "1.12.2",
     "bcryptjs": "2.4.3",
     "compression": "1.8.1",
-    "cors": "2.8.5",
+    "cors": "2.8.6",
     "feathers-hooks-common": "6.1.5",
     "feathers-memory": "4.1.0",
     "feathers-sequelize": "6.4.0",
