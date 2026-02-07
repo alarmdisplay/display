@@ -29,14 +29,14 @@ jobs:
           platforms: linux/arm/v7,linux/arm64,linux/amd64
 
       - name: Log into registry ghcr.io
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Log into Docker Hub
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: docker.io
           username: ${{ secrets.DOCKER_HUB_USER }}
