@@ -9,9 +9,9 @@
   },
   "license": "AGPL-3.0-only",
   "dependencies": {
-    "@feathersjs/authentication-client": "4.5.18",
-    "@feathersjs/feathers": "4.5.17",
-    "@feathersjs/socketio-client": "4.5.18",
+    "@feathersjs/authentication-client": "4.5.19",
+    "@feathersjs/feathers": "4.5.19",
+    "@feathersjs/socketio-client": "4.5.19",
     "@fortawesome/fontawesome-svg-core": "6.7.2",
     "@fortawesome/free-solid-svg-icons": "6.7.2",
     "@fortawesome/vue-fontawesome": "2.0.10",
