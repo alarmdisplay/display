@@ -17,7 +17,7 @@
     "@fortawesome/vue-fontawesome": "2.0.10",
     "@vue/composition-api": "1.7.2",
     "axios": "1.13.5",
-    "core-js": "3.48.0",
+    "core-js": "3.49.0",
     "feathers-vuex": "3.16.0",
     "leaflet": "1.9.4",
     "moment": "2.30.1",
