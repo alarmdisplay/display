@@ -5,7 +5,7 @@
     "group:allDigest",
     "group:linters",
     "group:test",
-    "npm:unpublishSafe",
+    "security:minimumReleaseAgeNpm",
     "schedule:automergeNonOfficeHours",
     "schedule:weekends",
     ":approveMajorUpdates",
