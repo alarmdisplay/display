@@ -20,7 +20,7 @@
     "core-js": "3.50.0",
     "feathers-hooks-common": "6.1.5",
     "feathers-vuex": "3.16.0",
-    "moment": "2.30.1",
+    "moment": "2.31.0",
     "socket.io-client": "2.5.0",
     "vue": "2.6.14",
     "vue-moment": "4.1.0",
